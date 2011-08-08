@@ -1,0 +1,36 @@
+== Welcome to RakeTasks
+
+RakeTasks provides basic rake tasks, such as rdoc generation,
+building and installing gems, and running tests. It will also load additional
+rake tasks if they are found.
+
+The following assumptions are currently made:
+
+1. There is a valid .gemspec file in the root folder that is named the same
+   as the root folder.
+
+2. Tests reside in a folder named 'test' and test files are named *_test.rb.
+
+3. Additional rake tasks are named *.rb and reside in a folder named 'tasks'.
+
+== Getting Started
+
+1. Install RakeTasks at the command prompt if you haven't yet:
+
+    gem install rake_tasks
+
+2. Require the gem in your gemfile:
+
+    gem 'rake_tasks', '~> 0.0.1'
+
+3. Require the gem wherever you need state management:
+
+    require 'rake_tasks'
+
+== Additional Documentation
+
+ rake rdoc:app
+
+== License
+
+AppMode is released under the GPLv3 license.
