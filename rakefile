@@ -1,0 +1,4 @@
+require 'bundler'
+Bundler.require :rake
+
+require_relative 'lib/rake_tasks'
