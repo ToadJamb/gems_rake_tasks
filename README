@@ -13,6 +13,15 @@ The following assumptions are currently made:
 
 3. Additional rake tasks are named *.rb and reside in a folder named 'tasks'.
 
+The default task will be set in the following order:
+
+1. If tests are found, rake will run test:all.
+
+2. If tests are not found, but an appropriately named .gemspec file is,
+   gem:build will be run.
+
+3. If no tests or .gemspec are found, rdoc:app will be run.
+
 == Getting Started
 
 1. Install RakeTasks at the command prompt if you haven't yet:
@@ -33,4 +42,4 @@ The following assumptions are currently made:
 
 == License
 
-AppMode is released under the GPLv3 license.
+RakeTasks is released under the GPLv3 license.
