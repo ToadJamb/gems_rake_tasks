@@ -7,7 +7,8 @@ if File.file?(gem_spec_file)
 
     gem_spec = Gem::Specification.load(gem_spec_file)
 
-    file gem_spec.file_name => [gem_spec_file, *Dir['lib/**/*.rb']] do |t|
+    file gem_spec.file_name =>
+        [gem_spec_file, *Dir['lib/**/*.rb'], 'Gemfile', 'Gemfile.lock'] do |t|
       puts `gem build #{gem_spec_file}`
     end
 
