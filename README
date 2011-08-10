@@ -1,8 +1,9 @@
 == Welcome to RakeTasks
 
-RakeTasks provides basic rake tasks, such as rdoc generation,
-building and installing gems, and running tests. It will also load additional
-rake tasks if they are found. mmmm yummy
+RakeTasks provides basic rake tasks for generating documentation,
+building and installing gems, and running tests.
+It will also load additional rake tasks if they are in a folder named 'tasks'.
+mmmm yummy
 
 The following assumptions are currently made:
 
@@ -28,11 +29,11 @@ The default task will be set in the following order:
 
     gem install rake_tasks
 
-2. Require the gem in your gemfile:
+2. Require the gem in your Gemfile:
 
-    gem 'rake_tasks', '~> 0.0.1'
+    gem 'rake_tasks', '~> 0.0.4'
 
-3. Require the gem wherever you want/need these nifty rake tasks:
+3. Require the gem wherever you need to use it:
 
     require 'rake_tasks'
 
