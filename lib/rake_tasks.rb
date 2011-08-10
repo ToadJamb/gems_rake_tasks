@@ -6,6 +6,7 @@ require 'tempfile'
 
 gem_name = File.basename(__FILE__, '.rb')
 
+require_relative File.join(gem_name, 'doc')
 require_relative File.join(gem_name, 'rdoc')
 require_relative File.join(gem_name, 'gem')
 require_relative File.join(gem_name, 'test')
