@@ -5,6 +5,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   rake (~> 0.8.7)
