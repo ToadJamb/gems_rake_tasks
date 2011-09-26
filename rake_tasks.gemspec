@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '1.0.1'
+  s.version = '1.1.0'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{

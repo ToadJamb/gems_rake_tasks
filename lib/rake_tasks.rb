@@ -28,21 +28,11 @@
 ################################################################################
 #++
 
-current_path = Dir.getwd
-
-Dir.chdir File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
-begin
-  require 'bundler'
-  Bundler.require
-
-  require 'rake/testtask'
-  require 'rdoc/task'
-  require 'rake/clean'
-  require 'tempfile'
-ensure
-  Dir.chdir current_path
-end
+require 'rake'
+require 'rake/testtask'
+require 'rdoc/task'
+require 'rake/clean'
+require 'tempfile'
 
 gem_name = File.basename(__FILE__, '.rb')
 
