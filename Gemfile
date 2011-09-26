@@ -1,5 +1,6 @@
 source "http://rubygems.org"
 
-group :rake do
-  gem 'rake', '~> 0.8.7'
+group :default, :rake do
+  gem 'rdoc', '~> 3.9.4'
+  gem 'rake', '~> 0.9.2'
 end
