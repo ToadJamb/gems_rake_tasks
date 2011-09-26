@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '0.0.4'
+  s.version = '0.0.5'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
@@ -14,7 +14,7 @@ mmmm yummy
   s.email    = 'tthetoad@gmail.com'
   s.homepage = 'http://www.bitbucket.org/ToadJamb/gems_rake_tasks'
 
-  s.license = 'GPLv3'
+  s.license = 'LGPLv3'
 
   s.extra_rdoc_files << 'README'
 
