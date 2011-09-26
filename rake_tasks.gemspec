@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '0.0.5'
+  s.version = '1.0.0'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
@@ -22,7 +22,8 @@ mmmm yummy
   s.files = Dir['lib/**/*.rb', '*']
   s.test_files = Dir['test/**/*.rb']
 
-  s.add_dependency 'rake', '~> 0.8.7'
+  s.add_dependency 'rdoc', '~> 3.9.4'
+  s.add_dependency 'rake', '~> 0.9.2'
 
   s.has_rdoc = true
 end
