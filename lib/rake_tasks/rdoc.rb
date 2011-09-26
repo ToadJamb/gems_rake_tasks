@@ -22,6 +22,7 @@ namespace :rdoc do
           :rdoc         => rdoc_task,
           :clobber_rdoc => "#{rdoc_task}:clobber",
           :rerdoc       => "#{rdoc_task}:force") do |rdtask|
+        rdtask.title = ''
         rdtask.rdoc_dir = File.join(base_path, rdoc_task.to_s)
         rdtask.options << '--charset' << 'utf8'
         rdtask.rdoc_files.include(rdoc_files[rdoc_task], 'README')
