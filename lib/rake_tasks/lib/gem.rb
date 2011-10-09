@@ -40,6 +40,14 @@ module RakeTasks
         return !gem_spec_file.nil?
       end
 
+      # Returns the gem title.
+      # This is the gem name with underscores removed.
+      # Wherever an underscore is removed, the next letter is capitalized.
+      def gem_title(spec = gem_spec)
+        return nil unless spec.respond_to?(:name)
+        spec.name.split('_').map { |w| w.capitalize }.join('')
+      end
+
       # Get the gem specification.
       def gem_spec(spec = Kernel.const_get('Gem').const_get('Specification'))
         spec.load(gem_spec_file) if gem_file?

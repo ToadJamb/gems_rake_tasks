@@ -42,6 +42,10 @@ class GemIntegrationTest < Test::Unit::TestCase
     end
   end
 
+  def test_gem_title
+    assert_equal 'RakeTasks', @class.gem_title
+  end
+
   def test_load_gem_spec
     assert_kind_of Gem::Specification, @class.gem_spec
   end
