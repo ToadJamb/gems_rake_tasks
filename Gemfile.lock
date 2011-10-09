@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rake_tasks (1.0.1)
+    rake_tasks (2.0.0)
       rake (~> 0.9.2)
       rdoc (~> 3.9.4)
 
@@ -13,7 +13,6 @@ GEM
 
 PLATFORMS
   ruby
-  x86-mingw32
 
 DEPENDENCIES
   rake_tasks!
