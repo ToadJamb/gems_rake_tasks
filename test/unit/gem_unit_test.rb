@@ -36,6 +36,21 @@ class GemUnitTest < Test::Unit::TestCase
     @spec_class = Gem::Specification
   end
 
+  def test_proper_gem_name_failure
+    simple_expectation :getwd
+    File.stubs(:file? => false).with(gem_file)
+
+    assert_equal nil, @class.gem_title
+  end
+
+  def test_proper_gem_name
+    simple_expectation :getwd
+    simple_expectation :file?
+    simple_expectation :load_gem_spec
+
+    assert_equal 'TestGem', @class.gem_title
+  end
+
   def test_set_version_error
     simple_expectation :getwd
     simple_expectation :file?
