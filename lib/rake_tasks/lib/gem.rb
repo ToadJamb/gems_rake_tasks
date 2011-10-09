@@ -42,7 +42,7 @@ module RakeTasks
 
       # Get the gem specification.
       def gem_spec(spec = Kernel.const_get('Gem').const_get('Specification'))
-        spec.load gem_spec_file if gem_file?
+        spec.load(gem_spec_file) if gem_file?
       end
 
       # Check for a gem spec file.
@@ -56,6 +56,29 @@ module RakeTasks
       def version(spec = gem_spec)
         if spec.respond_to?(:name) && spec.respond_to?(:version)
           "#{spec.name} version #{spec.version}"
+        end
+      end
+
+      def version!(value, spec = gem_spec, temp = Tempfile.new('temp_gem_spec'))
+        begin
+          file = File.open(gem_spec_file, 'r')
+
+          while line = file.gets
+            if line =~ /version *= *['"]#{gem_spec.version}['"]/
+              temp.puts line.sub(/['"]#{spec.version}['"]/, "'#{value}'")
+            else
+              temp.puts line
+            end
+          end
+
+          temp.flush
+
+          FileUtils.mv temp.path, gem_spec_file
+        rescue Exception => ex
+          raise ex
+        ensure
+          temp.close
+          temp.unlink
         end
       end
     end

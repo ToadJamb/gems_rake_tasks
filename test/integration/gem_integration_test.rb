@@ -33,6 +33,13 @@ require_relative File.join('../require.rb'.split('/'))
 class GemIntegrationTest < Test::Unit::TestCase
   def setup
     @class = RakeTasks::Gem
+    @version = @class.gem_spec.version
+  end
+
+  def teardown
+    if @version != @class.gem_spec.version
+      @class.version! @version.to_s
+    end
   end
 
   def test_load_gem_spec
@@ -45,6 +52,15 @@ class GemIntegrationTest < Test::Unit::TestCase
 
   def test_gem_file_exists
     assert @class.gem_file?, "#{@class.gem_spec_file} does not exist."
+  end
+
+  def test_set_version
+    old_spec = @class.gem_spec
+    @class.version! '0.0.0'
+    new_spec = @class.gem_spec
+
+    assert_not_equal old_spec.version, new_spec.version
+    assert_equal '0.0.0', new_spec.version.to_s
   end
 
   def test_version

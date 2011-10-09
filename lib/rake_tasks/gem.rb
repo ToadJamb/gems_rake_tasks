@@ -62,30 +62,9 @@ if RakeTasks::Gem.gem_file?
       if args[:number].nil?
         puts RakeTasks::Gem.version(gem_spec)
       else
-        temp_file = Tempfile.new("#{gem_spec.name}_gemspec")
-
-        begin
-          File.open(gem_spec_file, 'r') do |file|
-            while line = file.gets
-              if line =~ /version *= *['"]#{gem_spec.version}['"]/
-                temp_file.puts line.sub(
-                  /['"]#{gem_spec.version}['"]/, "'#{args[:number]}'")
-              else
-                temp_file.puts line
-              end
-            end
-          end
-
-          temp_file.flush
-
-          mv temp_file.path, gem_spec_file
-
-        rescue Exception => ex
-          raise ex
-        ensure
-          temp_file.close
-          temp_file.unlink
-        end
+        RakeTasks::Gem.version! args[:number], gem_spec
+        gem_spec = RakeTasks::Gem.gem_spec
+        puts RakeTasks::Gem.version(gem_spec)
       end
     end
 

@@ -33,6 +33,7 @@ require 'rake/testtask'
 require 'rdoc/task'
 require 'rake/clean'
 require 'tempfile'
+require 'fileutils'
 
 gem_name = File.basename(__FILE__, '.rb')
 
