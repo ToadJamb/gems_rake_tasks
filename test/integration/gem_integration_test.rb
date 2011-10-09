@@ -28,80 +28,18 @@
 ################################################################################
 #++
 
-require 'bundler'
-require_relative File.join('../require'.split('/'))
+require_relative File.join('../require.rb'.split('/'))
 
-class TestsUnitTest < Test::Unit::TestCase
+class GemIntegrationTest < Test::Unit::TestCase
   def setup
-    @class = RakeTasks::Tests
+    @class = RakeTasks::Gem
   end
 
-  def test_file_name_to_task_name
-    assert_equal 'something', @class.task_name('test/unit/something_test.rb')
-    assert_equal 'something', @class.task_name('test/unit/test_something.rb')
+  def test_gem_spec_file
+    assert_equal File.basename(Dir.getwd) + '.gemspec', @class.gem_spec_file
   end
 
-  def test_tests_exist
-    @class.expects(:root => 'root').with.once
-    Dir.expects(:[] => []).with('root/**').once
-    assert_equal false, @class.exist?
-
-    @class.expects(:root => 'root').with.once
-    Dir.expects(:[] => ['root/path']).with('root/**').once
-    assert @class.exist?
-  end
-
-  def test_file_list
-    @class.stubs(:root => 'root').with
-    @class.expects(:types => ['alphabet', 'number']).with.once
-
-    patterns.each do |pattern|
-      Dir.expects(
-        :[] => []).with("root/#{pattern}").once
-      case pattern
-        when /^\*/
-          Dir.expects(
-            :[] => ['root/alphabet/abc_test.rb', 'root/alphabet/def_test.rb']).
-            with("root/alphabet/#{pattern}").once
-          Dir.expects(
-            :[] => ['root/number/add_test.rb']).
-            with("root/number/#{pattern}").once
-        when /\*.rb$/
-          Dir.expects(:[] => []).with("root/alphabet/#{pattern}").once
-          Dir.expects(:[] => []).with("root/number/#{pattern}").once
-      end
-    end
-
-    assert_equal [
-      'root/alphabet/abc_test.rb',
-      'root/alphabet/def_test.rb',
-      'root/number/add_test.rb',
-      ],
-      @class.file_list
-  end
-
-  def test_types
-    @class.stubs(:root => 'root')
-
-    Dir.expects(:[] => ['root/mammal', 'root/marsupial', 'root/file.rb']).
-      with('root/**').once
-
-    File.expects(:directory? => true).with('root/mammal').once
-    File.expects(:directory? => true).with('root/marsupial').once
-    File.expects(:directory? => false).with('root/file.rb').once
-
-    assert_equal ['mammal', 'marsupial'], @class.types
-  end
-
-  ############################################################################
-  private
-  ############################################################################
-
-  # The patterns that indicate that a file contains tests.
-  def patterns
-    [
-      '*_test.rb',
-      'test_*.rb',
-    ]
+  def test_gem_file_exists
+    assert @class.gem_file?, "#{@class.gem_spec_file} does not exist."
   end
 end
