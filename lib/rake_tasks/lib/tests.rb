@@ -37,9 +37,7 @@ module RakeTasks
     class << self
       # Indicates that tests exist.
       def exist?
-        # TODO : Use class variables?
-        @@exist = !dir(File.join(root, '**')).empty?
-        return @@exist
+        return !Dir[File.join(root, '**')].empty?
       end
 
       # Returns an array of test files for the specified group.
@@ -50,24 +48,12 @@ module RakeTasks
 
         paths(group).each do |path|
           patterns.each do |pattern|
-            files = dir(File.join(path, pattern))
+            files = Dir[File.join(path, pattern)]
             list << files unless files.empty?
           end
         end
 
         return list.flatten
-      end
-
-      # The root test folder.
-      def root
-        # TODO : Use class variables?
-        roots.each do |r|
-          unless dir(r).empty?
-            @@root = r
-            break
-          end
-        end
-        return @@root
       end
 
       # Convert a path to a file into an appropriate task name.
@@ -94,11 +80,12 @@ module RakeTasks
 
       # Return an array containing the types of tests that are included.
       def types
-        # TODO : Use class variables?
         types = []
-        dir(File.join(root, '**')).each do |path|
-          types << File.basename(path) if dir?(path)
+
+        Dir[File.join(root, '**')].each do |path|
+          types << File.basename(path) if File.directory?(path)
         end
+
         return types
       end
 
@@ -130,9 +117,13 @@ module RakeTasks
         return paths
       end
 
-      # Indicates whether the specified path exists.
-      def dir?(path)
-        File.directory? path
+      # The root test folder.
+      def root
+        roots.each do |r|
+          unless Dir[r].empty?
+            return r
+          end
+        end
       end
 
       # Returns an array of potential root folder names.
@@ -141,11 +132,6 @@ module RakeTasks
           'test',
           'tests'
         ]
-      end
-
-      # Returns an array of file/path names.
-      def dir(path)
-        Dir[path]
       end
     end
   end

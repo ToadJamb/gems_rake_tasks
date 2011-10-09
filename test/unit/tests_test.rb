@@ -36,55 +36,72 @@ class TestsUnitTest < Test::Unit::TestCase
     @class = RakeTasks::Tests
   end
 
-  def test_class_name_to_task_name
+  def test_file_name_to_task_name
     assert_equal 'something', @class.task_name('test/unit/something_test.rb')
     assert_equal 'something', @class.task_name('test/unit/test_something.rb')
   end
 
+  def test_tests_exist
+    @class.expects(:root => 'root').with.once
+    Dir.expects(:[] => []).with('root/**').once
+    assert_equal false, @class.exist?
 
-  #~ def test_tests_exist
-    #~ assert_equal true, @class.exist?
-  #~ end
+    @class.expects(:root => 'root').with.once
+    Dir.expects(:[] => ['root/path']).with('root/**').once
+    assert @class.exist?
+  end
 
-  #~ def test_test_types
-    #~ assert_equal ['unit', 'integration', 'functional'], @class.types
-  #~ end
+  def test_file_list
+    @class.stubs(:root => 'root').with
+    @class.expects(:types => ['alphabet', 'number']).with.once
 
-  #~ def test_real_gem_spec_file_exists
-    #~ assert @class.gem_file?, 'This gem does not have a gem file.'
-  #~ end
+    patterns.each do |pattern|
+      Dir.expects(
+        :[] => []).with("root/#{pattern}").once
+      case pattern
+        when /^\*/
+          Dir.expects(
+            :[] => ['root/alphabet/abc_test.rb', 'root/alphabet/def_test.rb']).
+            with("root/alphabet/#{pattern}").once
+          Dir.expects(
+            :[] => ['root/number/add_test.rb']).
+            with("root/number/#{pattern}").once
+        when /\*.rb$/
+          Dir.expects(:[] => []).with("root/alphabet/#{pattern}").once
+          Dir.expects(:[] => []).with("root/number/#{pattern}").once
+      end
+    end
 
-  #~ def test_gem_spec_file_exists
-    #~ @class.stubs(:getwd => "/work/path/#{gem_spec.name}").once
-    #~ @class.stubs(:file? => true).once
-    #~ @class.expects(:gem_spec_file => @class.gem_spec_file).once
-    #~ assert @class.gem_file?, 'Gem file should exist.'
-  #~ end
+    assert_equal [
+      'root/alphabet/abc_test.rb',
+      'root/alphabet/def_test.rb',
+      'root/number/add_test.rb',
+      ],
+      @class.file_list
+  end
 
-  #~ def test_gem_spec_file_does_not_exist
-    #~ @class.stubs(:getwd => "/work/path/#{gem_spec.name}").once
-    #~ @class.stubs(:file? => false).once
-    #~ assert !@class.gem_file?, 'Gem file should exist.'
-  #~ end
+  def test_types
+    @class.stubs(:root => 'root')
 
-  #~ def test_gem_spec_file_name
-    #~ assert_equal "#{mock_path}/#{gem_spec.name}.gemspec", @class.gem_spec_file
-  #~ end
+    Dir.expects(:[] => ['root/mammal', 'root/marsupial', 'root/file.rb']).
+      with('root/**').once
+
+    File.expects(:directory? => true).with('root/mammal').once
+    File.expects(:directory? => true).with('root/marsupial').once
+    File.expects(:directory? => false).with('root/file.rb').once
+
+    assert_equal ['mammal', 'marsupial'], @class.types
+  end
 
   ############################################################################
   private
   ############################################################################
 
-  def mock_path
-    "/work/path/#{gem_spec.name}"
-  end
-
-  def gem_spec
-    @gem_spec = mock.responds_like(Gem::Specification)
-    @gem_spec.stubs(
-      :name    => 'mock_gem',
-      :version => '1.0.0'
-    )
-    @gem_spec
+  # The patterns that indicate that a file contains tests.
+  def patterns
+    [
+      '*_test.rb',
+      'test_*.rb',
+    ]
   end
 end
