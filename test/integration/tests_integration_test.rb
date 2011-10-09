@@ -33,13 +33,7 @@ require_relative File.join('../require'.split('/'))
 class TestsIntegrationTest < Test::Unit::TestCase
   def setup
     @class = RakeTasks::Tests
-  end
-
-  def test_root
-    root = File.dirname(__FILE__)
-    root = File.expand_path(File.join(root, '..'))
-    root = File.basename(root)
-    assert_equal root, @class.root
+    @file_path = 'test'
   end
 
   def test_tests_exist
@@ -57,7 +51,7 @@ class TestsIntegrationTest < Test::Unit::TestCase
   end
 
   def test_file_list
-    file = __FILE__[__FILE__.index(/\/#{@class.root}\//) + 1..-1]
+    file = File.join(@file_path, 'integration', File.basename(__FILE__))
 
     assert @class.file_list.include?(file),
       "#{file} is not in the list of test files:\n" +
@@ -72,7 +66,7 @@ class TestsIntegrationTest < Test::Unit::TestCase
   ############################################################################
 
   def check_file_list(group)
-    files = Dir[File.join(@class.root, group.to_s, '*.rb')]
+    files = Dir[File.join(@file_path, group.to_s, '*.rb')]
 
     assert_equal files.count, @class.file_list(group).count
 
