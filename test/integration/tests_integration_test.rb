@@ -28,25 +28,58 @@
 ################################################################################
 #++
 
-require 'rake'
-require 'rake/testtask'
-require 'rdoc/task'
-require 'rake/clean'
-require 'tempfile'
+require_relative File.join('../require'.split('/'))
 
-gem_name = File.basename(__FILE__, '.rb')
+class TestsIntegrationTest < Test::Unit::TestCase
+  def setup
+    @class = RakeTasks::Tests
+  end
 
-# Require lib files.
-Dir[File.join(File.dirname(__FILE__), gem_name, 'lib', '*.rb')].each do |lib|
-  require lib
-end
+  def test_root
+    root = File.dirname(__FILE__)
+    root = File.expand_path(File.join(root, '..'))
+    root = File.basename(root)
+    assert_equal root, @class.root
+  end
 
-# Require tasks.
-Dir[File.join(File.dirname(__FILE__), gem_name, '*.rb')].each do |task|
-  require task
-end
+  def test_tests_exist
+    assert_equal true, @class.exist?
+  end
 
-# Include any ruby files in the tasks folder.
-Dir[File.join(Dir.getwd, 'tasks', '*.rb')].each do |rake_file|
-  require rake_file
+  def test_types
+    types = @class.types
+
+    assert_equal 2, types.count
+
+    ['integration', 'unit'].each do |type|
+      assert types.include?(type), "Test types do not include #{type} tests."
+    end
+  end
+
+  def test_file_list
+    file = __FILE__[__FILE__.index(/\/#{@class.root}\//) + 1..-1]
+
+    assert @class.file_list.include?(file),
+      "#{file} is not in the list of test files:\n" +
+      @class.file_list.join("\n")
+
+    check_file_list :unit
+    check_file_list :integration
+  end
+
+  ############################################################################
+  private
+  ############################################################################
+
+  def check_file_list(group)
+    files = Dir[File.join(@class.root, group.to_s, '*.rb')]
+
+    assert_equal files.count, @class.file_list(group).count
+
+    files.each do |file|
+      assert @class.file_list(group).include?(file),
+        "#{file} is not in the list of test files:\n" +
+        @class.file_list(group).join("\n")
+    end
+  end
 end

@@ -28,25 +28,63 @@
 ################################################################################
 #++
 
-require 'rake'
-require 'rake/testtask'
-require 'rdoc/task'
-require 'rake/clean'
-require 'tempfile'
+require 'bundler'
+require_relative File.join('../require'.split('/'))
 
-gem_name = File.basename(__FILE__, '.rb')
+class TestsUnitTest < Test::Unit::TestCase
+  def setup
+    @class = RakeTasks::Tests
+  end
 
-# Require lib files.
-Dir[File.join(File.dirname(__FILE__), gem_name, 'lib', '*.rb')].each do |lib|
-  require lib
-end
+  def test_class_name_to_task_name
+    assert_equal 'something', @class.task_name('test/unit/something_test.rb')
+    assert_equal 'something', @class.task_name('test/unit/test_something.rb')
+  end
 
-# Require tasks.
-Dir[File.join(File.dirname(__FILE__), gem_name, '*.rb')].each do |task|
-  require task
-end
 
-# Include any ruby files in the tasks folder.
-Dir[File.join(Dir.getwd, 'tasks', '*.rb')].each do |rake_file|
-  require rake_file
+  #~ def test_tests_exist
+    #~ assert_equal true, @class.exist?
+  #~ end
+
+  #~ def test_test_types
+    #~ assert_equal ['unit', 'integration', 'functional'], @class.types
+  #~ end
+
+  #~ def test_real_gem_spec_file_exists
+    #~ assert @class.gem_file?, 'This gem does not have a gem file.'
+  #~ end
+
+  #~ def test_gem_spec_file_exists
+    #~ @class.stubs(:getwd => "/work/path/#{gem_spec.name}").once
+    #~ @class.stubs(:file? => true).once
+    #~ @class.expects(:gem_spec_file => @class.gem_spec_file).once
+    #~ assert @class.gem_file?, 'Gem file should exist.'
+  #~ end
+
+  #~ def test_gem_spec_file_does_not_exist
+    #~ @class.stubs(:getwd => "/work/path/#{gem_spec.name}").once
+    #~ @class.stubs(:file? => false).once
+    #~ assert !@class.gem_file?, 'Gem file should exist.'
+  #~ end
+
+  #~ def test_gem_spec_file_name
+    #~ assert_equal "#{mock_path}/#{gem_spec.name}.gemspec", @class.gem_spec_file
+  #~ end
+
+  ############################################################################
+  private
+  ############################################################################
+
+  def mock_path
+    "/work/path/#{gem_spec.name}"
+  end
+
+  def gem_spec
+    @gem_spec = mock.responds_like(Gem::Specification)
+    @gem_spec.stubs(
+      :name    => 'mock_gem',
+      :version => '1.0.0'
+    )
+    @gem_spec
+  end
 end
