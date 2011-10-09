@@ -46,4 +46,9 @@ class GemIntegrationTest < Test::Unit::TestCase
   def test_gem_file_exists
     assert @class.gem_file?, "#{@class.gem_spec_file} does not exist."
   end
+
+  def test_version
+    spec = @class.gem_spec
+    assert_equal "#{spec.name} version #{spec.version}", @class.version
+  end
 end

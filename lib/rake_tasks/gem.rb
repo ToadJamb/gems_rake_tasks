@@ -60,7 +60,7 @@ if RakeTasks::Gem.gem_file?
     desc "Show/Set the version number."
     task :version, [:number] do |t, args|
       if args[:number].nil?
-        puts "#{gem_spec.name} version #{gem_spec.version}"
+        puts RakeTasks::Gem.version(gem_spec)
       else
         temp_file = Tempfile.new("#{gem_spec.name}_gemspec")
 
