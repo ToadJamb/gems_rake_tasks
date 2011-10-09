@@ -66,7 +66,7 @@ module RakeTasks
 
           while line = file.gets
             if line =~ /version *= *['"]#{spec.version}['"]/
-              temp.puts line.sub(/['"]#{spec.version}['"]/, "'#{value}'")
+              temp.puts line.sub(/(['"])#{spec.version}(['"])/, "\\1#{value}\\2")
             else
               temp.puts line
             end
