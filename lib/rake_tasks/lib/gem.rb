@@ -61,6 +61,8 @@ module RakeTasks
 
       # Updates the version in the gem specification file.
       def version!(value, spec = gem_spec, temp = Tempfile.new('temp_gem_spec'))
+        return if spec.nil?
+
         begin
           file = File.open(gem_spec_file, 'r')
 
