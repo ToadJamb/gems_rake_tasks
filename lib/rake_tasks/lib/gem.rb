@@ -37,13 +37,19 @@ module RakeTasks
     class << self
       # Check whether a gem spec file exists for this project.
       def gem_file?
-        File.file? gem_spec_file
+        return !gem_spec_file.nil?
+      end
+
+      # Get the gem specification.
+      def gem_spec(spec = Kernel.const_get('Gem').const_get('Specification'))
+        spec.load gem_spec_file if gem_file?
       end
 
       # Check for a gem spec file.
       def gem_spec_file
-        path = Dir.getwd
-        return File.basename(path) + '.gemspec'
+        file = File.basename(Dir.getwd) + '.gemspec'
+        return nil unless File.file? file
+        return file
       end
     end
   end
