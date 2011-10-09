@@ -36,6 +36,27 @@ class GemUnitTest < Test::Unit::TestCase
     @spec_class = Gem::Specification
   end
 
+  def test_gem_version_defaults
+    spec = mock.responds_like(@spec_class.new)
+    spec.expects(:name).with.returns('gem_name').once
+    spec.expects(:version).with.returns('1.0.0').once
+
+    @class.expects(:gem_spec).with.returns(spec).once
+
+    assert_equal version('gem_name', '1.0.0'), @class.version
+  end
+
+  def test_gem_version
+    spec = mock.responds_like(@spec_class.new)
+    spec.expects(:name).with.returns('gem_name').once
+    spec.expects(:version).with.returns('1.0.0').once
+    assert_equal version('gem_name', '1.0.0'), @class.version(spec)
+  end
+
+  def test_gem_version_without_gemspec
+    assert_equal nil, @class.version(nil)
+  end
+
   def test_no_gem_spec
     Dir.expects(:getwd => path).with.once
     File.expects(:file?).with(gem_name).returns(false).once
@@ -81,6 +102,10 @@ class GemUnitTest < Test::Unit::TestCase
   ############################################################################
   private
   ############################################################################
+
+  def version(gem, version)
+    '%s version %s' % [gem, version]
+  end
 
   def gem_name
     File.basename(path) + '.gemspec'

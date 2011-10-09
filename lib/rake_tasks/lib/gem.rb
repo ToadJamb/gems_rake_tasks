@@ -51,6 +51,13 @@ module RakeTasks
         return nil unless File.file? file
         return file
       end
+
+      # Returns the name and version from the specified gem specification.
+      def version(spec = gem_spec)
+        if spec.respond_to?(:name) && spec.respond_to?(:version)
+          "#{spec.name} version #{spec.version}"
+        end
+      end
     end
   end
 end
