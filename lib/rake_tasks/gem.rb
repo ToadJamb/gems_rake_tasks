@@ -28,14 +28,13 @@
 ################################################################################
 #++
 
-gem_spec_file = RakeTasks::Gem.gem_spec_file
-
 if RakeTasks::Gem.gem_file?
   ############################################################################
   namespace :gem do
   ############################################################################
 
-    gem_spec = Gem::Specification.load(gem_spec_file)
+    gem_spec = RakeTasks::Gem.gem_spec
+    gem_spec_file = RakeTasks::Gem.gem_spec_file
 
     file gem_spec.file_name =>
         [gem_spec_file, *Dir['lib/**/*.rb'], 'Gemfile', 'Gemfile.lock'] do |t|
