@@ -70,7 +70,7 @@ class GemUnitTest < Test::Unit::TestCase
     ].each do |version|
       temp = simple_expectation :new_tempfile
       new_spec = gem_spec_single_line(
-        version.sub(/['"]\d\.\d\.\d['"]/, "'3.2.1'"))
+        version.sub(/(['"])\d+?\.\d+?\.\d+?(['"])/, "\\13.2.1\\1"))
 
       File.expects(:open => gem_spec_single_line(version)).
         with(gem_file, 'r').once
