@@ -35,6 +35,10 @@ class GemIntegrationTest < Test::Unit::TestCase
     @class = RakeTasks::Gem
   end
 
+  def test_load_gem_spec
+    assert_kind_of Gem::Specification, @class.gem_spec
+  end
+
   def test_gem_spec_file
     assert_equal File.basename(Dir.getwd) + '.gemspec', @class.gem_spec_file
   end

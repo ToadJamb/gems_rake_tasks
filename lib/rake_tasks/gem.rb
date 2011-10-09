@@ -28,9 +28,9 @@
 ################################################################################
 #++
 
-gem_spec_file = "#{File.basename(Dir.getwd)}.gemspec"
+gem_spec_file = RakeTasks::Gem.gem_spec_file
 
-if File.file?(gem_spec_file)
+if RakeTasks::Gem.gem_file?
   ############################################################################
   namespace :gem do
   ############################################################################
