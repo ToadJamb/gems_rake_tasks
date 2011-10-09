@@ -35,53 +35,30 @@ module RakeTasks
   # This class assists in setting up test tasks.
   class Tests
     class << self
-      # TODO : comments.
+      # Indicates that tests exist.
       def exist?
         # TODO : Use class variables?
         @@exist = !dir(File.join(root, '**')).empty?
         return @@exist
       end
 
-      # TODO : comments.
+      # Returns an array of test files for the specified group.
       def file_list(group = :all)
         group = group.to_sym unless group.is_a?(Symbol)
+
         list = []
+
         paths(group).each do |path|
           patterns.each do |pattern|
             files = dir(File.join(path, pattern))
             list << files unless files.empty?
           end
         end
+
         return list.flatten
       end
 
-      # TODO : comments
-      def task_name(file_path)
-        file = File.basename(file_path, '.rb')
-        patterns.each do |pattern|
-          pattern = pattern.sub(/\.rb$/, '').sub(/\*/, '.+?')
-          if file =~ /#{pattern}/
-            pattern = pattern.sub(/\.\+\?/, '')
-            if pattern.index('_') == 0
-              return file.sub(/#{pattern}$/, '')
-            else
-              return file.sub(/^#{pattern}/, '')
-            end
-          end
-        end
-      end
-
-      # TODO : comments.
-      def types
-        # TODO : Use class variables?
-        types = []
-        dir(File.join(root, '**')).each do |path|
-          types << File.basename(path) if dir?(path)
-        end
-        return types
-      end
-
-      # TODO : comments.
+      # The root test folder.
       def root
         # TODO : Use class variables?
         roots.each do |r|
@@ -93,11 +70,43 @@ module RakeTasks
         return @@root
       end
 
+      # Convert a path to a file into an appropriate task name.
+      # This is done by removing the pattern that is used to indicate
+      # it is a test file.
+      def task_name(file_path)
+        file = File.basename(file_path, '.rb')
+
+        patterns.each do |pattern|
+          pattern = pattern.sub(/\.rb$/, '').sub(/\*/, '.+?')
+
+          if file =~ /#{pattern}/
+            pattern = pattern.sub(/\.\+\?/, '')
+
+            if pattern.index('_') == 0
+              return file.sub(/#{pattern}$/, '')
+            else
+              return file.sub(/^#{pattern}/, '')
+            end
+          end
+
+        end
+      end
+
+      # Return an array containing the types of tests that are included.
+      def types
+        # TODO : Use class variables?
+        types = []
+        dir(File.join(root, '**')).each do |path|
+          types << File.basename(path) if dir?(path)
+        end
+        return types
+      end
+
       ####################################################################
       private
       ####################################################################
 
-      # TODO : comments.
+      # The patterns that indicate that a file contains tests.
       def patterns
         [
           '*_test.rb',
@@ -105,22 +114,28 @@ module RakeTasks
         ]
       end
 
-      # TODO : comments.
+      # Paths to check for test files.
+      # Only paths for a specified type will be returned, if specified.
       def paths(group = :all)
         paths = []
+
         paths << [root] if group == :all
+
         types.each do |type|
-          paths << File.join(root, type) if group == type.to_sym || group == :all
+          if group == type.to_sym || group == :all
+            paths << File.join(root, type)
+          end
         end
+
         return paths
       end
 
-      # TODO : comments.
+      # Indicates whether the specified path exists.
       def dir?(path)
         File.directory? path
       end
 
-      # TODO : comments.
+      # Returns an array of potential root folder names.
       def roots
         [
           'test',
@@ -128,7 +143,7 @@ module RakeTasks
         ]
       end
 
-      # TODO : comments.
+      # Returns an array of file/path names.
       def dir(path)
         Dir[path]
       end
