@@ -58,7 +58,7 @@ class GemUnitTest < Test::Unit::TestCase
   end
 
   def test_no_gem_spec
-    Dir.expects(:getwd => path).with.once
+    simple_expectation(:getwd)
     File.expects(:file?).with(gem_name).returns(false).once
 
     spec = mock.responds_like(@spec_class)
@@ -67,21 +67,21 @@ class GemUnitTest < Test::Unit::TestCase
   end
 
   def test_gem_spec
-    Dir.expects(:getwd => path).with.twice
-    File.expects(:file?).with(gem_name).returns(true).twice
+    simple_expectation(:getwd)
+    simple_expectation(:file?)
 
     spec = mock.responds_like(@spec_class)
     gem_spec = mock.responds_like(@spec_class.new)
 
     spec.expects(:load).with(gem_name).returns(gem_spec).once
 
-    gem_spec.expects(:kind_of?).with(spec).returns(true).once
+    gem_spec.expects(:kind_of?).with(spec).returns(true)
 
     assert_kind_of spec, @class.gem_spec(spec)
   end
 
   def test_gem_spec_file
-    Dir.expects(:getwd => path).with.twice
+    simple_expectation(:getwd)
     File.expects(:file?).with(gem_name).returns(true, false).twice
 
     assert_equal gem_name, @class.gem_spec_file
@@ -89,11 +89,9 @@ class GemUnitTest < Test::Unit::TestCase
   end
 
   def test_gem_file_existence
-    Dir.expects(:getwd => path).with.twice
+    simple_expectation(:getwd)
 
-    File.expects(:file?).
-      returns(true, false).
-      with(gem_name).twice
+    File.expects(:file?).returns(true, false).with(gem_name).twice
 
     assert_equal true, @class.gem_file?
     assert_equal false, @class.gem_file?
@@ -102,6 +100,13 @@ class GemUnitTest < Test::Unit::TestCase
   ############################################################################
   private
   ############################################################################
+
+  def simple_expectation(method)
+    case method
+      when :getwd then Dir.expects(:getwd => path).with.at_least_once
+      when :file? then File.expects(:file? => true).with(gem_name).at_least_once
+    end
+  end
 
   def version(gem, version)
     '%s version %s' % [gem, version]
@@ -113,10 +118,5 @@ class GemUnitTest < Test::Unit::TestCase
 
   def path
     '/root/path/gem_name'
-  end
-
-  def mocking_class(mocker)
-    mocking = mocker.inspect
-    Kernel.const_get(mocking.sub(/^.+?Mock:/, '').sub(/>$/, ''))
   end
 end
