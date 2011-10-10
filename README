@@ -16,6 +16,8 @@ The following assumptions are currently made:
    Additionally, if you have sub-folders under test(s)
    (i.e. test/unit, test/performance), they will be available
    using rake test:unit and rake test:performance.
+   Sub-folders that do not contain files matching the test file name patterns
+   will not be included in this set.
 
    You may run a single test from any test file by using the following:
 
