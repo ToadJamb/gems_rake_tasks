@@ -82,12 +82,31 @@ class TestsUnitTest < Test::Unit::TestCase
   def test_types
     @class.stubs(:root => 'root')
 
-    Dir.expects(:[] => ['root/mammal', 'root/marsupial', 'root/file.rb']).
+    File.stubs(:directory? => true)
+    File.expects(:directory? => false).with('root/file.rb').once
+
+    Dir.expects(:[] => [
+      'root/mammal', 'root/marsupial', 'root/primate', 'root/file.rb']).
       with('root/**').once
 
-    File.expects(:directory? => true).with('root/mammal').once
-    File.expects(:directory? => true).with('root/marsupial').once
-    File.expects(:directory? => false).with('root/file.rb').once
+    patterns.each do |pattern|
+      [
+        "root/mammal/#{pattern}",
+        "root/marsupial/#{pattern}",
+        "root/primate/#{pattern}",
+      ].each do |path|
+        if path =~ /primate/
+          Dir.expects(:[] => []).with(path).once
+        else
+          Dir.expects(:[] => [File.join(File.dirname(path), 'file_test.rb')]).
+            with(path).at_least(0)
+        end
+      end
+    end
+      #~ File.expects(:directory? => true).with('root/mammal').once
+      #~ File.expects(:directory? => true).with('root/marsupial').once
+      #~ File.expects(:directory? => true).with('root/primate').once
+      #~ File.expects(:directory? => false).with('root/file.rb').once
 
     assert_equal ['mammal', 'marsupial'], @class.types
   end

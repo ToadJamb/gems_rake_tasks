@@ -83,7 +83,12 @@ module RakeTasks
         types = []
 
         Dir[File.join(root, '**')].each do |path|
-          types << File.basename(path) if File.directory?(path)
+          next if !File.directory?(path)
+
+          patterns.each do |pattern|
+            next if types.include?(File.basename(path))
+            types << File.basename(path) unless Dir[File.join(path, pattern)].empty?
+          end
         end
 
         return types
