@@ -10,9 +10,34 @@ The following assumptions are currently made:
 1. There is a valid .gemspec file in the root folder that is named the same
    as the root folder.
 
-2. Tests reside in a folder named 'test' and test files are named *_test.rb.
+2. Tests reside in a folder named either 'test' or 'tests'
+   and test files are named *_test.rb or test_*.rb.
+
+   Additionally, if you have sub-folders under test(s)
+   (i.e. test/unit, test/performance), they will be available
+   using rake test:unit and rake test:performance.
+
+   You may run a single test from any test file by using the following:
+
+    rake test:test_file[test_method]
+
+   test_file is the name of the test file without the pattern,
+   so if you have a test named my_class_test.rb with a test method
+   named my_test_method, it would be invoked by:
+
+    rake test:my_class[my_test_method]
 
 3. Additional rake tasks are named *.rb and reside in a folder named 'tasks'.
+
+4. README generation is more intelligent about licensing information.
+   If nothing else is available, RakeTasks will use the gemspec information
+   to populate the license information. If a license folder exists, RakeTasks
+   will look for files that match the license name and include links
+   to both licenses and images in the README.
+
+   If a README does not exist, one will be created.
+   If a README does exist, a README_GENERATED file will be created,
+   so as not to overwrite a 'real' README file.
 
 The default task will be set in the following order:
 
@@ -31,7 +56,7 @@ The default task will be set in the following order:
 
 2. Require the gem in your Gemfile:
 
-    gem 'rake_tasks', '~> 0.0.4'
+    gem 'rake_tasks', '~> 2.0.0'
 
 3. Require the gem wherever you need to use it:
 
@@ -43,6 +68,6 @@ The default task will be set in the following order:
 
 == License
 
-RakeTasks is released under the {LGPLv3 license}[link:../../license/lgpl].
+RakeTasks is released under the {LGPLv3 license}[link:../../license/lgplv3].
 
-link:../../license/lgplv3-88x31.png
+link:../../license/lgplv3.png
