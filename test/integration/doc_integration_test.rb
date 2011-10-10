@@ -58,6 +58,12 @@ class DocIntegrationTest < Test::Unit::TestCase
     end
   end
 
+  def test_actual_readme_contents
+    contents = File.open('README', 'r')
+    assert_contains contents.read,
+      "gem '#{@gem_spec.name}', '~> #{@gem_spec.version}'"
+  end
+
   ############################################################################
   private
   ############################################################################
