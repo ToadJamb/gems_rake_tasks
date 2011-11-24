@@ -103,10 +103,6 @@ class TestsUnitTest < Test::Unit::TestCase
         end
       end
     end
-      #~ File.expects(:directory? => true).with('root/mammal').once
-      #~ File.expects(:directory? => true).with('root/marsupial').once
-      #~ File.expects(:directory? => true).with('root/primate').once
-      #~ File.expects(:directory? => false).with('root/file.rb').once
 
     assert_equal ['mammal', 'marsupial'], @class.types
   end
