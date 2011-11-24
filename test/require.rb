@@ -1,3 +1,4 @@
+require 'bundler'
 require 'test/unit'
 
 Bundler.require :test
