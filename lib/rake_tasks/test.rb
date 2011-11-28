@@ -59,23 +59,27 @@ if RakeTasks::Tests.exist?
 
     desc 'Runs tests against specified rubies and gemsets.'
     task :full do |t|
-      base_cmd = ['bash', './lib/rake_tasks/lib/rubies.sh', 'test:all']
+      base_cmd = ['bash',
+        File.join(File.dirname(__FILE__), '/lib/rubies.sh'),
+        'test:all']
 
       data = []
       RakeTasks::Tests.test_configs.each do |config|
         cmd = base_cmd.dup
         cmd << config[:ruby]
-        cmd << "_#{config[:rake]}_"
+        cmd << "_#{config[:rake]}_" if config[:rake]
 
         pid = Process.spawn(*cmd, :out => 'out.log', :err => 'err.log')
         Process.wait pid
 
-        puts "#{config[:ruby]} - #{config[:rake]}"
+        if config[:rake]
+          puts "#{config[:ruby]} - #{config[:rake]}"
+        end
 
         File.open('out.log', 'r') do |file|
           while line = file.gets
             case line
-              when /^[\.EF]*$/
+              when /^[\.EF]*$/, /^Using /
                 puts line.strip unless line.strip.empty?
               when /, \d* assertions[^\/]/
                 puts line.strip
