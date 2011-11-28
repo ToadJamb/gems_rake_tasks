@@ -94,6 +94,40 @@ module RakeTasks
         return types
       end
 
+      # Returns a hash containing all testable rubies/gemsets.
+      # ==== Output
+      # [Hash] The configurations that will be tested.
+      def test_configs
+        configs = {}
+
+        file = File.join('.', root, 'rubies.yml')
+
+        # Read the yaml file.
+        # Psych must be available on the system,
+        # preferably via installing ruby with libyaml already installed.
+        File.open(file, 'r') do |f|
+          configs = Psych.load(f.read)
+        end
+
+        # Loop through the configurations to set keys to symbols
+        # and add gemsets to rubies.
+        for i in 0..configs.length - 1 do
+          config = configs[i]
+
+          # Change keys to symbols (and remove the string-based pairs).
+          ['ruby', 'gemset', 'rake'].each do |key|
+            config[key.to_sym] = config[key]
+            config.delete(key)
+          end
+
+          # Add the '@' symbol to include gemsets.
+          config[:ruby] = config[:ruby] + '@' + config[:gemset]
+          config.delete(:gemset)
+        end
+
+        return configs
+      end
+
       ####################################################################
       private
       ####################################################################
