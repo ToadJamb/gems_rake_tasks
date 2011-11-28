@@ -56,6 +56,56 @@ if RakeTasks::Tests.exist?
         puts `ruby ./#{file_path} --name #{args[:method_name]}`
       end
     end
+
+    desc 'Runs tests against specified rubies and gemsets.'
+    task :full do |t|
+      base_cmd = ['bash', './lib/rake_tasks/lib/rubies.sh', 'test:all']
+
+      data = []
+      RakeTasks::Tests.test_configs.each do |config|
+        cmd = base_cmd.dup
+        cmd << config[:ruby]
+        cmd << "_#{config[:rake]}_"
+
+        pid = Process.spawn(*cmd, :out => 'out.log', :err => 'err.log')
+        Process.wait pid
+
+        puts "#{config[:ruby]} - #{config[:rake]}"
+
+        File.open('out.log', 'r') do |file|
+          while line = file.gets
+            case line
+              when /^[\.EF]*$/
+                puts line.strip unless line.strip.empty?
+              when /, \d* assertions[^\/]/
+                puts line.strip
+                data << line.split(', ').map { |x| x.to_i }
+            end
+          end
+        end
+      end
+
+      FileUtils.rm 'out.log'
+      FileUtils.rm 'err.log'
+
+      tests      = 0
+      assertions = 0
+      failures   = 0
+      errors     = 0
+      skips      = 0
+
+      data.each do |status|
+        tests      = tests      + status[0]
+        assertions = assertions + status[1]
+        failures   = failures   + status[2]
+        errors     = errors     + status[3]
+        skips      = skips      + status[4]
+      end
+
+      puts "%d tests, %d assertions, %d failures, %d errors, %d skips" % [
+        tests, assertions, failures, errors, skips]
+    end
+
   ############################################################################
   end # :test
   ############################################################################

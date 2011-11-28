@@ -31,6 +31,18 @@
 require_relative File.join('../require'.split('/'))
 
 class TestsIntegrationTest < Test::Unit::TestCase
+  # Supported ruby versions.
+  def rubies
+    ['1.9.2', '1.9.3']
+  end
+  private :rubies
+
+  # Supported rake versions.
+  def rakes
+    ['0.8.7', '0.9.0', '0.9.1', '0.9.2', '0.9.2.2']
+  end
+  private :rakes
+
   def setup
     @class = RakeTasks::Tests
     @file_path = 'test'
@@ -61,6 +73,10 @@ class TestsIntegrationTest < Test::Unit::TestCase
     check_file_list :integration
   end
 
+  def test_rubies
+    assert_equal configs, @class.test_configs
+  end
+
   ############################################################################
   private
   ############################################################################
@@ -75,5 +91,15 @@ class TestsIntegrationTest < Test::Unit::TestCase
         "#{file} is not in the list of test files:\n" +
         @class.file_list(group).join("\n")
     end
+  end
+
+  def configs
+    configs = []
+    rubies.each do |ruby|
+      rakes.each do |rake|
+        configs << { :ruby => ruby + '@rake_tasks_test', :rake => rake }
+      end
+    end
+    return configs
   end
 end
