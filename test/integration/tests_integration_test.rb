@@ -33,7 +33,7 @@ require_relative File.join('../require'.split('/'))
 class TestsIntegrationTest < Test::Unit::TestCase
   # Supported ruby versions.
   def rubies
-    ['1.9.2', '1.9.3']
+    ['1.9.2-p290', '1.9.3-p0']
   end
   private :rubies
 
