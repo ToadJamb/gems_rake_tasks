@@ -98,16 +98,7 @@ module RakeTasks
       # ==== Output
       # [Hash] The configurations that will be tested.
       def test_configs
-        configs = {}
-
-        file = File.join('.', root, 'rubies.yml')
-
-        # Read the yaml file.
-        # Psych must be available on the system,
-        # preferably via installing ruby with libyaml already installed.
-        File.open(file, 'r') do |f|
-          configs = Psych.load(f.read)
-        end
+        configs = Psych.load(rubies_yaml)
 
         # Loop through the configurations to set keys to symbols
         # and add gemsets to rubies.
@@ -171,6 +162,20 @@ module RakeTasks
           'test',
           'tests'
         ]
+      end
+
+      # Returns the contents of the rubies.yml file.
+      # ==== Output
+      # [String] The contents of the rubies yaml file.
+      def rubies_yaml
+        file = File.join('.', root, 'rubies.yml')
+
+        # Read the yaml file.
+        # Psych must be available on the system,
+        # preferably via installing ruby with libyaml already installed.
+        File.open(file, 'r') do |f|
+          return f.read
+        end
       end
     end
   end
