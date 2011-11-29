@@ -99,6 +99,7 @@ module RakeTasks
       # [Hash] The configurations that will be tested.
       def test_configs
         configs = Psych.load(rubies_yaml)
+        return unless configs
 
         # Loop through the configurations to set keys to symbols
         # and add gemsets to rubies.
@@ -107,12 +108,15 @@ module RakeTasks
 
           # Change keys to symbols (and remove the string-based pairs).
           ['ruby', 'gemset', 'rake'].each do |key|
-            config[key.to_sym] = config[key]
-            config.delete(key)
+            if config[key]
+              config[key.to_sym] = config[key]
+              config.delete(key)
+            end
           end
 
           # Add the '@' symbol to include gemsets.
-          config[:ruby] = config[:ruby] + '@' + config[:gemset]
+          config[:gemset] = '@' + config[:gemset] if config[:gemset]
+          config[:ruby] = config[:ruby].to_s + config[:gemset].to_s
           config.delete(:gemset)
         end
 
