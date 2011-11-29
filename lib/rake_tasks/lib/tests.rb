@@ -132,14 +132,6 @@ module RakeTasks
       private
       ####################################################################
 
-      # The patterns that indicate that a file contains tests.
-      def patterns
-        [
-          '*_test.rb',
-          'test_*.rb',
-        ]
-      end
-
       # Paths to check for test files.
       # Only paths for a specified type will be returned, if specified.
       def paths(group = :all)
@@ -154,6 +146,14 @@ module RakeTasks
         end
 
         return paths
+      end
+
+      # The patterns that indicate that a file contains tests.
+      def patterns
+        [
+          '*_test.rb',
+          'test_*.rb',
+        ]
       end
 
       # The root test folder.
