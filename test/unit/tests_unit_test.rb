@@ -107,6 +107,23 @@ class TestsUnitTest < Test::Unit::TestCase
     assert_equal ['mammal', 'marsupial'], @class.types
   end
 
+  def test_config_data
+    Psych.expects(:load).returns configs(:basic, :in)
+    assert_equal configs(:basic, :out), @class.test_configs
+
+    Psych.expects(:load).returns configs(:no_rake, :in)
+    assert_equal configs(:no_rake, :out), @class.test_configs
+
+    Psych.expects(:load).returns configs(:ruby_only, :in)
+    assert_equal configs(:ruby_only, :out), @class.test_configs
+
+    Psych.expects(:load).returns configs(:gemset_only, :in)
+    assert_equal configs(:gemset_only, :out), @class.test_configs
+
+    Psych.expects(:load).returns configs(:nothing, :in)
+    assert_equal configs(:nothing, :out), @class.test_configs
+  end
+
   ############################################################################
   private
   ############################################################################
@@ -117,5 +134,56 @@ class TestsUnitTest < Test::Unit::TestCase
       '*_test.rb',
       'test_*.rb',
     ]
+  end
+
+  def configs(config, inout)
+    yaml = {
+      :basic => {
+        :in  => [
+          {'ruby' => '1.9.2', 'gemset' => 'my_gemset', 'rake' => '0.8.7'},
+          {'ruby' => '1.9.3', 'gemset' => 'my_gems'  , 'rake' => '0.9.2'},
+        ], # :in
+        :out => [
+          {:ruby => '1.9.2@my_gemset', :rake => '0.8.7'},
+          {:ruby => '1.9.3@my_gems'  , :rake => '0.9.2'},
+        ], # :out
+      }, # :basic
+      :no_rake => {
+        :in  => [
+          {'ruby' => '1.9.2', 'gemset' => 'my_gemset'},
+          {'ruby' => '1.9.3', 'gemset' => 'my_gems'  },
+        ], # :in
+        :out => [
+          {:ruby => '1.9.2@my_gemset'},
+          {:ruby => '1.9.3@my_gems'  },
+        ], # :out
+      }, # :no_rake
+      :ruby_only => {
+        :in  => [
+          {'ruby' => '1.9.2'},
+          {'ruby' => '1.9.3'},
+        ], # :in
+        :out => [
+          {:ruby => '1.9.2'},
+          {:ruby => '1.9.3'},
+        ], # :out
+      }, # :ruby_only
+      :gemset_only => {
+        :in  => [
+          {'gemset' => 'the_gem'},
+          {'gemset' => 'a_gem'},
+        ], # :in
+        :out => [
+          {:ruby => '@the_gem'},
+          {:ruby => '@a_gem'},
+        ], # :out
+      }, # :gemset_only
+      :nothing => {
+        :in  => false,
+        :out => nil,
+      }, # :basic
+    }
+
+    yaml[config.to_sym][inout.to_sym]
   end
 end
