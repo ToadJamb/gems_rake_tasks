@@ -58,7 +58,7 @@ The default task will be set in the following order:
 
 2. Require the gem in your Gemfile:
 
-    gem 'rake_tasks', '~> 2.0.1'
+    gem 'rake_tasks', '~> 2.0.1.alpha'
 
 3. Require the gem wherever you need to use it:
 
