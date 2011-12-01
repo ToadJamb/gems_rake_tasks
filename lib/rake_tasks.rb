@@ -35,6 +35,11 @@ require 'tempfile'
 require 'fileutils'
 require 'psych'
 
+module RakeTasks
+  # Contains the full path to the shell script to run tests in other env's.
+  SCRIPT_PATH = File.expand_path(Dir['**/rubies.sh'][0])
+end
+
 gem_name = File.basename(__FILE__, '.rb')
 
 # Require lib files.
