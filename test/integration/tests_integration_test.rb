@@ -44,7 +44,8 @@ class TestsIntegrationTest < Test::Unit::TestCase
   private :rakes
 
   def setup
-    @class = RakeTasks::Tests
+    @module    = RakeTasks
+    @class     = @module::Tests
     @file_path = 'test'
   end
 
@@ -75,6 +76,13 @@ class TestsIntegrationTest < Test::Unit::TestCase
 
   def test_rubies
     assert_equal configs, @class.test_configs
+  end
+
+  def test_rubies_shell_script_location_should_be_lib
+    loc = File.expand_path(File.join(
+      File.dirname(__FILE__), '../../lib/rake_tasks/lib/rubies.sh'))
+    assert_equal loc, @module::SCRIPT_PATH
+    assert File.file?(loc)
   end
 
   ############################################################################
