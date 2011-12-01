@@ -60,9 +60,7 @@ if RakeTasks::Tests.exist?
     if RakeTasks::Tests::test_configs
       desc 'Runs tests against specified rubies and gemsets.'
       task :full do |t|
-        base_cmd = ['bash',
-          File.join(File.dirname(__FILE__), '/lib/rubies.sh'),
-          'test:all']
+        base_cmd = ['bash', RakeTasks::SCRIPT_PATH, 'test:all']
 
         data = []
         RakeTasks::Tests.test_configs.each do |config|
