@@ -97,6 +97,18 @@ class TestsUnitTest < Test::Unit::TestCase
     end
   end
 
+  def test_rubies_check
+    paths.each do |path|
+      clear_test_files
+      FileUtils.mkdir_p path
+      assert !@class.run_rubies?,
+        'The user should not be able to run tests agaisnt multiple Rubies.'
+      FileUtils.touch File.join(path, rubies_yaml_file)
+      assert @class.run_rubies?,
+        'The user should be able to run tests agaisnt multiple Rubies.'
+    end
+  end
+
   def test_config_data
     paths.each do |path|
       clear_test_files
@@ -240,5 +252,9 @@ NONSENSE
     end
 
     yaml
+  end
+
+  def rubies_yaml_file
+    'rubies.yml'
   end
 end

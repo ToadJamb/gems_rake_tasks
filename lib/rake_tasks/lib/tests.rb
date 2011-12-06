@@ -94,6 +94,11 @@ module RakeTasks
         return types
       end
 
+      # Indicates whether tests can be run against multiple rubies.
+      def run_rubies?
+        File.file? rubies_yaml
+      end
+
       # Runs tests against specified ruby/gemset/rake configurations.
       def run_ruby_tests
         parser = Parser.new
@@ -133,7 +138,7 @@ module RakeTasks
       # ==== Output
       # [Hash] The configurations that will be tested.
       def test_configs
-        configs = Psych.load(rubies_yaml)
+        configs = Psych.load(rubies_list)
         return unless configs
 
         # Loop through the configurations to set keys to symbols
@@ -207,8 +212,8 @@ module RakeTasks
       # Returns the contents of the rubies.yml file.
       # ==== Output
       # [String] The contents of the rubies yaml file.
-      def rubies_yaml
-        file = File.join('.', root, 'rubies.yml')
+      def rubies_list
+        file = File.join(rubies_yaml)
 
         # Read the yaml file.
         # Psych must be available on the system,
@@ -216,6 +221,11 @@ module RakeTasks
         File.open(file, 'r') do |f|
           return f.read
         end
+      end
+
+      # Returns the location of the rubies yaml file.
+      def rubies_yaml
+        File.join('.', root, 'rubies.yml')
       end
     end
   end
