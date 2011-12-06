@@ -196,6 +196,12 @@ class TestsUnitTest < Test::Unit::TestCase
         :in  => '',
         :out => nil,
       }, # :nothing
+      :nonsense => {
+        :out => [
+          {:ruby => '', 'key1' => 'value1'},
+          {:ruby => '', 'key2' => 'value2'},
+        ] # :out
+      }, # :nonsense
     }
 
     yaml[:basic][:in] = <<-BASIC
@@ -223,6 +229,11 @@ RUBY_ONLY
 - gemset: the_gem
 - gemset: a_gem
 GEMSET_ONLY
+
+    yaml[:nonsense][:in] = <<-NONSENSE
+- key1: value1
+- key2: value2
+NONSENSE
 
     yaml.each_key do |k|
       yaml[k][:in] = yaml[k][:in].strip
