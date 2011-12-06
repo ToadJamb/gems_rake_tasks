@@ -37,7 +37,8 @@ require 'psych'
 
 module RakeTasks
   # Contains the full path to the shell script to run tests in other env's.
-  SCRIPT_PATH = File.expand_path(Dir['**/rubies.sh'][0])
+  SCRIPT_PATH = File.expand_path(File.join(
+    File.dirname(__FILE__), 'rake_tasks', 'lib', 'rubies.sh'))
 end
 
 gem_name = File.basename(__FILE__, '.rb')
