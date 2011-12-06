@@ -58,7 +58,7 @@ if RakeTasks::Tests.exist?
       end
     end
 
-    if RakeTasks::Tests::test_configs
+    if RakeTasks::Tests::run_rubies?
       desc 'Runs tests against specified rubies and gemsets.'
       task :full do |t|
         RakeTasks::Tests::run_ruby_tests
