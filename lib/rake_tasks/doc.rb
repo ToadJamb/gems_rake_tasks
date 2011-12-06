@@ -34,7 +34,6 @@ if RakeTasks::Gem.gem_file?
   ############################################################################
 
     gem_spec_file = RakeTasks::Gem.gem_spec_file
-    gem_spec = RakeTasks::Gem.gem_spec
 
     readme = 'README'
     readme = 'README_GENERATED' if File.file?(readme)
