@@ -195,7 +195,7 @@ class TestsUnitTest < Test::Unit::TestCase
       :nothing => {
         :in  => '',
         :out => nil,
-      }, # :basic
+      }, # :nothing
     }
 
     yaml[:basic][:in] = <<-BASIC
