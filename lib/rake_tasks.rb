@@ -43,6 +43,8 @@ end
 
 gem_name = File.basename(__FILE__, '.rb')
 
+task :default
+
 # Require lib files.
 Dir[File.join(File.dirname(__FILE__), gem_name, 'lib', '*.rb')].each do |lib|
   require lib
