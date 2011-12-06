@@ -19,7 +19,7 @@ mmmm yummy
   s.extra_rdoc_files << 'README'
 
   s.require_paths = ['lib']
-  s.files = Dir['*', 'lib/**/*.rb', 'license/*']
+  s.files = Dir['*', 'lib/**/*.rb', 'lib/**/rubies.sh', 'license/*']
   s.test_files = Dir['test/**/*.rb']
 
   s.add_development_dependency 'mocha' , '~> 0.10.0'
