@@ -31,8 +31,21 @@
 require_relative File.join('../require'.split('/'))
 
 class TestsUnitTest < Test::Unit::TestCase
+  include RakeTasks::RakeTasksShared
+
   def setup
-    @class = RakeTasks::Tests
+    super
+    FakeFS.activate!
+    FileUtils.mkdir_p root
+    Dir.chdir root
+    @module = RakeTasks
+    @class  = @module::Tests
+  end
+
+  def teardown
+    FakeFS::FileSystem.clear
+    FakeFS.deactivate!
+    super
   end
 
   def test_file_name_to_task_name
@@ -41,149 +54,180 @@ class TestsUnitTest < Test::Unit::TestCase
   end
 
   def test_tests_exist
-    @class.expects(:root => 'root').with.once
-    Dir.expects(:[] => []).with('root/**').once
-    assert_equal false, @class.exist?
+    paths.each do |path|
+      files.each do |file|
+        clear_test_files
 
-    @class.expects(:root => 'root').with.once
-    Dir.expects(:[] => ['root/path']).with('root/**').once
-    assert @class.exist?
-  end
+        assert !@class.exist?, "#{path} folder should not contain anything."
+        FileUtils.mkdir_p File.join(path, 'something')
+        assert !@class.exist?,
+          "#{path} folder should not contain any matching files."
 
-  def test_file_list
-    @class.stubs(:root => 'root').with
-    @class.expects(:types => ['alphabet', 'number']).with.once
-
-    patterns.each do |pattern|
-      Dir.expects(
-        :[] => []).with("root/#{pattern}").once
-      case pattern
-        when /^\*/
-          Dir.expects(
-            :[] => ['root/alphabet/abc_test.rb', 'root/alphabet/def_test.rb']).
-            with("root/alphabet/#{pattern}").once
-          Dir.expects(
-            :[] => ['root/number/add_test.rb']).
-            with("root/number/#{pattern}").once
-        when /\*.rb$/
-          Dir.expects(:[] => []).with("root/alphabet/#{pattern}").once
-          Dir.expects(:[] => []).with("root/number/#{pattern}").once
+        FileUtils.touch File.join(path, file.gsub(/\*/, 'abc'))
+        assert @class.exist?, "#{path} should contain one matching file."
       end
     end
-
-    assert_equal [
-      'root/alphabet/abc_test.rb',
-      'root/alphabet/def_test.rb',
-      'root/number/add_test.rb',
-      ],
-      @class.file_list
   end
 
-  def test_types
-    @class.stubs(:root => 'root')
+  def test_file_list_and_types
+    file_list = [
+      { :path => 'alphabet', :file => 'abc' },
+      { :path => 'alphabet', :file => 'def' },
+      { :path => 'number'  , :file => 'add' },
+    ]
 
-    File.stubs(:directory? => true)
-    File.expects(:directory? => false).with('root/file.rb').once
+    paths.each do |path|
+      files.each do |file|
+        clear_test_files
+        list = file_list.map do |f|
+          file_path = file.gsub(/\*/, f[:file])
+          file_path = File.join(path, f[:path], file_path)
 
-    Dir.expects(:[] => [
-      'root/mammal', 'root/marsupial', 'root/primate', 'root/file.rb']).
-      with('root/**').once
-
-    patterns.each do |pattern|
-      [
-        "root/mammal/#{pattern}",
-        "root/marsupial/#{pattern}",
-        "root/primate/#{pattern}",
-      ].each do |path|
-        if path =~ /primate/
-          Dir.expects(:[] => []).with(path).once
-        else
-          Dir.expects(:[] => [File.join(File.dirname(path), 'file_test.rb')]).
-            with(path).at_least(0)
+          FileUtils.mkdir_p File.dirname(file_path)
+          FileUtils.touch file_path
+          File.join root, file_path
         end
+
+        FileUtils.mkdir_p File.join(root, path, 'color')
+        FileUtils.touch File.join(root, path, 'color', 'red.txt')
+
+        assert_equal list, @class.file_list
+        assert_equal file_list.map { |f| f[:path] }.uniq, @class.types
       end
     end
-
-    assert_equal ['mammal', 'marsupial'], @class.types
   end
 
   def test_config_data
-    Psych.expects(:load).returns configs(:basic, :in)
-    assert_equal configs(:basic, :out), @class.test_configs
+    paths.each do |path|
+      clear_test_files
 
-    Psych.expects(:load).returns configs(:no_rake, :in)
-    assert_equal configs(:no_rake, :out), @class.test_configs
+      FileUtils.mkdir_p path
 
-    Psych.expects(:load).returns configs(:ruby_only, :in)
-    assert_equal configs(:ruby_only, :out), @class.test_configs
+      configs.keys.each do |config|
+        File.open("./#{path}/rubies.yml", 'w') do |file|
+          file.write configs[config][:in]
+        end
 
-    Psych.expects(:load).returns configs(:gemset_only, :in)
-    assert_equal configs(:gemset_only, :out), @class.test_configs
+        assert_equal configs[config][:out], @class.test_configs,
+          "rubies.yml in #{path} did not result in expected outcome"
+      end
+    end
+  end
 
-    Psych.expects(:load).returns configs(:nothing, :in)
-    assert_equal configs(:nothing, :out), @class.test_configs
+  def test_run_rubies
+    path = paths[0]
+    FileUtils.mkdir_p path
+
+    configs.each do |k, v|
+      next unless v[:out].is_a?(Array)
+
+      File.open("./#{path}/rubies.yml", 'w') do |file|
+        file.write v[:in]
+      end
+
+      matches = []
+      v[:out].each_with_index do |config, i|
+        cmd = ['bash', @module::SCRIPT_PATH, 'test:all']
+        cmd << config[:ruby]
+        cmd << "_#{config[:rake]}_" if config[:rake]
+
+        Process.expects(:spawn).with(*cmd,
+          :out => 'out.log', :err => 'err.log').
+          returns(71 + i).once
+        Process.expects(:wait).with(71 + i).once
+
+        matches << "#{config[:ruby]} - #{config[:rake]}\n*" if config[:rake]
+      end
+
+      FileUtils.touch 'out.log'
+      FileUtils.touch 'err.log'
+
+      reset_io
+      wrap_output { @class.run_ruby_tests }
+
+      assert !File.file?('out.log'), 'Log file (out.log) should be deleted.'
+      assert !File.file?('err.log'), 'Log file (err.log) should be deleted.'
+
+      matches.each do |match|
+        assert_match match, out
+      end
+
+      assert_no_match Regexp.new(" - \n"), out
+    end
   end
 
   ############################################################################
   private
   ############################################################################
 
-  # The patterns that indicate that a file contains tests.
-  def patterns
-    [
-      '*_test.rb',
-      'test_*.rb',
-    ]
+  def clear_test_files
+    paths.each do |path|
+      FileUtils.rm_rf(path) if File.directory?(path)
+    end
   end
 
-  def configs(config, inout)
+  def configs
     yaml = {
       :basic => {
-        :in  => [
-          {'ruby' => '1.9.2', 'gemset' => 'my_gemset', 'rake' => '0.8.7'},
-          {'ruby' => '1.9.3', 'gemset' => 'my_gems'  , 'rake' => '0.9.2'},
-        ], # :in
         :out => [
           {:ruby => '1.9.2@my_gemset', :rake => '0.8.7'},
           {:ruby => '1.9.3@my_gems'  , :rake => '0.9.2'},
         ], # :out
       }, # :basic
       :no_rake => {
-        :in  => [
-          {'ruby' => '1.9.2', 'gemset' => 'my_gemset'},
-          {'ruby' => '1.9.3', 'gemset' => 'my_gems'  },
-        ], # :in
         :out => [
           {:ruby => '1.9.2@my_gemset'},
           {:ruby => '1.9.3@my_gems'  },
         ], # :out
       }, # :no_rake
       :ruby_only => {
-        :in  => [
-          {'ruby' => '1.9.2'},
-          {'ruby' => '1.9.3'},
-        ], # :in
         :out => [
           {:ruby => '1.9.2'},
           {:ruby => '1.9.3'},
         ], # :out
       }, # :ruby_only
       :gemset_only => {
-        :in  => [
-          {'gemset' => 'the_gem'},
-          {'gemset' => 'a_gem'},
-        ], # :in
         :out => [
           {:ruby => '@the_gem'},
           {:ruby => '@a_gem'},
         ], # :out
       }, # :gemset_only
       :nothing => {
-        :in  => false,
+        :in  => '',
         :out => nil,
       }, # :basic
     }
 
-    yaml[config.to_sym][inout.to_sym]
+    yaml[:basic][:in] = <<-BASIC
+- ruby: 1.9.2
+  gemset: my_gemset
+  rake: 0.8.7
+- ruby: 1.9.3
+  gemset: my_gems
+  rake: 0.9.2
+BASIC
+
+    yaml[:no_rake][:in] = <<-NO_RAKE
+- ruby: 1.9.2
+  gemset: my_gemset
+- ruby: 1.9.3
+  gemset: my_gems
+NO_RAKE
+
+    yaml[:ruby_only][:in] = <<-RUBY_ONLY
+- ruby: 1.9.2
+- ruby: 1.9.3
+RUBY_ONLY
+
+    yaml[:gemset_only][:in] = <<-GEMSET_ONLY
+- gemset: the_gem
+- gemset: a_gem
+GEMSET_ONLY
+
+    yaml.each_key do |k|
+      yaml[k][:in] = yaml[k][:in].strip
+    end
+
+    yaml
   end
 end

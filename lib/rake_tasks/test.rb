@@ -52,6 +52,7 @@ if RakeTasks::Tests.exist?
 
     # Add a way to call a specific method in a given file.
     RakeTasks::Tests.file_list.each do |file_path|
+      desc "Run individual tests in #{file_path}."
       task RakeTasks::Tests.task_name(file_path), [:method_name] do |t, args|
         puts `ruby ./#{file_path} --name #{args[:method_name]}`
       end
@@ -60,53 +61,7 @@ if RakeTasks::Tests.exist?
     if RakeTasks::Tests::test_configs
       desc 'Runs tests against specified rubies and gemsets.'
       task :full do |t|
-        base_cmd = ['bash', RakeTasks::SCRIPT_PATH, 'test:all']
-
-        data = []
-        RakeTasks::Tests.test_configs.each do |config|
-          cmd = base_cmd.dup
-          cmd << config[:ruby]
-          cmd << "_#{config[:rake]}_" if config[:rake]
-
-          pid = Process.spawn(*cmd, :out => 'out.log', :err => 'err.log')
-          Process.wait pid
-
-          if config[:rake]
-            puts "#{config[:ruby]} - #{config[:rake]}"
-          end
-
-          File.open('out.log', 'r') do |file|
-            while line = file.gets
-              case line
-                when /^[\.EF]*$/, /^Using /
-                  puts line.strip unless line.strip.empty?
-                when /, \d* assertions[^\/]/
-                  puts line.strip
-                  data << line.split(', ').map { |x| x.to_i }
-              end
-            end
-          end
-        end
-
-        FileUtils.rm 'out.log'
-        FileUtils.rm 'err.log'
-
-        tests      = 0
-        assertions = 0
-        failures   = 0
-        errors     = 0
-        skips      = 0
-
-        data.each do |status|
-          tests      = tests      + status[0]
-          assertions = assertions + status[1]
-          failures   = failures   + status[2]
-          errors     = errors     + status[3]
-          skips      = skips      + status[4]
-        end
-
-        puts "%d tests, %d assertions, %d failures, %d errors, %d skips" % [
-          tests, assertions, failures, errors, skips]
+        RakeTasks::Tests::run_ruby_tests
       end
     end
   ############################################################################

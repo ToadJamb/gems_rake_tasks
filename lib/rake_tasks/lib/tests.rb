@@ -37,7 +37,7 @@ module RakeTasks
     class << self
       # Indicates that tests exist.
       def exist?
-        return !Dir[File.join(root, '**')].empty?
+        return !root.nil? && !file_list.empty?
       end
 
       # Returns an array of test files for the specified group.
@@ -92,6 +92,41 @@ module RakeTasks
         end
 
         return types
+      end
+
+      # Runs tests against specified ruby/gemset/rake configurations.
+      def run_ruby_tests
+        parser = Parser.new
+        base_cmd = ['bash', RakeTasks::SCRIPT_PATH, 'test:all']
+
+        # Loop through the test configurations.
+        test_configs.each do |config|
+          puts '*' * 80
+
+          if config[:rake]
+            puts "#{config[:ruby]} - #{config[:rake]}"
+          end
+
+          cmd = base_cmd.dup
+          cmd << config[:ruby]
+          cmd << "_#{config[:rake]}_" if config[:rake]
+
+          # Run the tests.
+          pid = Process.spawn(*cmd, :out => 'out.log', :err => 'err.log')
+          Process.wait pid
+
+          File.open('out.log', 'r') do |file|
+            while line = file.gets
+              parser.parse line
+            end
+          end
+        end
+
+        FileUtils.rm 'out.log'
+        FileUtils.rm 'err.log'
+
+        puts '*' * 80
+        parser.summarize
       end
 
       # Returns a hash containing all testable rubies/gemsets.
@@ -158,6 +193,7 @@ module RakeTasks
             return r
           end
         end
+        return
       end
 
       # Returns an array of potential root folder names.
