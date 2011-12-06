@@ -4,3 +4,4 @@ require 'test/unit'
 Bundler.require :test
 
 require_relative File.join('../lib/rake_tasks'.split('/'))
+require_relative File.join('./lib/rake_tasks_shared'.split('/'))
