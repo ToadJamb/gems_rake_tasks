@@ -138,17 +138,29 @@ class TestsUnitTest < Test::Unit::TestCase
       end
 
       matches = []
+      gem_rubies = []
       v[:out].each_with_index do |config, i|
-        cmd = ['bash', @module::SCRIPT_PATH, 'test:all']
-        cmd << config[:ruby]
-        cmd << "_#{config[:rake]}_" if config[:rake]
+        if config[:ruby] and !config[:ruby].strip.empty?
+          unless gem_rubies.include?(config[:ruby])
+            gem_rubies << config[:ruby]
+            gems = ['bash', @module::SCRIPTS[:gemsets]]
 
-        Process.expects(:spawn).with(*cmd,
-          :out => 'out.log', :err => 'err.log').
-          returns(71 + i).once
-        Process.expects(:wait).with(71 + i).once
+            Process.expects(:spawn).with(*gems, *config[:ruby].split('@'))
+              .returns(101 + i).once
+            Process.expects(:wait).with(101 + i).once
+          end
 
-        matches << "#{config[:ruby]} - #{config[:rake]}\n*" if config[:rake]
+          rubies = ['bash', @module::SCRIPTS[:rubies], 'test:all']
+          rubies << config[:ruby]
+          rubies << "_#{config[:rake]}_" if config[:rake]
+
+          Process.expects(:spawn).with(*rubies,
+            :out => 'out.log', :err => 'err.log').
+            returns(71 + i).once
+          Process.expects(:wait).with(71 + i).once
+
+          matches << "#{config[:ruby]} - #{config[:rake]}\n*" if config[:rake]
+        end
       end
 
       FileUtils.touch 'out.log'
@@ -204,15 +216,18 @@ class TestsUnitTest < Test::Unit::TestCase
           {:ruby => '@a_gem'},
         ], # :out
       }, # :gemset_only
+      :multi_rake => {
+        :out => [
+          {:ruby => '1.9.3@multi_rake', :rake => '0.8.7'},
+          {:ruby => '1.9.3@multi_rake', :rake => '0.9.2'},
+        ], # :multi_rake
+      }, # :basic
       :nothing => {
         :in  => '',
         :out => nil,
       }, # :nothing
       :nonsense => {
-        :out => [
-          {:ruby => '', 'key1' => 'value1'},
-          {:ruby => '', 'key2' => 'value2'},
-        ] # :out
+        :out => [],
       }, # :nonsense
     }
 
@@ -241,6 +256,15 @@ RUBY_ONLY
 - gemset: the_gem
 - gemset: a_gem
 GEMSET_ONLY
+
+    yaml[:multi_rake][:in] = <<-MULTI_RAKE
+- ruby: 1.9.3
+  gemset: multi_rake
+  rake: 0.8.7
+- ruby: 1.9.3
+  gemset: multi_rake
+  rake: 0.9.2
+MULTI_RAKE
 
     yaml[:nonsense][:in] = <<-NONSENSE
 - key1: value1
