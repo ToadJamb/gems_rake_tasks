@@ -102,17 +102,31 @@ module RakeTasks
       # Runs tests against specified ruby/gemset/rake configurations.
       def run_ruby_tests
         parser = Parser.new
-        base_cmd = ['bash', RakeTasks::SCRIPT_PATH, 'test:all']
+
+        configs = test_configs
+
+        # Loop through the test configurations to initialize gemsets.
+        gem_rubies = []
+        configs.each do |config|
+          next if gem_rubies.include?(config[:ruby])
+          gem_rubies << config[:ruby]
+
+          cmd = ['bash', RakeTasks::SCRIPTS[:gemsets]]
+          cmd << config[:ruby].split('@')
+
+          pid = Process.spawn(*cmd.flatten)
+          Process.wait pid
+        end
 
         # Loop through the test configurations.
-        test_configs.each do |config|
+        configs.each do |config|
           puts '*' * 80
 
           if config[:rake]
             puts "#{config[:ruby]} - #{config[:rake]}"
           end
 
-          cmd = base_cmd.dup
+          cmd = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
           cmd << config[:ruby]
           cmd << "_#{config[:rake]}_" if config[:rake]
 
@@ -160,7 +174,7 @@ module RakeTasks
           config.delete(:gemset)
         end
 
-        return configs
+        return configs.reject { |x| x[:ruby] and x[:ruby].strip.empty? }
       end
 
       ####################################################################
