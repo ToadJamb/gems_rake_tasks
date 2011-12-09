@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '2.0.2'
+  s.version = '2.0.3'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
@@ -19,7 +19,8 @@ mmmm yummy
   s.extra_rdoc_files << 'README'
 
   s.require_paths = ['lib']
-  s.files = Dir['*', 'lib/**/*.rb', 'lib/**/rubies.sh', 'license/*']
+  s.files = Dir['*', 'lib/**/*.rb', 'lib/**/rubies.sh',
+    'lib/**/bundle_install.sh', 'license/*']
   s.test_files = Dir['test/**/*.rb']
 
   s.add_development_dependency 'mocha' , '~> 0.10.0'
