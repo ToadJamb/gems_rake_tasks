@@ -58,13 +58,19 @@ The default task will be set in the following order:
 
 2. Require the gem in your Gemfile:
 
-    gem 'rake_tasks', '~> 2.0.1'
+    gem 'rake_tasks', '~> 2.0.2'
 
 3. Require the gem wherever you need to use it:
 
     require 'rake_tasks'
 
 == Updates
+
+2.0.2 test:[test_file] will now run all the tests in the specified file
+      if a method is not specified. It should be noted that 'test_file' is
+      the name of the file with the test pattern removed
+      (i.e. 'my_module_test.rb' => 'my_module',
+      'test_my_module.rb' => 'my_module').
 
 2.0.1 Added test:full task (requires rvm).
 
