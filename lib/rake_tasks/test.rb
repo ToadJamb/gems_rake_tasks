@@ -54,7 +54,12 @@ if RakeTasks::Tests.exist?
     RakeTasks::Tests.file_list.each do |file_path|
       desc "Run individual tests in #{file_path}."
       task RakeTasks::Tests.task_name(file_path), [:method_name] do |t, args|
-        puts `ruby ./#{file_path} --name #{args[:method_name]}`
+        cmd = ['ruby', "./#{file_path}"]
+        if args[:method_name] and !args[:method_name].strip.empty?
+          cmd << ['--name', args[:method_name]]
+        end
+        pid = Process.spawn(*cmd.flatten)
+        Process.wait(pid)
       end
     end
 
