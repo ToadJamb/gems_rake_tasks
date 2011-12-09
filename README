@@ -64,6 +64,20 @@ The default task will be set in the following order:
 
     require 'rake_tasks'
 
+== Updates
+
+2.0.1 Added test:full task (requires rvm).
+
+      test:full allows a user to run tests against multiple ruby/gemset/rake
+      configurations by specifying them in a yaml file in the test folder.
+
+      A common rubies.yml file might look something like this:
+
+      - ruby: 1.9.2
+        gemset: my_gem_test
+      - ruby: 1.9.3
+        gemset: my_gem_test
+
 == Additional Documentation
 
  rake rdoc:app
