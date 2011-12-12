@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '2.0.3'
+  s.version = '2.0.4'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
@@ -16,11 +16,11 @@ mmmm yummy
 
   s.license = 'LGPLv3'
 
-  s.extra_rdoc_files << 'README'
+  s.extra_rdoc_files = ['README', 'license/gplv3', 'license/lgplv3']
 
   s.require_paths = ['lib']
   s.files = Dir['*', 'lib/**/*.rb', 'lib/**/rubies.sh',
-    'lib/**/bundle_install.sh', 'license/*']
+    'lib/**/bundle_install.sh', 'license/*'] - Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
   s.add_development_dependency 'mocha' , '~> 0.10.0'
