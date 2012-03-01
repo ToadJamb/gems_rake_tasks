@@ -55,9 +55,18 @@ Dir[File.join(File.dirname(__FILE__), gem_name, 'lib', '*.rb')].each do |lib|
 end
 
 # Require tasks.
-Dir[File.join(File.dirname(__FILE__), gem_name, '*.rb')].each do |task|
-  require task
-end
+# These must be required in this order as
+# there is an order of precedence for the default task.
+# Using a glob, they were being required in different orders
+# in different situations.
+# Specifically, it was different depending on whether it was
+# consumed as an installed gem or pointing to the source.
+base = File.dirname(__FILE__)
+
+require File.join(base, 'rake_tasks/rdoc')
+require File.join(base, 'rake_tasks/doc')
+require File.join(base, 'rake_tasks/gem')
+require File.join(base, 'rake_tasks/test')
 
 # Include any ruby files in the tasks folder.
 Dir[File.join(Dir.getwd, 'tasks', '*.rb')].each do |rake_file|
