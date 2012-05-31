@@ -23,7 +23,7 @@ mmmm yummy
     'lib/**/bundle_install.sh', 'license/*'] - Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
-  s.add_development_dependency 'mocha' , '~> 0.10.0'
+  s.add_development_dependency 'mocha' , '~> 0.11.4'
   s.add_development_dependency 'fakefs', '~> 0.4.0'
 
   s.has_rdoc = true

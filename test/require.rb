@@ -1,7 +1,7 @@
-require 'bundler'
 require 'test/unit'
 
-Bundler.require :test
+require 'mocha'
+require 'fakefs/safe'
 
 require_relative File.join('../lib/rake_tasks'.split('/'))
 require_relative File.join('./lib/rake_tasks_shared'.split('/'))

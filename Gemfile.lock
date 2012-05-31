@@ -8,7 +8,7 @@ GEM
   specs:
     fakefs (0.4.0)
     metaclass (0.0.1)
-    mocha (0.10.0)
+    mocha (0.11.4)
       metaclass (~> 0.0.1)
 
 PLATFORMS
@@ -16,5 +16,5 @@ PLATFORMS
 
 DEPENDENCIES
   fakefs (~> 0.4.0)
-  mocha (~> 0.10.0)
+  mocha (~> 0.11.4)
   rake_tasks!
