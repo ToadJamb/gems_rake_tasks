@@ -48,35 +48,35 @@ module RakeTasks
       gem_spec = @gem_spec
 
       @contents ||= %Q{
-#{header} Welcome to #{gem_title}
+#{header :h1, "Welcome to #{gem_title}"}
 
 #{gem_spec.description}
 
-#{header} Getting Started
+#{header :h2, 'Getting Started'}
 
-1. Install #{gem_title} at the command prompt if you haven't yet:
+Install #{gem_title} at the command prompt if you haven't yet:
 
-  gem install #{gem_spec.name}
+    $ gem install #{gem_spec.name}
 
-2. Require the gem in your Gemfile:
+Require the gem in your Gemfile:
 
-  gem '#{gem_spec.name}', '~> #{gem_spec.version}'
+    gem '#{gem_spec.name}', '~> #{gem_spec.version}'
 
-3. Require the gem wherever you need to use it:
+Require the gem wherever you need to use it:
 
-  require '#{gem_spec.name}'
+    require '#{gem_spec.name}'
 
-#{header} Usage
-
-TODO
-
-#{header} Additional Notes
+#{header :h2, 'Usage'}
 
 TODO
 
-#{header} Additional Documentation
+#{header :h2, 'Additional Notes'}
 
-rake rdoc:app
+TODO
+
+#{header :h2, 'Additional Documentation'}
+
+    $ rake rdoc:app
 #{license_details}}.strip
 
       return @contents
@@ -86,67 +86,25 @@ rake rdoc:app
     private
     ########################################################################
 
-    # Header indicator.
-    def header
-      '=='
+    # Returns formatted headers.
+    def header(type, text = nil)
+      case type
+      when :h1
+        "#{text}\n#{'=' * text.length}"
+      when :h2
+        "#{text}\n#{'-' * text.length}"
+      end
     end
 
     # Compose the license details.
-    # This will include links to the license and image,
-    # if they exist in the license folder.
     def license_details
       return if @gem_spec.licenses.empty?
 
-      # Set up the header (and other info. that will be the same regardless).
-      out = ''
-      out += "\n#{header} License\n\n"
-      out += "#{@gem_title} is released under the "
+      %Q{
+#{header :h2, 'License'}
 
-      # Get image files.
-      images = Dir[
-        File.join(@license_path, '*.png'),
-        File.join(@license_path, '*.jpg'),
-        File.join(@license_path, '*.jpeg'),
-        File.join(@license_path, '*.gif')
-      ]
-
-      # Get license files (by removing images from all files).
-      files = Dir[File.join(@license_path, '*')] - images
-
-      # Find the license file that matches the license.
-      found = nil
-      files.each do |file|
-        next unless File.file?(file)
-        if @gem_spec.license.downcase == File.basename(file).downcase
-          found = file
-          break
-        end
-      end
-
-      # Add the link to the license file.
-      if found
-        out += "{#{@gem_spec.license} license}[link:../../#{found}].\n"
-      else
-        out += "#{@gem_spec.license} license.\n"
-      end
-
-      # Find the image file that matches the license.
-      found = nil
-      images.each do |file|
-        next unless File.file?(file)
-        if @gem_spec.license.downcase ==
-            File.basename(file).sub(/\..+?$/, '').downcase
-          found = file
-          break
-        end
-      end
-
-      # Add the link to the image file.
-      if found
-        out += "\nlink:../../#{found}"
-      end
-
-      return out
+#{@gem_title} is released under the #{@gem_spec.licenses.first} license.
+}
     end
   end
 end

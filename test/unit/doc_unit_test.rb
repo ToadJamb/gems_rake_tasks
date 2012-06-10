@@ -43,7 +43,6 @@ class DocUnitTest < Test::Unit::TestCase
   end
 
   def test_readme_basic_contents
-    expectations :file_list
     [
       spec[:title],
       'Getting Started',
@@ -54,8 +53,7 @@ class DocUnitTest < Test::Unit::TestCase
       "gem '#{spec[:name]}', '~> #{spec[:version]}'",
       "require '#{spec[:name]}'",
       "rake rdoc:app",
-      "the {#{spec[:license]} license}[link:../../license/MiT].\n\n" +
-        "link:../../license/MiT.png",
+      "the #{spec[:license]} license",
     ].each do |text|
       assert_contains readme, text
     end
@@ -65,30 +63,6 @@ class DocUnitTest < Test::Unit::TestCase
     @spec.expects(:licenses).with.returns([]).at_least_once
     assert_not_contains readme, ' license.'
   end
-
-  def test_readme_license_no_files_match
-    Dir.expects(:[] => ['license/file3', 'license/file4'])
-    Dir.expects(:[] => ['license/file1.jpg', 'license/file2.png'])
-
-    assert_contains readme, "the #{spec[:license]} license."
-  end
-
-  def test_readme_license_with_license_but_no_images
-    Dir.expects(:[] => ['license/file1', 'license/MiT'])
-    Dir.expects(:[] => [])
-
-    assert_contains readme, "the {#{spec[:license]} license}" +
-      "[link:../../license/MiT]."
-  end
-
-  def test_readme_license_with_images_but_no_license
-    Dir.expects(:[] => [])
-    Dir.expects(:[] => ['license/file1.jpg', 'license/mIt.png'])
-
-    assert_contains readme, "the #{spec[:license]} license.\n\n" +
-      "link:../../license/mIt.png"
-  end
-
 
   ############################################################################
   private
