@@ -35,8 +35,8 @@ if RakeTasks::Gem.gem_file?
 
     gem_spec_file = RakeTasks::Gem.gem_spec_file
 
-    readme = 'README'
-    readme = 'README_GENERATED' if File.file?(readme)
+    readme = 'README.md'
+    readme = 'README_GENERATED.md' if File.file?(readme)
 
     file readme => gem_spec_file do |t|
       doc_obj = RakeTasks::Doc.new
