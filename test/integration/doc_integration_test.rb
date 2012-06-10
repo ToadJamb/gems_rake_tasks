@@ -49,10 +49,8 @@ class DocIntegrationTest < Test::Unit::TestCase
       "gem install #{@gem_spec.name}",
       "gem '#{@gem_spec.name}', '~> #{@gem_spec.version}'",
       "require '#{@gem_spec.name}'",
-      "rake rdoc:app",
-      "the {#{@gem_spec.license} license}" +
-        "[link:../../license/#{@gem_spec.license.downcase}].\n\n" +
-        "link:../../license/#{@gem_spec.license.downcase}.png",
+      'rake rdoc:app',
+      "the #{@gem_spec.license} license"
     ].each do |text|
       assert_contains readme, text
     end
