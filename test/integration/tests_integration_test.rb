@@ -28,7 +28,7 @@
 ################################################################################
 #++
 
-require_relative File.join('../require'.split('/'))
+require_relative '../require'
 
 class TestsIntegrationTest < Test::Unit::TestCase
   # Supported ruby versions.

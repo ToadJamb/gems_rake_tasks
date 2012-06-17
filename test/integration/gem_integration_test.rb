@@ -28,7 +28,7 @@
 ################################################################################
 #++
 
-require_relative File.join('../require.rb'.split('/'))
+require_relative '../require'
 
 class GemIntegrationTest < Test::Unit::TestCase
   def setup
