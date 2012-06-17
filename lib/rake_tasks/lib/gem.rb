@@ -68,14 +68,14 @@ module RakeTasks
       end
 
       # Updates the version in the gem specification file.
-      def version!(value)
+      def version!(value, spec = gem_spec)
         return unless gem_spec_file
 
         temp = StringIO.new
 
         File.open(gem_spec_file, 'r') do |file|
           while line = file.gets
-            if line =~ /version *= *['"]#{gem_spec.version}['"]/
+            if line =~ /version *= *['"]#{spec.version}['"]/
               temp.puts line.sub(/['"].*['"]/, "'#{value}'")
             else
               temp.puts line
