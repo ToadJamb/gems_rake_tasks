@@ -116,6 +116,18 @@ class GemTest < Test::Unit::TestCase
     assert_match(/ #{new_version}$/, @class.version)
   end
 
+  test '.version! accepts the gemspec as a second parameter' do
+    FakeFS.activate!
+    expect :real_gemspec, '0.0.1'
+    new_version = '1.2.3'
+
+    gem_spec = @spec_class.load(gem_spec_file_name)
+
+    @class.version! new_version, gem_spec
+
+    assert_match(/ #{new_version}$/, @class.version)
+  end
+
   [
     "  s.version = '0.0.1'",
     "  s.version='0.0.1'",
