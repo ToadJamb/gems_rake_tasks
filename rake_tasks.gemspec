@@ -16,7 +16,7 @@ mmmm yummy
 
   s.license = 'LGPLv3'
 
-  s.extra_rdoc_files = ['README.md', 'license/gplv3', 'license/lgplv3']
+  s.extra_rdoc_files = ['README.md', 'license/gplv3.md', 'license/lgplv3.md']
 
   s.require_paths = ['lib']
   s.files = Dir[
@@ -28,8 +28,8 @@ mmmm yummy
     Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
-  s.add_development_dependency 'mocha' ,           '~> 0.11.4'
-  s.add_development_dependency 'fakefs',           '~> 0.4.0'
+  s.add_development_dependency 'mocha' , '~> 0.11.4'
+  s.add_development_dependency 'fakefs', '~> 0.4.0'
 
   s.has_rdoc = true
 end
