@@ -49,15 +49,15 @@ module RakeTasks
       end
 
       # Get the gem specification.
-      def gem_spec(spec = Kernel.const_get('Gem').const_get('Specification'))
+      def gem_spec
+        spec = Kernel.const_get('Gem').const_get('Specification')
         spec.load(gem_spec_file) if gem_file?
       end
 
       # Check for a gem spec file.
       def gem_spec_file
-        file = File.basename(Dir.getwd) + '.gemspec'
-        return nil unless File.file? file
-        return file
+        file_name = Dir['*.gemspec'].first
+        return file_name
       end
 
       # Returns the name and version from the specified gem specification.
@@ -68,28 +68,27 @@ module RakeTasks
       end
 
       # Updates the version in the gem specification file.
-      def version!(value, spec = gem_spec, temp = Tempfile.new('temp_gem_spec'))
-        return if spec.nil?
+      def version!(value)
+        return unless gem_spec_file
 
-        begin
-          file = File.open(gem_spec_file, 'r')
+        temp = StringIO.new
 
+        File.open(gem_spec_file, 'r') do |file|
           while line = file.gets
-            if line =~ /version *= *['"]#{spec.version}['"]/
-              temp.puts line.sub(/(['"])#{spec.version}(['"])/, "\\1#{value}\\2")
+            if line =~ /version *= *['"]#{gem_spec.version}['"]/
+              temp.puts line.sub(/['"].*['"]/, "'#{value}'")
             else
               temp.puts line
             end
           end
+        end
 
-          temp.flush
+        temp.rewind
 
-          FileUtils.mv temp.path, gem_spec_file
-        rescue Exception => ex
-          raise ex
-        ensure
-          temp.close
-          temp.unlink
+        File.open(gem_spec_file, 'w') do |file|
+          while line = temp.gets
+            file.puts line
+          end
         end
       end
     end
