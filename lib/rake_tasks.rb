@@ -31,7 +31,6 @@
 require 'rake/testtask'
 require 'rdoc/task'
 require 'rake/clean'
-require 'tempfile'
 require 'fileutils'
 require 'psych'
 
