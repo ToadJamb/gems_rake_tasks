@@ -28,7 +28,7 @@
 ################################################################################
 #++
 
-require_relative File.join('../require'.split('/'))
+require_relative '../require'
 
 class DocUnitTest < Test::Unit::TestCase
   def setup
