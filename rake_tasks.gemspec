@@ -30,7 +30,6 @@ mmmm yummy
 
   s.add_development_dependency 'mocha' ,           '~> 0.11.4'
   s.add_development_dependency 'fakefs',           '~> 0.4.0'
-  s.add_development_dependency 'test_unit_helper', '~> 0.0.1'
 
   s.has_rdoc = true
 end
