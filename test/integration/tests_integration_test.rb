@@ -33,7 +33,17 @@ require_relative '../require'
 class TestsIntegrationTest < Test::Unit::TestCase
   # Supported ruby versions.
   def rubies
-    ['1.9.2-p290', '1.9.3-p0']
+    [
+      '1.9.2-p0',
+      '1.9.2-p136',
+      '1.9.2-p180',
+      '1.9.2-p290',
+      '1.9.2-p318',
+      '1.9.2-p320',
+      '1.9.3-p0',
+      '1.9.3-p125',
+      '1.9.3-p194',
+    ]
   end
   private :rubies
 

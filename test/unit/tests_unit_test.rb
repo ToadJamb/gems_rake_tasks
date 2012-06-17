@@ -152,7 +152,7 @@ class TestsUnitTest < Test::Unit::TestCase
 
           rubies = ['bash', @module::SCRIPTS[:rubies], 'test:all']
           rubies << config[:ruby]
-          rubies << "_#{config[:rake]}_" if config[:rake]
+          rubies << config[:rake] if config[:rake]
 
           Process.expects(:spawn).with(*rubies,
             :out => 'out.log', :err => 'err.log').

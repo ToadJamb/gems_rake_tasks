@@ -14,3 +14,4 @@ rvm use $1@$2
 
 gem install bundler --no-rdoc --no-ri
 bundle install
+bundle clean --force

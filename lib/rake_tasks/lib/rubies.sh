@@ -9,4 +9,10 @@ else
 fi
 
 rvm use $2
-rake $3 $1
+
+if [ $# -ge 3 ]; then
+  gem install rake -v $3 --no-rdoc --no-ri
+  rake _$3_ $1
+else
+  bundle exec rake $1
+fi 

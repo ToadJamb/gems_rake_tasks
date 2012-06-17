@@ -128,7 +128,7 @@ module RakeTasks
 
           cmd = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
           cmd << config[:ruby]
-          cmd << "_#{config[:rake]}_" if config[:rake]
+          cmd << config[:rake] if config[:rake]
 
           # Run the tests.
           pid = Process.spawn(*cmd, :out => 'out.log', :err => 'err.log')
