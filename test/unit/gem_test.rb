@@ -149,7 +149,7 @@ class GemTest < Test::Unit::TestCase
     FakeFS.activate!
     expect :no_gemspec
 
-    @class.version! '1.0.0'
+    assert_nothing_raised { @class.version! '1.0.0' }
   end
 
   ############################################################################
