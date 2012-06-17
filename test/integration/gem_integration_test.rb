@@ -51,7 +51,7 @@ class GemIntegrationTest < Test::Unit::TestCase
   end
 
   def test_gem_spec_file
-    assert_equal File.basename(Dir.getwd) + '.gemspec', @class.gem_spec_file
+    assert_equal Dir['*.gemspec'].first, @class.gem_spec_file
   end
 
   def test_gem_file_exists

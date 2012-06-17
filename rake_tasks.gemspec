@@ -16,15 +16,21 @@ mmmm yummy
 
   s.license = 'LGPLv3'
 
-  s.extra_rdoc_files = ['README', 'license/gplv3', 'license/lgplv3']
+  s.extra_rdoc_files = ['README.md', 'license/gplv3', 'license/lgplv3']
 
   s.require_paths = ['lib']
-  s.files = Dir['*', 'lib/**/*.rb', 'lib/**/rubies.sh',
-    'lib/**/bundle_install.sh', 'license/*'] - Dir['Gemfile.lock']
+  s.files = Dir[
+    '*',
+    'lib/**/*.rb',
+    'lib/**/rubies.sh',
+    'lib/**/bundle_install.sh',
+    'license/*'] -
+    Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
-  s.add_development_dependency 'mocha' , '~> 0.11.4'
-  s.add_development_dependency 'fakefs', '~> 0.4.0'
+  s.add_development_dependency 'mocha' ,           '~> 0.11.4'
+  s.add_development_dependency 'fakefs',           '~> 0.4.0'
+  s.add_development_dependency 'test_unit_helper', '~> 0.0.1'
 
   s.has_rdoc = true
 end
