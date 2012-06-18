@@ -56,7 +56,7 @@ Install RakeTasks at the command prompt if you haven't yet:
 
 Require the gem in your Gemfile:
 
-    gem 'rake_tasks', '~> 2.0.5'
+    gem 'rake_tasks', '~> 2.0.6'
 
 Require the gem wherever you need to use it:
 
@@ -67,6 +67,8 @@ Updates
 
     2.0.6 Use markdown for generated README.
           Convert rake_task's README to markdown and rename it to README.md.
+
+          The gemspec is now located by extension rather than root folder.
 
     2.0.5 Specify load order of rake tasks.
 
