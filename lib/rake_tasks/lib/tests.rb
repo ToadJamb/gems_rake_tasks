@@ -87,7 +87,9 @@ module RakeTasks
 
           patterns.each do |pattern|
             next if types.include?(File.basename(path))
-            types << File.basename(path) unless Dir[File.join(path, pattern)].empty?
+            unless Dir[File.join(path, pattern)].empty?
+              types << File.basename(path)
+            end
           end
         end
 

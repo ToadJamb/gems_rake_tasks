@@ -49,7 +49,8 @@ if RakeTasks::Gem.gem_file?
       puts `gem install #{gem_spec.file_name} --no-rdoc --no-ri`
     end
 
-    desc "Removes files associated with building and installing #{gem_spec.name}."
+    desc "Removes files associated with building " +
+      "and installing #{gem_spec.name}."
     task :clobber do |t|
       rm_f gem_spec.file_name
     end
