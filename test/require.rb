@@ -1,7 +1,6 @@
 require 'test/unit'
 
-require 'mocha'
-require 'fakefs/safe'
+require 'mocha/setup'
 
 root = File.dirname(__FILE__)
 Dir["#{root}/support/*.rb"].each do |file|

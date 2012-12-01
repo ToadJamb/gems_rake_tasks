@@ -28,8 +28,10 @@ mmmm yummy
     Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
-  s.add_development_dependency 'mocha' , '~> 0.11.4'
-  s.add_development_dependency 'fakefs', '~> 0.4.0'
+  s.add_development_dependency 'rspec', '~> 2.12.0'
+  s.add_development_dependency 'mocha', '~> 0.13.0'
+  s.add_development_dependency 'cane',  '~> 2.5.0'
+  s.add_development_dependency 'faker', '~> 1.1.2'
 
   s.has_rdoc = true
 end

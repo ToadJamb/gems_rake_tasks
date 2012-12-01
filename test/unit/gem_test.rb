@@ -36,11 +36,6 @@ class GemTest < Test::Unit::TestCase
     @spec_class = Gem::Specification
   end
 
-  def teardown
-    FakeFS::FileSystem.clear
-    FakeFS.deactivate!
-  end
-
   test '.gem_spec_file returns the gemspec file name' do
     expect :gemspec_file
     assert_equal gem_spec_file_name, @class.gem_spec_file
@@ -106,64 +101,6 @@ class GemTest < Test::Unit::TestCase
     assert_nil @class.version(spec)
   end
 
-  test '.version! sets the version in the gemspec file' do
-    FakeFS.activate!
-    expect :real_gemspec, '0.0.1'
-    new_version = '1.2.3'
-
-    @class.version! new_version
-
-    assert_match(/ #{new_version}$/, @class.version)
-  end
-
-  test '.version! accepts the gemspec as a second parameter' do
-    FakeFS.activate!
-    expect :real_gemspec, '0.0.1'
-    new_version = '1.2.3'
-
-    gem_spec = @spec_class.load(gem_spec_file_name)
-
-    @class.version! new_version, gem_spec
-
-    assert_match(/ #{new_version}$/, @class.version)
-  end
-
-  [
-    "  s.version = '0.0.1'",
-    "  s.version='0.0.1'",
-    "  s.version  =   '0.0.1'",
-    '  s.version  =   "0.0.1"',
-    '  s.version ="0.0.1"',
-  ].each do |version|
-    test ".version! sets the version given a format of '#{version}'" do
-      FakeFS.activate!
-      expect :real_gemspec, '0.0.1'
-
-      content = File.readlines(gem_spec_file_name)
-      index = content.index { |l| l.match(/version = '/) }
-      content[index] = version
-
-      File.open(gem_spec_file_name, 'w') do |file|
-        file.puts content
-      end
-
-      new_version = '12.3.10'
-      @class.version! new_version
-
-      gem_spec = @spec_class.load(gem_spec_file_name)
-
-      assert_equal new_version, gem_spec.version.to_s,
-        "The following format should be valid: '#{version}'"
-    end
-  end
-
-  test '.version! does nothing given there is no gem spec' do
-    FakeFS.activate!
-    expect :no_gemspec
-
-    assert_nothing_raised { @class.version! '1.0.0' }
-  end
-
   ############################################################################
   private
   ############################################################################
@@ -172,18 +109,7 @@ class GemTest < Test::Unit::TestCase
     case method
     when :gemspec_file
       result ||= [gem_spec_file_name]
-      Dir.expects(:[] => result).with('*.gemspec').at_least_once
-    when :real_gemspec
-      path = '/root/path/gems/test_gem'
-      FileUtils.mkdir_p path
-      Dir.chdir path
-      File.open(gem_spec_file_name, 'w') do |file|
-        file.puts gem_spec(result)
-      end
-    when :no_gemspec
-      path = '/root/path/gems/test_gem'
-      FileUtils.mkdir_p path
-      Dir.chdir path
+      Dir.expects(:glob => result).with('*.gemspec').at_least_once
     end
   end
 

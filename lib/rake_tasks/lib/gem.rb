@@ -55,8 +55,7 @@ module RakeTasks
 
       # Check for a gem spec file.
       def gem_spec_file
-        file_name = Dir['*.gemspec'].first
-        return file_name
+        Util.dir_glob('*.gemspec').first
       end
 
       # Returns the name and version from the specified gem specification.
@@ -71,22 +70,33 @@ module RakeTasks
         return unless gem_spec_file
 
         temp = StringIO.new
-
-        File.open(gem_spec_file, 'r') do |file|
-          while line = file.gets
-            if line =~ /version *= *['"]#{spec.version}['"]/
-              temp.puts line.sub(/['"].*['"]/, "'#{value}'")
-            else
-              temp.puts line
-            end
-          end
-        end
+        write_temp spec, temp, gem_spec_file, value
 
         temp.rewind
+        write_file gem_spec_file, temp
+      end
 
-        File.open(gem_spec_file, 'w') do |file|
-          while line = temp.gets
+      private
+
+      # Write the contents of a stream to a file.
+      def write_file(gem_spec_file, stream)
+        Util.open_file(gem_spec_file, 'w') do |file|
+          while line = stream.gets
             file.puts line
+          end
+        end
+      end
+
+      # Write the contents of a file to an in-memory stream object,
+      # changing the version.
+      def write_temp(spec, stream, gem_spec_file, version)
+        Util.open_file(gem_spec_file, 'r') do |file|
+          while line = file.gets
+            if line =~ /version *= *['"]#{spec.version}['"]/
+              stream.puts line.sub(/['"].*['"]/, "'#{version}'")
+            else
+              stream.puts line
+            end
           end
         end
       end
