@@ -112,9 +112,7 @@ class TestsIntegrationTest < Test::Unit::TestCase
     assert_equal files.count, @class.file_list(group).count
 
     files.each do |file|
-      assert @class.file_list(group).include?(file),
-        "#{file} is not in the list of test files:\n" +
-        @class.file_list(group).join("\n")
+      assert_file group, file
     end
   end
 
@@ -126,5 +124,11 @@ class TestsIntegrationTest < Test::Unit::TestCase
       end
     end
     return configs
+  end
+
+  def assert_file(group, file)
+    assert @class.file_list(group).include?(file),
+      "#{file} is not in the list of test files:\n" +
+      @class.file_list(group).join("\n")
   end
 end

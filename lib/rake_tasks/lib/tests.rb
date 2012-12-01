@@ -34,22 +34,32 @@
 module RakeTasks
   # This class assists in setting up test tasks.
   class Tests
+      # Returns an array of potential root folder names.
+   ROOTS = [
+    'test',
+    'tests'
+   ]
+
+    # The patterns that indicate that a file contains tests.
+    PATTERNS = [
+      '*_test.rb',
+      'test_*.rb',
+    ]
+
     class << self
       # Indicates that tests exist.
       def exist?
-        return !root.nil? && !file_list.empty?
+        !file_list.empty?
       end
 
       # Returns an array of test files for the specified group.
       def file_list(group = :all)
-        group = group.to_sym unless group.is_a?(Symbol)
-
         list = []
 
-        paths(group).each do |path|
-          patterns.each do |pattern|
-            files = Dir[File.join(path, pattern)]
-            list << files unless files.empty?
+        PATTERNS.each do |pattern|
+          paths(group).each do |path|
+            files = Util.dir_glob(File.join(path, pattern))
+            list << files
           end
         end
 
@@ -62,43 +72,45 @@ module RakeTasks
       def task_name(file_path)
         file = File.basename(file_path, '.rb')
 
-        patterns.each do |pattern|
+        PATTERNS.each do |pattern|
           pattern = pattern.sub(/\.rb$/, '').sub(/\*/, '.+?')
 
           if file =~ /#{pattern}/
             pattern = pattern.sub(/\.\+\?/, '')
+            return file_task(file, pattern)
 
-            if pattern.index('_') == 0
-              return file.sub(/#{pattern}$/, '')
-            else
-              return file.sub(/^#{pattern}/, '')
-            end
           end
-
         end
       end
 
       # Return an array containing the types of tests that are included.
       def types
+        return [] unless root
+
         types = []
 
-        Dir[File.join(root, '**')].each do |path|
-          next if !File.directory?(path)
-
-          patterns.each do |pattern|
-            next if types.include?(File.basename(path))
-            unless Dir[File.join(path, pattern)].empty?
-              types << File.basename(path)
-            end
-          end
+        Util.dir_glob(File.join(root, '**')).each do |path|
+          next unless Util.directory?(path)
+          types << get_types(path)
         end
 
-        return types
+        return types.flatten
+      end
+
+      def get_types(path)
+        types = []
+        PATTERNS.each do |pattern|
+          next if types.include?(File.basename(path))
+          unless Util.dir_glob(File.join(path, pattern)).empty?
+            types << File.basename(path)
+          end
+        end
+        types
       end
 
       # Indicates whether tests can be run against multiple rubies.
       def run_rubies?
-        File.file? rubies_yaml
+        Util.file? rubies_yaml
       end
 
       # Runs tests against specified ruby/gemset/rake configurations.
@@ -107,18 +119,7 @@ module RakeTasks
 
         configs = test_configs
 
-        # Loop through the test configurations to initialize gemsets.
-        gem_rubies = []
-        configs.each do |config|
-          next if gem_rubies.include?(config[:ruby])
-          gem_rubies << config[:ruby]
-
-          cmd = ['bash', RakeTasks::SCRIPTS[:gemsets]]
-          cmd << config[:ruby].split('@')
-
-          pid = Process.spawn(*cmd.flatten)
-          Process.wait pid
-        end
+        init_rubies configs
 
         # Loop through the test configurations.
         configs.each do |config|
@@ -136,59 +137,53 @@ module RakeTasks
           pid = Process.spawn(*cmd, :out => 'out.log', :err => 'err.log')
           Process.wait pid
 
-          File.open('out.log', 'r') do |file|
-            while line = file.gets
-              parser.parse line
-            end
-          end
+          parse_log parser
         end
 
-        FileUtils.rm 'out.log'
-        FileUtils.rm 'err.log'
+        Util.rm 'out.log'
+        Util.rm 'err.log'
 
         puts '*' * 80
         parser.summarize
       end
 
-      # Returns a hash containing all testable rubies/gemsets.
-      # ==== Output
-      # [Hash] The configurations that will be tested.
-      def test_configs
-        configs = Psych.load(rubies_list)
-        return unless configs
+      # Initialize gemsets for rubies.
+      def init_rubies(configs)
+        # Loop through the test configurations to initialize gemsets.
+        gem_rubies = []
+        configs.each do |config|
+          next if gem_rubies.include?(config[:ruby])
+          gem_rubies << config[:ruby]
 
-        # Loop through the configurations to set keys to symbols
-        # and add gemsets to rubies.
-        for i in 0..configs.length - 1 do
-          config = configs[i]
+          cmd = ['bash', RakeTasks::SCRIPTS[:gemsets]]
+          cmd << config[:ruby].split('@')
 
-          # Change keys to symbols (and remove the string-based pairs).
-          ['ruby', 'gemset', 'rake'].each do |key|
-            if config[key]
-              config[key.to_sym] = config[key]
-              config.delete(key)
-            end
-          end
-
-          # Add the '@' symbol to include gemsets.
-          config[:gemset] = '@' + config[:gemset] if config[:gemset]
-          config[:ruby] = config[:ruby].to_s + config[:gemset].to_s
-          config.delete(:gemset)
+          pid = Process.spawn(*cmd.flatten)
+          Process.wait pid
         end
-
-        return configs.reject { |x| x[:ruby] and x[:ruby].strip.empty? }
       end
 
-      ####################################################################
-      private
-      ####################################################################
+      # Returns an array of hashes containing all testable rubies/gemsets.
+      # ==== Output
+      # [Array] The configurations that will be tested.
+      def test_configs
+        configs = Util.load_yaml(rubies_yaml)
+        return [] unless configs.is_a?(Array)
+
+        configs.select! { |c| c['ruby'] || c['gemset'] }
+
+        set_configs configs
+
+        configs
+      end
 
       # Paths to check for test files.
       # Only paths for a specified type will be returned, if specified.
       def paths(group = :all)
+        group = group.to_sym
         paths = []
 
-        paths << [root] if group == :all
+        paths << root if group == :all && root
 
         types.each do |type|
           if group == type.to_sym || group == :all
@@ -199,49 +194,53 @@ module RakeTasks
         return paths
       end
 
-      # The patterns that indicate that a file contains tests.
-      def patterns
-        [
-          '*_test.rb',
-          'test_*.rb',
-        ]
-      end
-
       # The root test folder.
       def root
-        roots.each do |r|
-          unless Dir[r].empty?
-            return r
-          end
+        ROOTS.each do |r|
+          return r if Util.directory?(r)
         end
         return
       end
 
-      # Returns an array of potential root folder names.
-      def roots
-        [
-          'test',
-          'tests'
-        ]
+      # Returns the location of the rubies yaml file.
+      def rubies_yaml
+        return unless root
+        File.join('.', root, 'rubies.yml')
       end
 
-      # Returns the contents of the rubies.yml file.
-      # ==== Output
-      # [String] The contents of the rubies yaml file.
-      def rubies_list
-        file = File.join(rubies_yaml)
+      private
 
-        # Read the yaml file.
-        # Psych must be available on the system,
-        # preferably via installing ruby with libyaml already installed.
-        File.open(file, 'r') do |f|
-          return f.read
+      def file_task(file, pattern)
+        if pattern.index('_') == 0
+          return file.sub(/#{pattern}$/, '')
+        else
+          return file.sub(/^#{pattern}/, '')
         end
       end
 
-      # Returns the location of the rubies yaml file.
-      def rubies_yaml
-        File.join('.', root, 'rubies.yml')
+      def parse_log(parser)
+        Util.open_file('out.log', 'r') do |file|
+          while line = file.gets
+            parser.parse line
+          end
+        end
+      end
+
+      def set_configs(configs)
+        for i in 0..configs.length - 1 do
+          config = configs[i]
+
+          config.keys.each do |key|
+            config[key.to_sym] = config[key]
+            config.delete key
+          end
+
+          if config[:gemset]
+            config[:ruby] = "#{config[:ruby]}@#{config[:gemset]}"
+          end
+
+          config.delete(:gemset)
+        end
       end
     end
   end

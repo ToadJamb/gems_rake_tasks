@@ -36,7 +36,13 @@ module RakeTasks
   # This class will handle parsing duties.
   class Parser
     def initialize
-      @data = []
+      @data = {
+        tests:      0,
+        assertions: 0,
+        failures:   0,
+        errors:     0,
+        skips:      0,
+      }
     end
 
     # Parse a given line.
@@ -48,28 +54,21 @@ module RakeTasks
           puts line.strip #unless line.strip.empty?
         when /^\d+ tests, \d+ assertions, /
           puts line.strip
-          @data << line.split(', ').map { |x| x.to_i }
+
+          data = line.split(', ').map { |x| x.to_i }
+
+          @data[:tests]      += data[0]
+          @data[:assertions] += data[1]
+          @data[:failures]   += data[2]
+          @data[:errors]     += data[3]
+          @data[:skips]      += data[4]
       end
     end
 
     # Calculate the summary and send it to standard out.
     def summarize
-      tests      = 0
-      assertions = 0
-      failures   = 0
-      errors     = 0
-      skips      = 0
-
-      @data.each do |status|
-        tests      = tests      + status[0]
-        assertions = assertions + status[1]
-        failures   = failures   + status[2]
-        errors     = errors     + status[3]
-        skips      = skips      + status[4]
-      end
-
-      puts "%d tests, %d assertions, %d failures, %d errors, %d skips" % [
-        tests, assertions, failures, errors, skips]
+      puts "%d tests, %d assertions, %d failures, %d errors, %d skips" %
+        @data.values
     end
   end
 end

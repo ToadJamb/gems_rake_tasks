@@ -62,15 +62,7 @@ class ParserTest < Test::Unit::TestCase
 
   def test_summary
     summary_lines.each_value do |lines|
-      lines[:in].each do |line|
-        wrap_output { @obj.parse line }
-      end
-
-      reset_io
-      wrap_output { @obj.summarize }
-      @obj = @class.new
-
-      assert_equal lines[:out], out
+      check_lines lines
     end
   end
 
@@ -108,7 +100,8 @@ class ParserTest < Test::Unit::TestCase
 
   def printable_lines
     [
-      "Using /home/travis/.rvm/gems/ruby-1.9.3-p0 with gemset rake_tasks_test\n",
+      "Using /home/travis/.rvm/gems/ruby-1.9.3-p0 " +
+        "with gemset rake_tasks_test\n",
       "...................................\n",
       "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n",
       "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n",
@@ -126,5 +119,17 @@ class ParserTest < Test::Unit::TestCase
       "# Running tests:\n",
       "\n",
     ]
+  end
+
+  def check_lines(lines)
+    lines[:in].each do |line|
+      wrap_output { @obj.parse line }
+    end
+
+    reset_io
+    wrap_output { @obj.summarize }
+    @obj = @class.new
+
+    assert_equal lines[:out], out
   end
 end
