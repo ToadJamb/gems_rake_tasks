@@ -263,8 +263,8 @@ module RakeTasks
         cmds = gemset_create_commands(configs)
         cmds << ['rvm', rvm_rubies(configs), 'do', 'gem', 'install',
           'bundler', '--no-rdoc', '--no-ri']
-        cmds << ['rvm', rvm_rubies(configs), 'do', 'bundle', 'clean', '--force']
         cmds << ['rvm', rvm_rubies(configs), 'do', 'bundle', 'install']
+        cmds << ['rvm', rvm_rubies(configs), 'do', 'bundle', 'clean', '--force']
         configs.each do |config|
           if config[:rake]
             cmds << ['rvm', config[:ruby], 'do', 'gem', 'install',

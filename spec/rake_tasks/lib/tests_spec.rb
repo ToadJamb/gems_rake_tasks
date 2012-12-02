@@ -552,16 +552,16 @@ describe RakeTasks::Tests do
         assert_equal bundler_install, output[0 + offset]
       end
 
-      it 'cleans up gems' do
-        wrap_output { klass.run_rubies_commands }
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal bundle_clean, output[1 + offset]
-      end
-
       it 'installs gems' do
         wrap_output { klass.run_rubies_commands }
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal bundle_install, output[2 + offset]
+        assert_equal bundle_install, output[1 + offset]
+      end
+
+      it 'cleans up gems' do
+        wrap_output { klass.run_rubies_commands }
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal bundle_clean, output[2 + offset]
       end
 
       it 'runs rake' do
