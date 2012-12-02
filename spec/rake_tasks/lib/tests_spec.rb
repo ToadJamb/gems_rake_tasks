@@ -385,7 +385,7 @@ describe RakeTasks::Tests do
   end
 
   describe '::run_ruby_tests' do
-    let(:yaml_configs) { yaml_config_list(3) }
+    let(:yaml_configs) { yaml_config_list 3 }
     let(:seperator) { '*' * 80 }
     let(:seperator_count) { yaml_configs.count + 1 }
     let(:test_count) { rand(9) + 1 }
@@ -407,7 +407,7 @@ describe RakeTasks::Tests do
       it 'runs all specs' do
         yaml_configs.each_with_index do |config, i|
           command = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
-          command << config[:ruby]
+          command << "#{config[:ruby]}@#{config[:gemset]}"
 
           Process.expects(:spawn).with(*command, out: 'out.log', err: 'err.log')
             .returns pids[i]
@@ -426,7 +426,7 @@ describe RakeTasks::Tests do
       it 'runs all specs' do
         yaml_configs.each_with_index do |config, i|
           command = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
-          command << config[:ruby]
+          command << "#{config[:ruby]}@#{config[:gemset]}"
           command << config[:rake]
 
           Process.expects(:spawn).with(*command, out: 'out.log', err: 'err.log')

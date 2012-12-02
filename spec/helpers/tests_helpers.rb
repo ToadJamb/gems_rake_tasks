@@ -73,7 +73,8 @@ module TestsHelpers
 
   def default_options(options)
     if options[:ruby].nil? && options[:gemset].nil?
-      options[:ruby] = Faker::Lorem.word
+      options[:ruby] = "ruby-#{Faker::Lorem.word}"
+      options[:gemset] = "gemset_#{Faker::Lorem.word}"
     end
     options
   end
@@ -85,7 +86,7 @@ module TestsHelpers
     count.times do |n|
       config_opts = {}
       options.each_key do |key|
-        config_opts[key] = "#{options[key]} ##{n + 1}"
+        config_opts[key] = "#{options[key]}_#{n + 1}"
       end
       configs << yaml_config(config_opts)
     end
