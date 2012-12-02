@@ -1,6 +1,4 @@
 - ruby: 1.9.2-p0
-  gemset: rake_tasks_test_no_rake
-- ruby: 1.9.2-p0
   gemset: rake_tasks_test
   rake: 0.9.0
 - ruby: 1.9.2-p0
@@ -31,8 +29,6 @@
   gemset: rake_tasks_test
   rake: 10.0.2
 
-- ruby: 1.9.2-p136
-  gemset: rake_tasks_test_no_rake
 - ruby: 1.9.2-p136
   gemset: rake_tasks_test
   rake: 0.9.0
@@ -65,8 +61,6 @@
   rake: 10.0.2
 
 - ruby: 1.9.2-p180
-  gemset: rake_tasks_test_no_rake
-- ruby: 1.9.2-p180
   gemset: rake_tasks_test
   rake: 0.9.0
 - ruby: 1.9.2-p180
@@ -97,8 +91,6 @@
   gemset: rake_tasks_test
   rake: 10.0.2
 
-- ruby: 1.9.2-p290
-  gemset: rake_tasks_test_no_rake
 - ruby: 1.9.2-p290
   gemset: rake_tasks_test
   rake: 0.9.0
@@ -131,8 +123,6 @@
   rake: 10.0.2
 
 - ruby: 1.9.2-p318
-  gemset: rake_tasks_test_no_rake
-- ruby: 1.9.2-p318
   gemset: rake_tasks_test
   rake: 0.9.0
 - ruby: 1.9.2-p318
@@ -163,8 +153,6 @@
   gemset: rake_tasks_test
   rake: 10.0.2
 
-- ruby: 1.9.2-p320
-  gemset: rake_tasks_test_no_rake
 - ruby: 1.9.2-p320
   gemset: rake_tasks_test
   rake: 0.9.0

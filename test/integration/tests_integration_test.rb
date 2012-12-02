@@ -126,7 +126,10 @@ class TestsIntegrationTest < Test::Unit::TestCase
   def configs
     configs = []
     rubies.each do |ruby|
-      configs << { :ruby => ruby + '@rake_tasks_test_no_rake' }
+      unless ruby.match(/^1.9.2/)
+        configs << { :ruby => ruby + '@rake_tasks_test_no_rake' }
+      end
+
       rakes.each do |rake|
         configs << { :ruby => ruby + '@rake_tasks_test', :rake => rake }
       end
