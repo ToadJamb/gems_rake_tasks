@@ -148,19 +148,17 @@ module RakeTasks
       end
 
       # Outputs commands to run all tests.
-      def run_rubies_commands
+      def rubies_shell_script
         configs = test_configs
 
         # Loop through the test configurations.
-        cmds = setup_commands(configs)
+        commands = setup_commands(configs)
 
         run_commands(configs).each do |command|
-          cmds << command
+          commands << command
         end
 
-        cmds.each do |cmd|
-          puts cmd.join(' ')
-        end
+        write_rubies_shell_script commands
       end
 
       # Initialize gemsets for rubies.
@@ -304,6 +302,14 @@ module RakeTasks
         configs.uniq { |c| c[:ruby] }.map do |config|
           config[:ruby]
         end.join(',')
+      end
+
+      def write_rubies_shell_script(commands)
+        Util.open_file('rubies.sh', 'w') do |file|
+          commands.each do |command|
+            file.puts command.join(' ')
+          end
+        end
       end
     end
   end

@@ -505,7 +505,7 @@ describe RakeTasks::Tests do
     end
   end
 
-  describe '::run_rubies_commands' do
+  describe '::rubies_shell_script' do
     context 'given rubies and gemsets' do
       let(:yaml_configs) { yaml_config_list 2 }
       let(:uniq_configs) do
@@ -527,17 +527,25 @@ describe RakeTasks::Tests do
         end
       end
       let(:rake) { "#{rvm} bundle exec rake" }
-      let(:output) { out.split "\n" }
+      let(:output) do
+        shell_script.rewind
+        shell_script.read.to_s.split "\n"
+      end
       let(:offset) { yaml_configs.count }
+      let(:ruby_shell_script) { 'rubies.sh' }
+      let(:shell_script) { StringIO.new }
 
       before { reset_io }
       before { stub_root }
       before { Util.stubs(:load_yaml).with(yaml_path).returns yaml_configs }
+      before do
+        Util.stubs(:open_file).with(ruby_shell_script, 'w').yields shell_script
+      end
 
       before { assert yaml_configs.all? { |c| c[:ruby] && c[:gemset] } }
 
       it 'creates the gemset' do
-        wrap_output { klass.run_rubies_commands }
+        klass.rubies_shell_script
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
         assert_equal gemset_creates.first, output.first
 
@@ -547,31 +555,31 @@ describe RakeTasks::Tests do
       end
 
       it 'installs bundler' do
-        wrap_output { klass.run_rubies_commands }
+        klass.rubies_shell_script
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
         assert_equal bundler_install, output[0 + offset]
       end
 
       it 'installs gems' do
-        wrap_output { klass.run_rubies_commands }
+        klass.rubies_shell_script
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
         assert_equal bundle_install, output[1 + offset]
       end
 
       it 'cleans up gems' do
-        wrap_output { klass.run_rubies_commands }
+        klass.rubies_shell_script
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
         assert_equal bundle_clean, output[2 + offset]
       end
 
       it 'runs rake' do
-        wrap_output { klass.run_rubies_commands }
+        klass.rubies_shell_script
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
         assert_equal rake, output.last
       end
 
       it 'does not install rake' do
-        wrap_output { klass.run_rubies_commands }
+        klass.rubies_shell_script
         refute output.any? { |line| line.index('gem install rake') }
       end
 
@@ -592,7 +600,7 @@ describe RakeTasks::Tests do
         before { assert yaml_configs.all? { |c| c[:rake] } }
 
         it 'installs the appropriate rake version' do
-          wrap_output { klass.run_rubies_commands }
+          klass.rubies_shell_script
           assert_equal yaml_configs.count, rvm_rubies.scan('@').count
 
           index = output.index(rake_installs.first)
@@ -604,7 +612,7 @@ describe RakeTasks::Tests do
         end
 
         it 'runs rake without bundle exec' do
-          wrap_output { klass.run_rubies_commands }
+          klass.rubies_shell_script
           assert_equal yaml_configs.count, rvm_rubies.scan('@').count
 
           assert_equal rakes.last, output.last
@@ -632,7 +640,7 @@ describe RakeTasks::Tests do
           before { refute_equal yaml_configs.count, uniq_configs.count }
 
           it 'creates the gemset once' do
-            wrap_output { klass.run_rubies_commands }
+            klass.rubies_shell_script
             assert_equal uniq_configs.count, rvm_rubies.scan('@').count
             assert_equal gemset_creates.first, output.first
 
@@ -642,7 +650,7 @@ describe RakeTasks::Tests do
           end
 
           it 'does not repeat ruby/gemset combinations' do
-            wrap_output { klass.run_rubies_commands }
+            klass.rubies_shell_script
             assert_equal uniq_configs.count, rvm_rubies.scan('@').count
 
             output.each do |line|
@@ -653,7 +661,7 @@ describe RakeTasks::Tests do
           end
 
           it 'runs rake without bundle exec' do
-            wrap_output { klass.run_rubies_commands }
+            klass.rubies_shell_script
             assert_equal uniq_configs.count, rvm_rubies.scan('@').count
 
             assert_equal rakes.last, output.last
@@ -692,7 +700,7 @@ describe RakeTasks::Tests do
         before { refute yaml_configs.all? { |c| c[:rake] } }
 
         it 'runs rake for each ruby according to the rake setting' do
-          wrap_output { klass.run_rubies_commands }
+          klass.rubies_shell_script
           assert_equal yaml_configs.count, rvm_rubies.scan('@').count
 
           assert_equal rakes.last, output.last
