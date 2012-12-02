@@ -43,13 +43,16 @@ class TestsIntegrationTest < Test::Unit::TestCase
       '1.9.3-p0',
       '1.9.3-p125',
       '1.9.3-p194',
+      '1.9.3-p286',
     ]
   end
   private :rubies
 
   # Supported rake versions.
   def rakes
-    ['0.8.7', '0.9.0', '0.9.1', '0.9.2', '0.9.2.2']
+    # 0.8.7 is no longer supported.
+    ['0.9.0', '0.9.1', '0.9.2', '0.9.2.2', '0.9.3', '0.9.4', '0.9.5',
+      '10.0.0', '10.0.1', '10.0.2']
   end
   private :rakes
 
@@ -123,6 +126,7 @@ class TestsIntegrationTest < Test::Unit::TestCase
   def configs
     configs = []
     rubies.each do |ruby|
+      configs << { :ruby => ruby + '@rake_tasks_test_no_rake' }
       rakes.each do |rake|
         configs << { :ruby => ruby + '@rake_tasks_test', :rake => rake }
       end
