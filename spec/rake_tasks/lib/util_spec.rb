@@ -82,18 +82,4 @@ describe Util do
   describe '::load_yaml' do
     it_behaves_like 'a delegated property', Psych, :load_file, :load_yaml
   end
-
-  #describe '::home' do
-  #  before do
-  #    SaveUtil.unstub :home
-  #    SaveUtil.unstub :expand_path
-  #  end
-
-  #  it 'calls File.expand_path with ~' do
-  #    File.stubs(:expand_path).returns home.reverse
-  #    File.expects(:expand_path).with('~').returns home
-
-  #    expect(SaveUtil.home).to eq home
-  #  end
-  #end
 end

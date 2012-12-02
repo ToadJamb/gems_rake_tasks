@@ -11,9 +11,7 @@ puts Benchmark.measure('app') {
 puts Benchmark.measure('specs') {
   require 'faker'
   require 'rspec'
-  #require 'factory_girl'
   require 'mocha/api'
-  #require 'shoulda-matchers'
 
   base = File.expand_path(File.dirname(__FILE__))
   path = File.join(base, 'support')
