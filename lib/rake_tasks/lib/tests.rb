@@ -34,11 +34,12 @@
 module RakeTasks
   # This class assists in setting up test tasks.
   class Tests
-      # Returns an array of potential root folder names.
-   ROOTS = [
-    'test',
-    'tests'
-   ]
+    # Returns an array of potential root folder names.
+    ROOTS = [
+      'test',
+      'tests',
+      'spec',
+    ]
 
     # The patterns that indicate that a file contains tests.
     PATTERNS = [
@@ -219,10 +220,12 @@ module RakeTasks
       # Returns the location of the rubies yaml file.
       def rubies_yaml
         return unless root
-        File.join('.', root, 'rubies.yml')
+        File.join '.', root, 'rubies.yml'
       end
 
+      #########################################################################
       private
+      #########################################################################
 
       def file_task(file, pattern)
         if pattern.index('_') == 0

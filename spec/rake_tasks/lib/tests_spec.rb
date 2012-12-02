@@ -8,6 +8,7 @@ describe RakeTasks::Tests do
   roots = [
     'test',
     'tests',
+    'spec',
   ]
   let(:roots) { roots }
 
