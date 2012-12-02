@@ -159,7 +159,7 @@ module RakeTasks
           commands << command
         end
 
-        write_rubies_shell_script commands
+        Util.write_file 'rubies.sh', commands.map { |c| c.join(' ') }
       end
 
       # Initialize gemsets for rubies.
@@ -305,14 +305,6 @@ module RakeTasks
         configs.uniq { |c| c[:ruby] }.map do |config|
           config[:ruby]
         end.join(',')
-      end
-
-      def write_rubies_shell_script(commands)
-        Util.open_file('rubies.sh', 'w') do |file|
-          commands.each do |command|
-            file.puts command.join(' ')
-          end
-        end
       end
     end
   end

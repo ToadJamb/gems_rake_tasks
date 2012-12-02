@@ -7,6 +7,14 @@ class Util
     File.open(*args, &block)
   end
 
+  def self.write_file(file_path, array)
+    open_file(file_path, 'w') do |file|
+      array.each do |element|
+        file.puts element
+      end
+    end
+  end
+
   def self.file?(*args)
     File.file?(*args)
   end

@@ -540,6 +540,7 @@ describe RakeTasks::Tests do
       before { stub_root }
       before { Util.stubs(:load_yaml).with(yaml_path).returns yaml_configs }
       before do
+        Util.unstub :write_file
         Util.stubs(:open_file).with(ruby_shell_script, 'w').yields shell_script
       end
 
