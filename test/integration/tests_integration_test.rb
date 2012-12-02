@@ -85,7 +85,11 @@ class TestsIntegrationTest < Test::Unit::TestCase
   end
 
   def test_rubies
-    assert_equal configs, @class.test_configs
+    test_configs = @class.test_configs
+    configs.each_with_index do |config, i|
+      assert_equal config, test_configs[i]
+    end
+    assert_equal configs, test_configs
   end
 
   def test_rubies_shell_script_location_should_be_lib
