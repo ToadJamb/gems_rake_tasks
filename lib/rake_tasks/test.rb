@@ -68,6 +68,11 @@ if RakeTasks::Tests.exist?
       task :full do |t|
         RakeTasks::Tests::run_ruby_tests
       end
+
+      desc 'Generates a shell script that will run specs against all rubies'
+      task :script do |t|
+        RakeTasks::Tests::rubies_shell_script
+      end
     end
   ############################################################################
   end # :test

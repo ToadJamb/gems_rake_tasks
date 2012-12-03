@@ -8,6 +8,7 @@ describe RakeTasks::Tests do
   roots = [
     'test',
     'tests',
+    'spec',
   ]
   let(:roots) { roots }
 
@@ -385,7 +386,7 @@ describe RakeTasks::Tests do
   end
 
   describe '::run_ruby_tests' do
-    let(:yaml_configs) { yaml_config_list(3) }
+    let(:yaml_configs) { yaml_config_list 3 }
     let(:seperator) { '*' * 80 }
     let(:seperator_count) { yaml_configs.count + 1 }
     let(:test_count) { rand(9) + 1 }
@@ -407,7 +408,7 @@ describe RakeTasks::Tests do
       it 'runs all specs' do
         yaml_configs.each_with_index do |config, i|
           command = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
-          command << config[:ruby]
+          command << "#{config[:ruby]}@#{config[:gemset]}"
 
           Process.expects(:spawn).with(*command, out: 'out.log', err: 'err.log')
             .returns pids[i]
@@ -426,7 +427,7 @@ describe RakeTasks::Tests do
       it 'runs all specs' do
         yaml_configs.each_with_index do |config, i|
           command = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
-          command << config[:ruby]
+          command << "#{config[:ruby]}@#{config[:gemset]}"
           command << config[:rake]
 
           Process.expects(:spawn).with(*command, out: 'out.log', err: 'err.log')
@@ -501,6 +502,230 @@ describe RakeTasks::Tests do
         end
 
         klass.init_rubies configs
+      end
+    end
+  end
+
+  describe '::rubies_shell_script' do
+    context 'given rubies and gemsets' do
+      let(:yaml_configs) { yaml_config_list 2 }
+      let(:uniq_configs) do
+        yaml_configs.uniq { |c| "#{c[:ruby]}@#{c[:gemset]}" }
+      end
+      let(:rvm_rubies) { uniq_configs.map { |c| c[:ruby] }.join(',') }
+      let(:rvm_ruby_list) do
+        uniq_configs.map { |c| c[:ruby].sub(/@.*/, '') }.join(',')
+      end
+      let(:rvm) { "rvm #{rvm_rubies} do" }
+      let(:bundler_install) { "#{rvm} gem install bundler --no-rdoc --no-ri" }
+      let(:bundle_clean) { "#{rvm} bundle clean --force" }
+      let(:bundle_install) { "#{rvm} bundle install" }
+      let(:gemset_creates) do
+        yaml_configs.map do |config|
+          ruby = config[:ruby].sub(/@.*/, '')
+          gemset = config[:ruby].sub(/.*@/, '')
+          "rvm #{ruby} do rvm gemset create #{gemset}"
+        end
+      end
+      let(:rake) { "#{rvm} bundle exec rake" }
+      let(:output) do
+        shell_script.rewind
+        shell_script.read.to_s.split "\n"
+      end
+      let(:offset) { yaml_configs.count + 1 }
+      let(:ruby_shell_script) { 'rubies.sh' }
+      let(:shell_script) { StringIO.new }
+      let(:rakes) do
+        yaml_configs.map do |config|
+          if config[:rake]
+            [
+              "echo ruby: #{config[:ruby]} / rake: #{config[:rake]}",
+              "rvm #{config[:ruby]} do rake _#{config[:rake]}_",
+            ]
+          else
+            "rvm #{config[:ruby]} do bundle exec rake"
+          end
+        end.flatten
+      end
+
+      before { reset_io }
+      before { stub_root }
+      before { Util.stubs(:load_yaml).with(yaml_path).returns yaml_configs }
+      before do
+        Util.unstub :write_file
+        Util.stubs(:open_file).with(ruby_shell_script, 'w').yields shell_script
+      end
+
+      before { assert yaml_configs.all? { |c| c[:ruby] && c[:gemset] } }
+
+      it 'tells the shell to exit on error' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal 'set -e', output.first
+      end
+
+      it 'creates the gemset' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal gemset_creates.first, output[1]
+
+        gemset_creates.each_with_index do |gemset_create, i|
+          assert_equal gemset_create, output[i + 1]
+        end
+      end
+
+      it 'installs bundler' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal bundler_install, output[0 + offset]
+      end
+
+      it 'installs gems' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal bundle_install, output[1 + offset]
+      end
+
+      it 'cleans up gems' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal bundle_clean, output[2 + offset]
+      end
+
+      it 'runs rake' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal rake, output.last
+      end
+
+      it 'does not install rake' do
+        klass.rubies_shell_script
+        refute output.any? { |line| line.index('gem install rake') }
+      end
+
+      context 'given rake is specified for all configs' do
+        let(:yaml_configs) { yaml_config_list 2, rake: Faker::Lorem.word }
+        let(:rake_installs) do
+          yaml_configs.map do |config|
+            "rvm #{config[:ruby]} do gem install " +
+              "rake -v #{config[:rake]} --no-rdoc --no-ri"
+          end
+        end
+        let(:echoes) { rakes.select { |r| r.match(/^echo ruby: /) } }
+
+        before { assert yaml_configs.all? { |c| c[:rake] } }
+
+        it 'installs the appropriate rake version' do
+          klass.rubies_shell_script
+          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+
+          index = output.index(rake_installs.first)
+          assert_equal 3 + offset, index
+
+          yaml_configs.each_with_index do |config, i|
+            assert_equal rake_installs[i], output[index + i]
+          end
+        end
+
+        it 'runs rake without bundle exec' do
+          klass.rubies_shell_script
+          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+
+          assert_equal rakes.last, output.last
+
+          yaml_configs.reverse.each_with_index do |config, i|
+            index = -(i + 1)
+            assert_equal rakes[index], output[index]
+          end
+        end
+
+        it 'echoes the ruby/rake combination' do
+          klass.rubies_shell_script
+          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+          assert echoes.count > 0
+          echoes.each do |echo|
+            assert_include output, echo
+          end
+        end
+
+        context 'given the same ruby/gemset combination is specified' do
+          let(:yaml_configs) do
+            ruby = "ruby_#{Faker::Lorem.word}"
+            gemset = "gemset_#{Faker::Lorem.word}"
+            rake = "rake_#{Faker::Lorem.word}"
+
+            [
+              yaml_config(ruby: ruby, gemset: gemset, rake: "#{rake}_1"),
+              yaml_config(ruby: ruby, gemset: gemset, rake: "#{rake}_2"),
+            ]
+          end
+
+          let(:rvm_rubies) { uniq_configs.map { |c| c[:ruby] }.join(',') }
+
+          before { refute_equal yaml_configs.count, uniq_configs.count }
+
+          it 'creates the gemset once' do
+            klass.rubies_shell_script
+            assert_equal uniq_configs.count, rvm_rubies.scan('@').count
+            assert_equal gemset_creates.first, output[1]
+
+            gemset_creates.each do |gemset_create|
+              assert_equal 1, output.count{ |l| l.match(gemset_create) }
+            end
+          end
+
+          it 'does not repeat ruby/gemset combinations' do
+            klass.rubies_shell_script
+            assert_equal uniq_configs.count, rvm_rubies.scan('@').count
+
+            output.each do |line|
+              if !line.match('rake') && !line.match(/rvm gemset create/) &&
+                  !line.match(/set -e/)
+                assert_match(/^rvm #{rvm_rubies} do/, line)
+              end
+            end
+          end
+
+          it 'runs rake without bundle exec' do
+            klass.rubies_shell_script
+            assert_equal uniq_configs.count, rvm_rubies.scan('@').count
+
+            assert_equal rakes.last, output.last
+
+            yaml_configs.reverse.each_with_index do |config, i|
+              index = -(i + 1)
+              assert_equal rakes[index], output[index]
+            end
+          end
+        end
+      end
+
+      context 'given rake is specified for some configs' do
+        let(:yaml_configs) do
+          ruby = "ruby_#{Faker::Lorem.word}"
+          gemset = "gemset_#{Faker::Lorem.word}"
+          rake = "rake_#{Faker::Lorem.word}"
+
+          [
+            yaml_config(ruby: "#{ruby}_1", gemset: "#{gemset}_1"),
+            yaml_config(ruby: "#{ruby}_2", gemset: "#{gemset}_2", rake: rake),
+          ]
+        end
+
+        before { assert yaml_configs.any? { |c| c[:rake] } }
+        before { refute yaml_configs.all? { |c| c[:rake] } }
+
+        it 'runs rake for each ruby according to the rake setting' do
+          klass.rubies_shell_script
+          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+
+          assert_equal rakes.last, output.last
+
+          yaml_configs.reverse.each_with_index do |config, i|
+            index = -(i + 1)
+            assert_equal rakes[index], output[index]
+          end
+        end
       end
     end
   end

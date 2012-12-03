@@ -2,7 +2,13 @@ require 'benchmark'
 
 puts 'Keep individual measurements sub-second (app, specs, individual specs).'
 
-benchmark_format = "%n\t#{Benchmark::FORMAT}"
+if defined?(Benchmark::FORMAT)
+  # Ruby 1.9.3
+  benchmark_format = "%n\t#{Benchmark::FORMAT}"
+elsif defined?(Benchmark::FMTSTR)
+  # Ruby 1.9.2
+  benchmark_format = "%n\t#{Benchmark::FMTSTR}"
+end
 
 puts Benchmark.measure('app') {
   require_relative '../lib/rake_tasks'
@@ -11,9 +17,7 @@ puts Benchmark.measure('app') {
 puts Benchmark.measure('specs') {
   require 'faker'
   require 'rspec'
-  #require 'factory_girl'
   require 'mocha/api'
-  #require 'shoulda-matchers'
 
   base = File.expand_path(File.dirname(__FILE__))
   path = File.join(base, 'support')

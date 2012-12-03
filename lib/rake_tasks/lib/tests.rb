@@ -34,11 +34,12 @@
 module RakeTasks
   # This class assists in setting up test tasks.
   class Tests
-      # Returns an array of potential root folder names.
-   ROOTS = [
-    'test',
-    'tests'
-   ]
+    # Returns an array of potential root folder names.
+    ROOTS = [
+      'test',
+      'tests',
+      'spec',
+    ]
 
     # The patterns that indicate that a file contains tests.
     PATTERNS = [
@@ -147,6 +148,20 @@ module RakeTasks
         parser.summarize
       end
 
+      # Outputs commands to run all tests.
+      def rubies_shell_script
+        configs = test_configs
+
+        # Loop through the test configurations.
+        commands = setup_commands(configs)
+
+        run_commands(configs).each do |command|
+          commands << command
+        end
+
+        Util.write_file 'rubies.sh', commands.map { |c| c.join(' ') }
+      end
+
       # Initialize gemsets for rubies.
       def init_rubies(configs)
         # Loop through the test configurations to initialize gemsets.
@@ -205,10 +220,12 @@ module RakeTasks
       # Returns the location of the rubies yaml file.
       def rubies_yaml
         return unless root
-        File.join('.', root, 'rubies.yml')
+        File.join '.', root, 'rubies.yml'
       end
 
+      #########################################################################
       private
+      #########################################################################
 
       def file_task(file, pattern)
         if pattern.index('_') == 0
@@ -241,6 +258,56 @@ module RakeTasks
 
           config.delete(:gemset)
         end
+      end
+
+      def setup_commands(configs)
+        cmds = gemset_create_commands(configs)
+        cmds << ['rvm', rvm_rubies(configs), 'do', 'gem', 'install',
+          'bundler', '--no-rdoc', '--no-ri']
+        cmds << ['rvm', rvm_rubies(configs), 'do', 'bundle', 'install']
+        cmds << ['rvm', rvm_rubies(configs), 'do', 'bundle', 'clean', '--force']
+        configs.each do |config|
+          if config[:rake]
+            cmds << ['rvm', config[:ruby], 'do', 'gem', 'install',
+              'rake', '-v', config[:rake], '--no-rdoc', '--no-ri']
+          end
+        end
+        cmds
+      end
+
+      def run_commands(configs)
+        cmds = []
+        if configs.any? { |c| c[:rake] }
+          configs.each do |config|
+            if config[:rake]
+              cmds << ['echo',
+                "ruby: #{config[:ruby]} / rake: #{config[:rake]}"]
+              cmds << ['rvm', config[:ruby], 'do', 'rake', "_#{config[:rake]}_"]
+            else
+              cmds << ['rvm', config[:ruby], 'do', 'bundle', 'exec', 'rake']
+            end
+          end
+        else
+          cmds << ['rvm', rvm_rubies(configs), 'do', 'bundle', 'exec', 'rake']
+        end
+        cmds
+      end
+
+      def gemset_create_commands(configs)
+        cmds = []
+        cmds << ['set', '-e']
+        configs.uniq { |c| c[:ruby] }.each do |config|
+          ruby = config[:ruby].sub(/@.*/, '')
+          gemset = config[:ruby].sub(/.*@/, '')
+          cmds << ['rvm', ruby, 'do', 'rvm', 'gemset', 'create', gemset]
+        end
+        cmds
+      end
+
+      def rvm_rubies(configs)
+        configs.uniq { |c| c[:ruby] }.map do |config|
+          config[:ruby]
+        end.join(',')
       end
     end
   end

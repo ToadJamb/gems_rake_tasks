@@ -67,6 +67,26 @@ describe Util do
     end
   end
 
+  describe '::write_file' do
+    let(:file) { Faker::Lorem.word }
+    let(:file_content) { StringIO.new }
+    let(:array) { Faker::Lorem.sentences rand(98) + 1 }
+    let(:written_file) do
+      file_content.rewind
+      file_content.read.to_s.split("\n")
+    end
+
+    before { klass.unstub :write_file }
+    before { Util.expects(:open_file).with(file, 'w').yields file_content }
+    before { klass.write_file file, array }
+
+    it 'writes an array to the file' do
+      array.each_with_index do |element, i|
+        assert_equal element, written_file[i]
+      end
+    end
+  end
+
   describe '::file?' do
     it_behaves_like 'a delegated property', File, :file?
   end
@@ -82,18 +102,4 @@ describe Util do
   describe '::load_yaml' do
     it_behaves_like 'a delegated property', Psych, :load_file, :load_yaml
   end
-
-  #describe '::home' do
-  #  before do
-  #    SaveUtil.unstub :home
-  #    SaveUtil.unstub :expand_path
-  #  end
-
-  #  it 'calls File.expand_path with ~' do
-  #    File.stubs(:expand_path).returns home.reverse
-  #    File.expects(:expand_path).with('~').returns home
-
-  #    expect(SaveUtil.home).to eq home
-  #  end
-  #end
 end

@@ -11,7 +11,7 @@ The following assumptions are currently made:
 * There is a valid .gemspec file in the root folder that is named the same
    as the root folder.
 
-* Tests reside in a folder named either 'test' or 'tests'
+* Tests reside in a folder named 'test', 'tests', or 'spec'
    and test files are named *_test.rb or test_*.rb.
 
    Additionally, if you have sub-folders under test(s)
@@ -32,7 +32,7 @@ The following assumptions are currently made:
 
 * Additional rake tasks are named *.rb and reside in a folder named 'tasks'.
 
-* README generation useo the gemspec data to populate the license information.
+* README generation uses the gemspec data to populate the license information.
 
   If README.md does not exist, one will be created.
   If README.md does exist, a README_GENERATED.md file will be created,
@@ -64,6 +64,11 @@ Require the gem wherever you need to use it:
 
 Updates
 -------
+
+    3.0.0 Added `rake test:script` as a workaround to problems with `rake test:full`.
+          For some reason the gem command no longer works for me from the shell scripts.
+
+          Support for rake 0.8.7 was removed due to what appears to be issues with rspec.
 
     2.0.6 Use markdown for generated README.
           Convert rake_task's README to markdown and rename it to README.md.
