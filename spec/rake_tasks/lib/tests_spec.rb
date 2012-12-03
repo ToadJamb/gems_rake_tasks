@@ -535,6 +535,18 @@ describe RakeTasks::Tests do
       let(:offset) { yaml_configs.count }
       let(:ruby_shell_script) { 'rubies.sh' }
       let(:shell_script) { StringIO.new }
+      let(:rakes) do
+        yaml_configs.map do |config|
+          if config[:rake]
+            [
+              "echo ruby: #{config[:ruby]} / rake: #{config[:rake]}",
+              "rvm #{config[:ruby]} do rake _#{config[:rake]}_",
+            ]
+          else
+            "rvm #{config[:ruby]} do bundle exec rake"
+          end
+        end.flatten
+      end
 
       before { reset_io }
       before { stub_root }
@@ -593,11 +605,7 @@ describe RakeTasks::Tests do
               "rake -v #{config[:rake]} --no-rdoc --no-ri"
           end
         end
-        let(:rakes) do
-          yaml_configs.map do |config|
-            "rvm #{config[:ruby]} do rake _#{config[:rake]}_"
-          end
-        end
+        let(:echoes) { rakes.select { |r| r.match(/^echo ruby: /) } }
 
         before { assert yaml_configs.all? { |c| c[:rake] } }
 
@@ -622,6 +630,15 @@ describe RakeTasks::Tests do
           yaml_configs.reverse.each_with_index do |config, i|
             index = -(i + 1)
             assert_equal rakes[index], output[index]
+          end
+        end
+
+        it 'echoes the ruby/rake combination' do
+          klass.rubies_shell_script
+          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+          assert echoes.count > 0
+          echoes.each do |echo|
+            assert_include output, echo
           end
         end
 
@@ -686,16 +703,6 @@ describe RakeTasks::Tests do
             yaml_config(ruby: "#{ruby}_1", gemset: "#{gemset}_1"),
             yaml_config(ruby: "#{ruby}_2", gemset: "#{gemset}_2", rake: rake),
           ]
-        end
-
-        let(:rakes) do
-          yaml_configs.map do |config|
-            if config[:rake]
-              "rvm #{config[:ruby]} do rake _#{config[:rake]}_"
-            else
-              "rvm #{config[:ruby]} do bundle exec rake"
-            end
-          end
         end
 
         before { assert yaml_configs.any? { |c| c[:rake] } }

@@ -280,6 +280,8 @@ module RakeTasks
         if configs.any? { |c| c[:rake] }
           configs.each do |config|
             if config[:rake]
+              cmds << ['echo',
+                "ruby: #{config[:ruby]} / rake: #{config[:rake]}"]
               cmds << ['rvm', config[:ruby], 'do', 'rake', "_#{config[:rake]}_"]
             else
               cmds << ['rvm', config[:ruby], 'do', 'bundle', 'exec', 'rake']
