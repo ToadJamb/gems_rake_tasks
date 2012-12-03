@@ -1,5 +1,3 @@
-# This file holds the class that handles gem utilities.
-
 #--
 ################################################################################
 #                      Copyright (C) 2011 Travis Herrick                       #
@@ -30,76 +28,53 @@
 ################################################################################
 #++
 
-# The main module for this gem.
-module RakeTasks
-  # This class will handle gem utilities.
-  class Gem
-    class << self
-      # Check whether a gem spec file exists for this project.
-      def gem_file?
-        return !gem_spec_file.nil?
-      end
+if RakeTasks::Gem.gem_file?
+  ############################################################################
+  namespace :gem do
+  ############################################################################
 
-      # Returns the gem title.
-      # This is the gem name with underscores removed.
-      # Wherever an underscore is removed, the next letter is capitalized.
-      def gem_title(spec = gem_spec)
-        return nil unless spec.respond_to?(:name)
-        spec.name.split('_').map { |w| w.capitalize }.join('')
-      end
+    gem_spec = RakeTasks::Gem.gem_spec
+    gem_spec_file = RakeTasks::Gem.gem_spec_file
 
-      # Get the gem specification.
-      def gem_spec
-        ::Gem::Specification.load(gem_spec_file) if gem_file?
-      end
+    file gem_spec.file_name =>
+        [gem_spec_file, *Dir['lib/**/*.rb'], 'Gemfile', 'Gemfile.lock'] do |t|
+      puts `gem build #{gem_spec_file}`
+    end
 
-      # Check for a gem spec file.
-      def gem_spec_file
-        Util.dir_glob('*.gemspec').first
-      end
+    desc "Build #{gem_spec.name} gem version #{gem_spec.version}."
+    task :build => gem_spec.file_name
 
-      # Returns the name and version from the specified gem specification.
-      def version(spec = gem_spec)
-        if spec.respond_to?(:name) && spec.respond_to?(:version)
-          "#{spec.name} version #{spec.version}"
-        end
-      end
+    desc "Install the #{gem_spec.name} gem."
+    task :install => [gem_spec.file_name] do |t|
+      puts `gem install #{gem_spec.file_name} --no-rdoc --no-ri`
+    end
 
-      # Updates the version in the gem specification file.
-      def version!(value, spec = gem_spec)
-        return unless gem_spec_file
+    desc "Removes files associated with building " +
+      "and installing #{gem_spec.name}."
+    task :clobber do |t|
+      rm_f gem_spec.file_name
+    end
 
-        temp = StringIO.new
-        write_temp spec, temp, gem_spec_file, value
+    desc "Removes the gem file, builds, and installs."
+    task :generate => ['gem:clobber', gem_spec.file_name, 'gem:install']
 
-        temp.rewind
-        write_file gem_spec_file, temp
-      end
-
-      private
-
-      # Write the contents of a stream to a file.
-      def write_file(gem_spec_file, stream)
-        Util.open_file(gem_spec_file, 'w') do |file|
-          while line = stream.gets
-            file.puts line
-          end
-        end
-      end
-
-      # Write the contents of a file to an in-memory stream object,
-      # changing the version.
-      def write_temp(spec, stream, gem_spec_file, version)
-        Util.open_file(gem_spec_file, 'r') do |file|
-          while line = file.gets
-            if line =~ /version *= *['"]#{spec.version}['"]/
-              stream.puts line.sub(/['"].*['"]/, "'#{version}'")
-            else
-              stream.puts line
-            end
-          end
-        end
+    desc "Show/Set the version number."
+    task :version, [:number] do |t, args|
+      if args[:number].nil?
+        puts RakeTasks::Gem.version(gem_spec)
+      else
+        RakeTasks::Gem.version! args[:number], gem_spec
+        gem_spec = RakeTasks::Gem.gem_spec
+        puts RakeTasks::Gem.version(gem_spec)
       end
     end
-  end
+
+  ############################################################################
+  end # :gem
+  ############################################################################
+
+  Rake::Task[:default].prerequisites.clear
+  task :default => 'gem:build'
+
+  task :clobber => 'gem:clobber'
 end

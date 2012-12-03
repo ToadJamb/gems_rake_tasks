@@ -10,7 +10,7 @@ RSpec::Core::RakeTask.new(:spec) do |task|
 end
 
 namespace :cane do
-  glob_pattern = '{bin,lib,spec,test}/**/*.rb'
+  glob_pattern = '{bin,lib,spec,test,tasks,scripts}/**/*.{rb,rake,sh}'
 
   desc 'Run cane to check quality metrics'
   Cane::RakeTask.new(:quality) do |cane|
