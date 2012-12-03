@@ -30,7 +30,7 @@ The following assumptions are currently made:
 
     rake test:my_class[my_test_method]
 
-* Additional rake tasks are named *.rb and reside in a folder named 'tasks'.
+* Additional rake tasks are named *.rake (as of 3.0.0) and reside in a folder named 'tasks'.
 
 * README generation uses the gemspec data to populate the license information.
 
@@ -69,6 +69,8 @@ Updates
           For some reason the gem command no longer works for me from the shell scripts.
 
           Support for rake 0.8.7 was removed due to what appears to be issues with rspec.
+
+          Custom rake tasks should now load properly from any tasks folder under the project root.
 
     2.0.6 Use markdown for generated README.
           Convert rake_task's README to markdown and rename it to README.md.
