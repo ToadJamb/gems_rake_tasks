@@ -1,3 +1,5 @@
+# This file holds the class that handles documentation utilities.
+
 #--
 ################################################################################
 #                      Copyright (C) 2011 Travis Herrick                       #
@@ -28,32 +30,81 @@
 ################################################################################
 #++
 
-if RakeTasks::Gem.gem_file?
-  ############################################################################
-  namespace :doc do
-  ############################################################################
-
-    gem_spec_file = RakeTasks::Gem.gem_spec_file
-
-    readme = 'README.md'
-    readme = 'README_GENERATED.md' if File.file?(readme)
-
-    file readme => gem_spec_file do |t|
-      doc_obj = RakeTasks::Doc.new
-      Util.write_file readme, doc_obj.readme_contents
+# The main module for this gem.
+module RakeTasks
+  # This class will handle documentation utilities.
+  class Doc
+    # Constructor.
+    def initialize(gem_info = RakeTasks::Gem)
+      @gem_spec = gem_info.gem_spec
+      @gem_title = gem_info.gem_title(@gem_spec)
+      @license_path = 'license'
+      @contents = nil
     end
 
-    desc "Generate a #{readme} file."
-    task :readme => readme
+    # The default contents for a readme file.
+    def readme_contents
+      gem_title = @gem_title
+      gem_spec = @gem_spec
 
-    desc "Removes files associated with generating documentation."
-    task :clobber do |t|
-      rm_f readme
+      @contents ||= %Q{
+#{header :h1, "Welcome to #{gem_title}"}
+
+#{gem_spec.description}
+
+#{header :h2, 'Getting Started'}
+
+Install #{gem_title} at the command prompt if you haven't yet:
+
+    $ gem install #{gem_spec.name}
+
+Require the gem in your Gemfile:
+
+    gem '#{gem_spec.name}', '~> #{gem_spec.version}'
+
+Require the gem wherever you need to use it:
+
+    require '#{gem_spec.name}'
+
+#{header :h2, 'Usage'}
+
+TODO
+
+#{header :h2, 'Additional Notes'}
+
+TODO
+
+#{header :h2, 'Additional Documentation'}
+
+    $ rake rdoc:app
+#{license_details}}.strip
+
+      return @contents.split("\n")
     end
 
-  ############################################################################
-  end # :doc
-  ############################################################################
+    ########################################################################
+    private
+    ########################################################################
 
-  task :clobber => 'doc:clobber'
+    # Returns formatted headers.
+    def header(type, text = nil)
+      case type
+      when :h1
+        "#{text}\n#{'=' * text.length}"
+      when :h2
+        "#{text}\n#{'-' * text.length}"
+      end
+    end
+
+    # Compose the license details.
+    def license_details
+      return if @gem_spec.licenses.empty?
+
+      %Q{
+#{header :h2, 'License'}
+
+#{@gem_title} is released under the #{@gem_spec.licenses.first} license.
+}
+    end
+  end
 end

@@ -38,18 +38,24 @@ module RakeTasks
   # Contains the full path to the shell script to run tests in other env's.
   SCRIPTS = {
     :rubies  => File.expand_path(File.join(
-      File.dirname(__FILE__), 'rake_tasks', 'lib', 'rubies.sh')),
+      File.dirname(__FILE__), '..', 'scripts', 'rubies.sh')),
     :gemsets => File.expand_path(File.join(
-      File.dirname(__FILE__), 'rake_tasks', 'lib', 'bundle_install.sh')),
+      File.dirname(__FILE__), '..', 'scripts', 'bundle_install.sh')),
   }
 end
 
-gem_name = File.basename(__FILE__, '.rb')
-
 task :default
 
-# Require lib files.
-Dir[File.join(File.dirname(__FILE__), gem_name, 'lib', '*.rb')].each do |lib|
+gem_name = File.basename(__FILE__, '.rb')
+base_path = File.dirname(__FILE__)
+
+# Require base files.
+Dir[File.join(base_path, 'base', '*.rb')].each do |base|
+  require base
+end
+
+# Require files.
+Dir[File.join(base_path, gem_name, '*.rb')].each do |lib|
   require lib
 end
 
@@ -60,14 +66,12 @@ end
 # in different situations.
 # Specifically, it was different depending on whether it was
 # consumed as an installed gem or pointing to the source.
-base = File.dirname(__FILE__)
+require File.join(base_path, 'tasks', 'rdoc')
+require File.join(base_path, 'tasks', 'doc')
+require File.join(base_path, 'tasks', 'gem')
+require File.join(base_path, 'tasks', 'test')
 
-require File.join(base, 'rake_tasks/rdoc')
-require File.join(base, 'rake_tasks/doc')
-require File.join(base, 'rake_tasks/gem')
-require File.join(base, 'rake_tasks/test')
-
-# Include any ruby files in the tasks folder.
-Dir[File.join(Dir.getwd, 'tasks', '*.rb')].each do |rake_file|
-  require rake_file
+# Include any rake files in tasks folders.
+Dir[File.join(Dir.getwd, '**', 'tasks', '**', '*.rake')].each do |rake_file|
+  import rake_file
 end

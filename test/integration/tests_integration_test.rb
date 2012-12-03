@@ -97,14 +97,14 @@ class TestsIntegrationTest < Test::Unit::TestCase
 
   def test_rubies_shell_script_location_should_be_lib
     loc = File.expand_path(File.join(
-      File.dirname(__FILE__), '../../lib/rake_tasks/lib/rubies.sh'))
+      File.dirname(__FILE__), '../../scripts/rubies.sh'))
     assert_equal loc, @module::SCRIPTS[:rubies]
     assert File.file?(loc)
   end
 
   def test_bundle_install_shell_script_location_should_be_lib
     loc = File.expand_path(File.join(
-      File.dirname(__FILE__), '../../lib/rake_tasks/lib/bundle_install.sh'))
+      File.dirname(__FILE__), '../../scripts/bundle_install.sh'))
     assert_equal loc, @module::SCRIPTS[:gemsets]
     assert File.file?(loc)
   end
