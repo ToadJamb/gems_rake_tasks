@@ -79,7 +79,7 @@ TODO
     $ rake rdoc:app
 #{license_details}}.strip
 
-      return @contents
+      return @contents.split("\n")
     end
 
     ########################################################################

@@ -99,7 +99,7 @@ class DocUnitTest < Test::Unit::TestCase
   end
 
   def readme
-    @readme ||= @obj.readme_contents
+    @readme ||= @obj.readme_contents.join("\n")
   end
 
   def spec
