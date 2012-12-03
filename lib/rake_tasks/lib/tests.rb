@@ -295,6 +295,7 @@ module RakeTasks
 
       def gemset_create_commands(configs)
         cmds = []
+        cmds << ['set', '-e']
         configs.uniq { |c| c[:ruby] }.each do |config|
           ruby = config[:ruby].sub(/@.*/, '')
           gemset = config[:ruby].sub(/.*@/, '')

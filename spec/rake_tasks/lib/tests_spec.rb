@@ -532,7 +532,7 @@ describe RakeTasks::Tests do
         shell_script.rewind
         shell_script.read.to_s.split "\n"
       end
-      let(:offset) { yaml_configs.count }
+      let(:offset) { yaml_configs.count + 1 }
       let(:ruby_shell_script) { 'rubies.sh' }
       let(:shell_script) { StringIO.new }
       let(:rakes) do
@@ -558,13 +558,19 @@ describe RakeTasks::Tests do
 
       before { assert yaml_configs.all? { |c| c[:ruby] && c[:gemset] } }
 
+      it 'tells the shell to exit on error' do
+        klass.rubies_shell_script
+        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+        assert_equal 'set -e', output.first
+      end
+
       it 'creates the gemset' do
         klass.rubies_shell_script
         assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal gemset_creates.first, output.first
+        assert_equal gemset_creates.first, output[1]
 
         gemset_creates.each_with_index do |gemset_create, i|
-          assert_equal gemset_create, output[i]
+          assert_equal gemset_create, output[i + 1]
         end
       end
 
@@ -661,7 +667,7 @@ describe RakeTasks::Tests do
           it 'creates the gemset once' do
             klass.rubies_shell_script
             assert_equal uniq_configs.count, rvm_rubies.scan('@').count
-            assert_equal gemset_creates.first, output.first
+            assert_equal gemset_creates.first, output[1]
 
             gemset_creates.each do |gemset_create|
               assert_equal 1, output.count{ |l| l.match(gemset_create) }
@@ -673,7 +679,8 @@ describe RakeTasks::Tests do
             assert_equal uniq_configs.count, rvm_rubies.scan('@').count
 
             output.each do |line|
-              if !line.match('rake') && !line.match(/rvm gemset create/)
+              if !line.match('rake') && !line.match(/rvm gemset create/) &&
+                  !line.match(/set -e/)
                 assert_match(/^rvm #{rvm_rubies} do/, line)
               end
             end
