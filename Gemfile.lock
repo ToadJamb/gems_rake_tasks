@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rake_tasks (2.0.6)
+    rake_tasks (3.0.0.pre)
 
 GEM
   remote: http://rubygems.org/
