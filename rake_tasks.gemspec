@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '3.0.0.pre'
+  s.version = '0.0.0'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
@@ -28,10 +28,10 @@ mmmm yummy
     Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
-  s.add_development_dependency 'rspec', '~> 2.12.0'
-  s.add_development_dependency 'mocha', '~> 0.13.0'
-  s.add_development_dependency 'cane',  '~> 2.5.0'
-  s.add_development_dependency 'faker', '~> 1.1.2'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'mocha'
+  s.add_development_dependency 'cane'
+  s.add_development_dependency 'faker'
 
   s.has_rdoc = true
 end

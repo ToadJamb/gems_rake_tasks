@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe RakeTasks::Tests do
+RSpec.describe RakeTasks::Tests do
   include TestsHelpers
 
   let(:klass) { RakeTasks::Tests }
@@ -37,32 +37,32 @@ describe RakeTasks::Tests do
 
   describe '::ROOTS' do
     it 'contains at least one element' do
-      assert klass::ROOTS.count > 0
+      expect(klass::ROOTS.count).to be > 0
     end
 
     it 'has the correct number of elements' do
-      assert_equal roots.count, klass::ROOTS.count
+      expect(klass::ROOTS.count).to eq roots.count
     end
 
     roots.each do |root|
       it "contains #{root.inspect}" do
-        assert_include klass::ROOTS, root
+        expect(klass::ROOTS).to include root
       end
     end
   end
 
   describe '::PATTERNS' do
     it 'contains at least one element' do
-      assert klass::PATTERNS.count > 0
+      expect(klass::PATTERNS.count).to be > 0
     end
 
     it 'has the correct number of elements' do
-      assert_equal patterns.count, klass::PATTERNS.count
+      expect(klass::PATTERNS.count).to eq patterns.count
     end
 
     patterns.each do |pattern|
       it "contains #{pattern.inspect}" do
-        assert_include klass::PATTERNS, pattern
+        expect(klass::PATTERNS).to include pattern
       end
     end
   end
@@ -76,7 +76,7 @@ describe RakeTasks::Tests do
     ].each do |task|
       context "given a file of #{task.last}" do
         it "returns #{task.first}" do
-          assert_equal task.first, klass.task_name(task.last)
+          expect(klass.task_name(task.last)).to eq task.first
         end
       end
     end
@@ -85,17 +85,17 @@ describe RakeTasks::Tests do
   describe '::exist?' do
     context 'given no root folder' do
       before { stub_no_root }
-      before { refute Util.directory?(root) }
+      before { expect(Util.directory?(root)).to eq false }
 
       it 'returns false' do
-        assert_equal false, klass.exist?
+        expect(klass.exist?).to eq false
       end
     end
 
     context 'given a root folder' do
       before { stub_root }
 
-      before { assert_equal true, Util.directory?(root) }
+      before { expect(Util.directory?(root)).to eq true }
 
       context 'given no test files' do
         before do
@@ -111,10 +111,10 @@ describe RakeTasks::Tests do
           end
         end
 
-        before { assert_empty klass.file_list }
+        before { expect(klass.file_list).to eq [] }
 
         it 'returns false' do
-          assert_equal false, klass.exist?
+          expect(klass.exist?).to eq false
         end
       end
 
@@ -123,16 +123,16 @@ describe RakeTasks::Tests do
 
         before do
           patterns.each do |pattern|
-            refute_empty Util.dir_glob(File.join(root, pattern))
+            expect(Util.dir_glob(File.join(root, pattern)).empty?).to eq false
 
             paths.each do |path|
-              refute_empty Util.dir_glob(File.join(path, pattern))
+              expect(Util.dir_glob(File.join(path, pattern)).empty?).to eq false
             end
           end
         end
 
         it 'returns true' do
-          assert_equal true, klass.exist?
+          expect(klass.exist?).to eq true
         end
       end
     end
@@ -149,19 +149,19 @@ describe RakeTasks::Tests do
         roots.each do |root|
           root_count += 1 if Util.directory?(root)
         end
-        assert_equal 1, root_count
+        expect(root_count).to eq 1
       end
 
       it 'returns the folder name' do
-        assert_equal root, klass.root
+        expect(klass.root).to eq root
       end
     end
 
     context 'given a root folder does not exist' do
-      before { refute roots.any? { |r| Util.directory?(r) } }
+      before { expect(roots.any? { |r| Util.directory?(r) }).to eq false }
 
       it 'returns nil' do
-        assert_nil klass.root
+        expect(klass.root).to eq nil
       end
     end
 
@@ -170,16 +170,16 @@ describe RakeTasks::Tests do
         roots.each { |r| Util.stubs(:directory?).with(r).returns true }
       end
 
-      before { assert klass::ROOTS.count > 1 }
+      before { expect(klass::ROOTS.count).to be > 1 }
 
       before do
         klass::ROOTS.each do |root|
-          assert Util.directory?(root)
+          expect(Util.directory?(root)).to eq true
         end
       end
 
       it 'returns the first one' do
-        assert_equal klass::ROOTS.first, klass.root
+        expect(klass.root).to eq klass::ROOTS.first
       end
     end
   end
@@ -189,7 +189,7 @@ describe RakeTasks::Tests do
 
     context 'by default' do
       it 'returns files in the test folder' do
-        assert_equal @files, klass.file_list
+        expect(klass.file_list).to eq @files
       end
     end
 
@@ -197,10 +197,10 @@ describe RakeTasks::Tests do
       let(:type) { subfolders.sample.to_sym }
       let(:type_files) { @files.select { |f| f.match(%r|^#{root}/#{type}/|) } }
 
-      before { assert type_files.count > 0 }
+      before { expect(type_files.count).to be > 0 }
 
       it 'returns only files for that type' do
-        assert_equal type_files, klass.file_list(type)
+        expect(klass.file_list(type)).to eq type_files
       end
     end
   end
@@ -209,7 +209,7 @@ describe RakeTasks::Tests do
     before { stub_test_files }
 
     it 'returns the paths that contain test files' do
-      assert_equal [root].push(paths).flatten, klass.paths
+      expect(klass.paths).to eq [root].push(paths).flatten
     end
 
     context 'given a specific type' do
@@ -217,44 +217,44 @@ describe RakeTasks::Tests do
       let(:type) { File.basename(path).to_sym }
 
       context 'given the type is a symbol' do
-        before { assert_kind_of Symbol, type }
+        before { expect(type).to be_a Symbol }
 
         it 'returns the path for that type' do
-          assert_equal [path], klass.paths(type)
+          expect(klass.paths(type)).to eq [path]
         end
       end
 
       context 'given the type is a string' do
         let(:type) { File.basename(path) }
 
-        before { assert_kind_of String, type }
+        before { expect(type).to be_a String }
 
         it 'returns the path for that type' do
-          assert_equal [path], klass.paths(type)
+          expect(klass.paths(type)).to eq [path]
         end
       end
 
       context 'given all types are specified' do
         let(:type) { :all }
 
-        before { assert_equal :all, type }
+        before { expect(type).to eq :all }
 
         it 'includes the root path' do
-          assert_include klass.paths(type), root
+          expect(klass.paths(type)).to include root
         end
 
         it 'includes all paths' do
-          assert_equal [root].push(paths).flatten, klass.paths(type)
+          expect(klass.paths(type)).to eq [root].push(paths).flatten
         end
       end
     end
 
     context 'given no root folder' do
       before { stub_no_root }
-      before { refute Util.directory?(root) }
+      before { expect(Util.directory?(root)).to eq false }
 
       it 'returns an empty array' do
-        assert_empty klass.paths
+        expect(klass.paths).to eq []
       end
     end
   end
@@ -272,9 +272,9 @@ describe RakeTasks::Tests do
       end
 
       before do
-        assert subfolders.count > 1
+        expect(subfolders.count).to be > 1
         subfolders.each do |folder|
-          assert Util.directory?("#{root}/#{folder}")
+          expect(Util.directory?("#{root}/#{folder}")).to eq true
         end
       end
 
@@ -289,15 +289,15 @@ describe RakeTasks::Tests do
 
         before do
           paths.each do |path|
-            assert Util.directory?(path)
+            expect(Util.directory?(path)).to eq true
             patterns.each do |pattern|
-              refute_empty Util.dir_glob(File.join(path, pattern))
+              expect(Util.dir_glob(File.join(path, pattern)).empty?).to eq false
             end
           end
         end
 
         it 'returns the subfolder names' do
-          assert_equal subfolders, klass.types
+          expect(klass.types).to eq subfolders
         end
       end
 
@@ -312,15 +312,15 @@ describe RakeTasks::Tests do
 
         before do
           paths.each do |path|
-            assert Util.directory?(path)
+            expect(Util.directory?(path)).to eq true
             patterns.each do |pattern|
-              assert_empty Util.dir_glob(File.join(path, pattern))
+              expect(Util.dir_glob(File.join(path, pattern))).to eq []
             end
           end
         end
 
         it 'returns an empty array' do
-          assert_empty klass.types
+          expect(klass.types).to eq []
         end
       end
     end
@@ -332,21 +332,21 @@ describe RakeTasks::Tests do
 
       before do
         paths.each do |folder|
-          refute Util.directory?(folder)
+          expect(Util.directory?(folder)).to eq false
         end
       end
 
       it 'returns an empty array' do
-        assert_empty klass.types
+        expect(klass.types).to eq []
       end
     end
 
     context 'given no root folder' do
       before { stub_no_root }
-      before { refute Util.directory?(root) }
+      before { expect(Util.directory?(root)).to eq false }
 
       it 'returns an empty array' do
-        assert_empty klass.types
+        expect(klass.types).to eq []
       end
     end
   end
@@ -355,20 +355,20 @@ describe RakeTasks::Tests do
     context 'given no root folder' do
       before { stub_no_root }
       before { Util.stubs(:file?).with(any_of(nil, '')).returns false }
-      before { refute roots.any? { |r| Util.directory?(r) } }
+      before { expect(roots.any? { |r| Util.directory?(r) }).to eq false }
 
       it 'returns false' do
-        refute klass.run_rubies?
+        expect(klass.run_rubies?).to eq false
       end
     end
 
     context 'given a root folder' do
       before { stub_root }
       before { Util.stubs(:file?).with(yaml_path).returns true }
-      before { assert Util.directory?(root) }
+      before { expect(Util.directory?(root)).to eq true }
 
-      it 'returns false' do
-        assert klass.run_rubies?
+      it 'returns true' do
+        expect(klass.run_rubies?).to eq true
       end
     end
   end
@@ -377,10 +377,10 @@ describe RakeTasks::Tests do
     context 'given a root folder' do
       before { stub_root }
 
-      before { assert_equal true, Util.directory?(root) }
+      before { expect(Util.directory?(root)).to eq true }
 
       it 'returns the path to the yaml file' do
-        assert_equal yaml_path, klass.rubies_yaml
+        expect(klass.rubies_yaml).to eq yaml_path
       end
     end
   end
@@ -417,8 +417,8 @@ describe RakeTasks::Tests do
 
         wrap_output { klass.run_ruby_tests }
 
-        assert_equal seperator_count, out.scan(seperator).count
-        assert_match "#{test_count * yaml_configs.count} tests", out
+        expect(out.scan(seperator).count).to eq seperator_count
+        expect(out).to match("#{test_count * yaml_configs.count} tests")
       end
     end
 
@@ -438,7 +438,7 @@ describe RakeTasks::Tests do
         wrap_output { klass.run_ruby_tests }
 
         yaml_configs.each do |config|
-          assert_match "#{config[:ruby]} - #{config[:rake]}", out
+          expect(out).to match("#{config[:ruby]} - #{config[:rake]}")
         end
       end
     end
@@ -454,7 +454,7 @@ describe RakeTasks::Tests do
         end
 
         it "returns #{yaml_hash[:out].inspect}" do
-          assert_equal yaml_hash[:out], klass.test_configs
+          expect(klass.test_configs).to eq yaml_hash[:out]
         end
       end
     end
@@ -556,51 +556,54 @@ describe RakeTasks::Tests do
         Util.stubs(:open_file).with(ruby_shell_script, 'w').yields shell_script
       end
 
-      before { assert yaml_configs.all? { |c| c[:ruby] && c[:gemset] } }
+      before do
+        expect(yaml_configs.all? { |c| c[:ruby] && c[:gemset] }).to eq true
+      end
 
       it 'tells the shell to exit on error' do
         klass.rubies_shell_script
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal 'set -e', output.first
+        expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+        expect(output.first).to eq 'set -e'
       end
 
       it 'creates the gemset' do
         klass.rubies_shell_script
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal gemset_creates.first, output[1]
+        expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+        expect(output[1]).to eq gemset_creates.first
 
         gemset_creates.each_with_index do |gemset_create, i|
-          assert_equal gemset_create, output[i + 1]
+          expect(output[i + 1]).to eq gemset_create
         end
       end
 
       it 'installs bundler' do
         klass.rubies_shell_script
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal bundler_install, output[0 + offset]
+        expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+        expect(output[0 + offset]).to eq bundler_install
       end
 
       it 'installs gems' do
         klass.rubies_shell_script
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal bundle_install, output[1 + offset]
+        expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+        expect(output[1 + offset]).to eq bundle_install
       end
 
       it 'cleans up gems' do
         klass.rubies_shell_script
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal bundle_clean, output[2 + offset]
+        expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+        expect(output[2 + offset]).to eq bundle_clean
       end
 
       it 'runs rake' do
         klass.rubies_shell_script
-        assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-        assert_equal rake, output.last
+        expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+        expect(output.last).to eq rake
       end
 
       it 'does not install rake' do
         klass.rubies_shell_script
-        refute output.any? { |line| line.index('gem install rake') }
+        expect(output.any? { |line| line.index('gem install rake') })
+          .to eq false
       end
 
       context 'given rake is specified for all configs' do
@@ -613,38 +616,38 @@ describe RakeTasks::Tests do
         end
         let(:echoes) { rakes.select { |r| r.match(/^echo ruby: /) } }
 
-        before { assert yaml_configs.all? { |c| c[:rake] } }
+        before { expect(yaml_configs.all? { |c| c[:rake] }).to eq true }
 
         it 'installs the appropriate rake version' do
           klass.rubies_shell_script
-          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+          expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
 
           index = output.index(rake_installs.first)
-          assert_equal 3 + offset, index
+          expect(index).to eq 3 + offset
 
           yaml_configs.each_with_index do |config, i|
-            assert_equal rake_installs[i], output[index + i]
+            expect(output[index + i]).to eq rake_installs[i]
           end
         end
 
         it 'runs rake without bundle exec' do
           klass.rubies_shell_script
-          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+          expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
 
-          assert_equal rakes.last, output.last
+          expect(output.last).to eq rakes.last
 
           yaml_configs.reverse.each_with_index do |config, i|
             index = -(i + 1)
-            assert_equal rakes[index], output[index]
+            expect(output[index]).to eq rakes[index]
           end
         end
 
         it 'echoes the ruby/rake combination' do
           klass.rubies_shell_script
-          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
-          assert echoes.count > 0
+          expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
+          expect(echoes.count).to be > 0
           echoes.each do |echo|
-            assert_include output, echo
+            expect(output).to include echo
           end
         end
 
@@ -662,39 +665,39 @@ describe RakeTasks::Tests do
 
           let(:rvm_rubies) { uniq_configs.map { |c| c[:ruby] }.join(',') }
 
-          before { refute_equal yaml_configs.count, uniq_configs.count }
+          before { expect(uniq_configs.count).to_not eq yaml_configs.count }
 
           it 'creates the gemset once' do
             klass.rubies_shell_script
-            assert_equal uniq_configs.count, rvm_rubies.scan('@').count
-            assert_equal gemset_creates.first, output[1]
+            expect(rvm_rubies.scan('@').count).to eq uniq_configs.count
+            expect(output[1]).to eq gemset_creates.first
 
             gemset_creates.each do |gemset_create|
-              assert_equal 1, output.count{ |l| l.match(gemset_create) }
+              expect(output.count{ |l| l.match(gemset_create) }).to eq 1
             end
           end
 
           it 'does not repeat ruby/gemset combinations' do
             klass.rubies_shell_script
-            assert_equal uniq_configs.count, rvm_rubies.scan('@').count
+            expect(rvm_rubies.scan('@').count).to eq uniq_configs.count
 
             output.each do |line|
               if !line.match('rake') && !line.match(/rvm gemset create/) &&
                   !line.match(/set -e/)
-                assert_match(/^rvm #{rvm_rubies} do/, line)
+                expect(line).to match(/^rvm #{rvm_rubies} do/)
               end
             end
           end
 
           it 'runs rake without bundle exec' do
             klass.rubies_shell_script
-            assert_equal uniq_configs.count, rvm_rubies.scan('@').count
+            expect(rvm_rubies.scan('@').count).to eq uniq_configs.count
 
-            assert_equal rakes.last, output.last
+            expect(output.last).to eq rakes.last
 
             yaml_configs.reverse.each_with_index do |config, i|
               index = -(i + 1)
-              assert_equal rakes[index], output[index]
+              expect(output[index]).to eq rakes[index]
             end
           end
         end
@@ -712,18 +715,18 @@ describe RakeTasks::Tests do
           ]
         end
 
-        before { assert yaml_configs.any? { |c| c[:rake] } }
-        before { refute yaml_configs.all? { |c| c[:rake] } }
+        before { expect(yaml_configs.any? { |c| c[:rake] }).to eq true }
+        before { expect(yaml_configs.all? { |c| c[:rake] }).to eq false }
 
         it 'runs rake for each ruby according to the rake setting' do
           klass.rubies_shell_script
-          assert_equal yaml_configs.count, rvm_rubies.scan('@').count
+          expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
 
-          assert_equal rakes.last, output.last
+          expect(output.last).to eq rakes.last
 
           yaml_configs.reverse.each_with_index do |config, i|
             index = -(i + 1)
-            assert_equal rakes[index], output[index]
+            expect(output[index]).to eq rakes[index]
           end
         end
       end

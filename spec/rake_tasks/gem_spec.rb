@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe RakeTasks::Gem do
+RSpec.describe RakeTasks::Gem do
   let(:klass) { RakeTasks::Gem }
 
   describe '::gem_spec_file' do
@@ -9,35 +9,35 @@ describe RakeTasks::Gem do
     before { Util.stubs dir_glob: gemspecs }
 
     it 'returns a string' do
-      assert_kind_of String, klass.gem_spec_file
+      expect(klass.gem_spec_file).to be_a String
     end
 
     context 'given a single gemspec' do
       let(:gemspecs) { [Faker::Lorem.words.first] }
 
-      before { assert_equal 1, gemspecs.count }
+      before { expect(gemspecs.count).to eq 1 }
 
       it 'returns the gemspec file name' do
-        assert_equal gemspecs[0], klass.gem_spec_file
+        expect(klass.gem_spec_file).to eq gemspecs[0]
       end
     end
 
     context 'given multiple gemspecs' do
       let(:gemspecs) { Faker::Lorem.words }
 
-      before { assert gemspecs.count > 1 }
+      before { expect(gemspecs.count).to be > 1 }
 
       it 'returns the first gemspec file name' do
-        assert_equal gemspecs[0], klass.gem_spec_file
+        expect(klass.gem_spec_file).to eq gemspecs[0]
       end
     end
 
     context 'given no gemspecs' do
       let(:gemspecs) { [] }
-      before { assert_equal [], gemspecs }
+      before { expect(gemspecs).to eq [] }
 
       it 'returns nil' do
-        assert_nil klass.gem_spec_file
+        expect(klass.gem_spec_file).to eq nil
       end
     end
   end
@@ -73,7 +73,7 @@ end
         }.strip
       }
 
-      before { refute_equal old_version, new_version }
+      before { expect(new_version).to_not eq old_version }
 
       [
         "  version = '#{old_version}'",
@@ -91,21 +91,21 @@ end
             Util.stubs(:dir_glob).with('*.gemspec').returns [gemspec_file]
             Util.stubs(:open_file).with(gemspec_file, 'r').yields input
             Util.stubs(:open_file).with(gemspec_file, 'w').yields output
-            Gem::Specification.stubs(:load).with(gemspec_file).returns gemspec
+            Util.stubs(:load_gemspec).with(gemspec_file).returns gemspec
           end
 
           it 'sets the version in the gemspec file' do
             klass.version! new_version
 
             output.rewind
-            assert_match(/'#{new_version}'$/, output.read)
+            expect(output.read).to match(/'#{new_version}'$/)
           end
 
           it 'accepts the gemspec as the second parameter' do
             klass.version! new_version, gemspec
 
             output.rewind
-            assert_match(/'#{new_version}'$/, output.read)
+            expect(output.read).to match(/'#{new_version}'$/)
           end
         end
       end
@@ -113,9 +113,9 @@ end
 
     context 'given no gemspec' do
       before { Util.stubs(:dir_glob).with('*.gemspec').returns [] }
-      before { assert_nil klass.gem_spec }
+      before { expect(klass.gem_spec).to eq nil }
       it 'does nothing' do
-        assert_nothing_raised { klass.version! new_version }
+        expect{ klass.version! new_version }.to_not raise_error
       end
     end
   end

@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Util do
+RSpec.describe Util do
   let(:klass) { Util }
 
   shared_examples_for 'a delegated property' do |klass, method, delegate|
@@ -63,7 +63,7 @@ describe Util do
         block_called = true
       end
 
-      assert_equal true, block_called
+      expect(block_called).to eq true
     end
   end
 
@@ -82,7 +82,7 @@ describe Util do
 
     it 'writes an array to the file' do
       array.each_with_index do |element, i|
-        assert_equal element, written_file[i]
+        expect(written_file[i]).to eq element
       end
     end
   end
@@ -101,5 +101,9 @@ describe Util do
 
   describe '::load_yaml' do
     it_behaves_like 'a delegated property', Psych, :load_file, :load_yaml
+  end
+
+  describe '::load_gemspec' do
+    it_behaves_like 'a delegated property', Gem::Specification, :load, :load_gemspec
   end
 end

@@ -32,4 +32,8 @@ class Util
     # preferably via installing ruby with libyaml already installed.
     Psych.load_file(*args)
   end
+
+  def self.load_gemspec(*args)
+    Gem::Specification.load(*args)
+  end
 end

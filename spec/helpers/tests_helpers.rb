@@ -127,7 +127,7 @@ module TestsHelpers
 
   def stub_test_file_dir_glob(pattern, i)
     paths.each_with_index do |path, j|
-      assert_match(/\*/, pattern)
+      expect(pattern).to match(/\*/)
       add_files_to_test_file_dir_glob path, pattern, rand(4) + 1, i, j
     end
   end

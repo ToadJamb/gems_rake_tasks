@@ -50,7 +50,7 @@ module RakeTasks
 
       # Get the gem specification.
       def gem_spec
-        ::Gem::Specification.load(gem_spec_file) if gem_file?
+        Util.load_gemspec(gem_spec_file) if gem_file?
       end
 
       # Check for a gem spec file.
