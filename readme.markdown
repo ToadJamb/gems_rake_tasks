@@ -59,8 +59,19 @@ Require the gem in your Gemfile:
     gem 'rake\_tasks', '~> 3.0.0.pre'
 
 Require the gem wherever you need to use it:
+(This will load any \*.rake files in your project.)
 
     require 'rake\_tasks'
+
+Require the tasks that you want to use:
+
+    require 'rake\_tasks\tasks\doc'      # Generate readme
+    require 'rake\_tasks\tasks\cane'     # Cane rake tasks
+    require 'rake\_tasks\tasks\gem'      # Gem build, install, deploy, etc.
+    require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
+    require 'rake\_tasks\tasks\test'     # Run tests - This may get deprecated
+    require 'rake\_tasks\tasks\checksum' # Generate a checksum for \*.gem file
+
 
 Updates
 -------
@@ -69,6 +80,8 @@ Updates
 
           Tasks must be included explicitly.
           The only thing rake\_tasks does by default is load rake tasks for you.
+
+          Added cane and checksum tasks.
 
     3.0.0 Added `rake test:script` as a workaround to problems with `rake test:full`.
           For some reason the gem command no longer works for me from the shell scripts.
