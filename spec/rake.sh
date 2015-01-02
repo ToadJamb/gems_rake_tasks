@@ -23,7 +23,7 @@ do
   rvm use $i
   rvm current
   bundle check || bundle install --path vendor
-  bundle exec rake
+  bundle exec rake spec test:all
   echo "$footer$footer"
   echo
 done
