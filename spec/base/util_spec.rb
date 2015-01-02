@@ -104,6 +104,7 @@ RSpec.describe Util do
   end
 
   describe '::load_gemspec' do
-    it_behaves_like 'a delegated property', Gem::Specification, :load, :load_gemspec
+    it_behaves_like 'a delegated property',
+      Gem::Specification, :load, :load_gemspec
   end
 end
