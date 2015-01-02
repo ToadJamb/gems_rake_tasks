@@ -44,8 +44,6 @@ module RakeTasks
   }
 end
 
-task :default
-
 gem_name = File.basename(__FILE__, '.rb')
 base_path = File.dirname(__FILE__)
 
@@ -60,8 +58,6 @@ Dir[File.join(base_path, gem_name, '*.rb')].each do |lib|
 end
 
 # Require tasks.
-# These must be required in this order as
-# there is an order of precedence for the default task.
 # Using a glob, they were being required in different orders
 # in different situations.
 # Specifically, it was different depending on whether it was

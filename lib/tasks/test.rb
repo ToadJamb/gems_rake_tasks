@@ -77,7 +77,4 @@ if RakeTasks::Tests.exist?
   ############################################################################
   end # :test
   ############################################################################
-
-  Rake::Task[:default].prerequisites.clear
-  task :default => 'test:all'
 end

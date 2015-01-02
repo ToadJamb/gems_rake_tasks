@@ -73,8 +73,5 @@ if RakeTasks::Gem.gem_file?
   end # :gem
   ############################################################################
 
-  Rake::Task[:default].prerequisites.clear
-  task :default => 'gem:build'
-
   task :clobber => 'gem:clobber'
 end
