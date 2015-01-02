@@ -66,6 +66,10 @@ Updates
 -------
 
     4.0.0 No tasks are automatically added to the default rake task.
+
+          Tasks must be included explicitly.
+          The only thing rake\_tasks does by default is load rake tasks for you.
+
     3.0.0 Added `rake test:script` as a workaround to problems with `rake test:full`.
           For some reason the gem command no longer works for me from the shell scripts.
 
