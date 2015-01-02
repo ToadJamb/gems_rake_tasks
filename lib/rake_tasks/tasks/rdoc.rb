@@ -29,7 +29,6 @@
 #++
 
 require 'rdoc/task'
-require 'rake/clean'
 
 ################################################################################
 namespace :rdoc do
@@ -58,8 +57,8 @@ namespace :rdoc do
         rdtask.title = ''
         rdtask.rdoc_dir = File.join(base_path, rdoc_task.to_s)
         rdtask.options << '--charset' << 'utf8'
-        rdtask.rdoc_files.include 'README', rdoc_files[rdoc_task]
-        rdtask.main = 'README'
+        rdtask.rdoc_files.include 'readme.md', rdoc_files[rdoc_task]
+        rdtask.main = 'readme.md'
       end
 
       Rake::Task[rdoc_task].comment =
@@ -67,7 +66,12 @@ namespace :rdoc do
     end
   end
 
-  CLOBBER.include(base_path)
+  desc 'Remove all generated rdoc files'
+  task :clobber do |t|
+    rm_f 'rdoc'
+  end
 ################################################################################
 end # :rdoc
 ################################################################################
+
+task :clobber => 'rdoc:clobber'
