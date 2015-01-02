@@ -76,14 +76,14 @@ Require the tasks that you want to use:
 Updates
 -------
 
-    4.0.0 No tasks are automatically added to the default rake task.
+    3.0.0 No tasks are automatically added to the default rake task.
 
           Tasks must be included explicitly.
           The only thing rake\_tasks does by default is load rake tasks for you.
 
           Added cane and checksum tasks.
 
-    3.0.0 Added `rake test:script` as a workaround to problems with `rake test:full`.
+          Added `rake test:script` as a workaround to problems with `rake test:full`.
           For some reason the gem command no longer works for me from the shell scripts.
 
           Support for rake 0.8.7 was removed due to what appears to be issues with rspec.
