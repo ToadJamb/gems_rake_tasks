@@ -16,7 +16,11 @@ mmmm yummy
 
   s.license = 'LGPLv3'
 
-  s.extra_rdoc_files = ['README.md', 'license/gplv3.md', 'license/lgplv3.md']
+  s.extra_rdoc_files = [
+    'readme.markdown',
+    'license/gplv3.md',
+    'license/lgplv3.md',
+  ]
 
   s.require_paths = ['lib']
   s.files = Dir[
