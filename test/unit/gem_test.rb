@@ -51,14 +51,14 @@ class GemTest < Test::Unit::TestCase
     assert_nil @class.gem_spec_file
   end
 
-  test '.gem_file? returns true if the gem spec exists' do
+  test '.gemspec_file? returns true if the gem spec exists' do
     expect :gemspec_file
-    assert @class.gem_file?
+    assert @class.gemspec_file?
   end
 
-  test '.gem_file? returns false if the gem spec does not exist' do
+  test '.gemspec_file? returns false if the gem spec does not exist' do
     expect :gemspec_file, []
-    assert !@class.gem_file?
+    assert !@class.gemspec_file?
   end
 
   test '.gem_spec expects to load a gem spec' do

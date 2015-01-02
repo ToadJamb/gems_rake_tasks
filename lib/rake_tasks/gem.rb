@@ -36,8 +36,12 @@ module RakeTasks
   class Gem
     class << self
       # Check whether a gem spec file exists for this project.
-      def gem_file?
+      def gemspec_file?
         return !gem_spec_file.nil?
+      end
+
+      def gem_file?
+        return !gem_file.nil?
       end
 
       # Returns the gem title.
@@ -50,12 +54,16 @@ module RakeTasks
 
       # Get the gem specification.
       def gem_spec
-        Util.load_gemspec(gem_spec_file) if gem_file?
+        Util.load_gemspec(gem_spec_file) if gemspec_file?
       end
 
       # Check for a gem spec file.
       def gem_spec_file
         Util.dir_glob('*.gemspec').first
+      end
+
+      def gem_file
+        @gem_file ||= Util.dir_glob('*.gem').first
       end
 
       # Returns the name and version from the specified gem specification.

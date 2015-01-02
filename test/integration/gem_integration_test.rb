@@ -54,8 +54,8 @@ class GemIntegrationTest < Test::Unit::TestCase
     assert_equal Dir['*.gemspec'].first, @class.gem_spec_file
   end
 
-  def test_gem_file_exists
-    assert @class.gem_file?, "#{@class.gem_spec_file} does not exist."
+  def test_gemspec_file_exists
+    assert @class.gemspec_file?, "#{@class.gem_spec_file} does not exist."
   end
 
   def test_set_version

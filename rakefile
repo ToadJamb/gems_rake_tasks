@@ -5,6 +5,7 @@ require_relative 'lib/rake_tasks'
   'gem',
   'rdoc',
   'test',
+  'checksum',
 ].each do |task|
   require_relative File.join('lib/rake_tasks/tasks', task)
 end
