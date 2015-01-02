@@ -47,7 +47,7 @@ class DocIntegrationTest < Test::Unit::TestCase
       'Additional Notes',
       'Additional Documentation',
       "gem install #{@gem_spec.name}",
-      "gem '#{@gem_spec.name}', '~> #{@gem_spec.version}'",
+      require_gem,
       "require '#{@gem_spec.name}'",
       'rake rdoc:app',
       "the #{@gem_spec.license} license"
@@ -59,7 +59,7 @@ class DocIntegrationTest < Test::Unit::TestCase
   def test_actual_readme_contents
     contents = File.open('readme.markdown', 'r')
     assert_contains contents.read,
-      "gem '#{@gem_spec.name}', '~> #{@gem_spec.version}'"
+      require_gem.gsub('_', '\_')
   end
 
   ############################################################################
@@ -73,5 +73,9 @@ class DocIntegrationTest < Test::Unit::TestCase
 
   def readme
     @readme ||= @obj.readme_contents.join("\n")
+  end
+
+  def require_gem
+    "gem '#{@gem_spec.name}', '~> #{@gem_spec.version}'"
   end
 end
