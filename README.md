@@ -12,7 +12,7 @@ The following assumptions are currently made:
    as the root folder.
 
 * Tests reside in a folder named 'test', 'tests', or 'spec'
-   and test files are named *_test.rb or test_*.rb.
+   and test files are named \*\_test.rb or test\_\*.rb.
 
    Additionally, if you have sub-folders under test(s)
    (i.e. test/unit, test/performance), they will be available
@@ -22,20 +22,20 @@ The following assumptions are currently made:
 
    You may run a single test from any test file by using the following:
 
-    rake test:test_file[test_method]
+    rake test:test\_file[test\_method]
 
-   test_file is the name of the test file without the pattern,
-   so if you have a test named my_class_test.rb with a test method
-   named my_test_method, it would be invoked by:
+   test\_file is the name of the test file without the pattern,
+   so if you have a test named my\_class\_test.rb with a test method
+   named my\_test\_method, it would be invoked by:
 
-    rake test:my_class[my_test_method]
+    rake test:my\_class[my\_test\_method]
 
-* Additional rake tasks are named *.rake (as of 3.0.0) and reside in a folder named 'tasks'.
+* Additional rake tasks are named \*.rake (as of 3.0.0) and reside in a folder named 'tasks'.
 
 * README generation uses the gemspec data to populate the license information.
 
   If README.md does not exist, one will be created.
-  If README.md does exist, a README_GENERATED.md file will be created,
+  If README.md does exist, a README\_GENERATED.md file will be created,
   so as not to overwrite a 'real' README.md file.
 
 The default task will be set in the following order:
@@ -52,15 +52,15 @@ Getting Started
 
 Install RakeTasks at the command prompt if you haven't yet:
 
-    $ gem install rake_tasks
+    $ gem install rake\_tasks
 
 Require the gem in your Gemfile:
 
-    gem 'rake_tasks', '~> 3.0.0.pre'
+    gem 'rake\_tasks', '~> 3.0.0.pre'
 
 Require the gem wherever you need to use it:
 
-    require 'rake_tasks'
+    require 'rake\_tasks'
 
 Updates
 -------
@@ -73,7 +73,7 @@ Updates
           Custom rake tasks should now load properly from any tasks folder under the project root.
 
     2.0.6 Use markdown for generated README.
-          Convert rake_task's README to markdown and rename it to README.md.
+          Convert rake\_task's README to markdown and rename it to README.md.
 
           The gemspec is now located by extension rather than root folder.
 
@@ -82,13 +82,13 @@ Updates
     2.0.4 Added license files to the included files in the gemspec.
           Excluded Gemfile.lock from included fileo in the gemspec.
 
-    2.0.3 Added bundle_install.sh to the included files in the gemspec.
+    2.0.3 Added bundle\_install.sh to the included files in the gemspec.
 
-    2.0.2 test:[test_file] will now run all the tests in the specified file
-          if a method is not specified. It should be noted that 'test_file' is
+    2.0.2 test:[test\_file] will now run all the tests in the specified file
+          if a method is not specified. It should be noted that 'test\_file' is
           the name of the file with the test pattern removed
-          (i.e. 'my_module_test.rb' => 'my_module',
-          'test_my_module.rb' => 'my_module').
+          (i.e. 'my\_module\_test.rb' => 'my\_module',
+          'test\_my\_module.rb' => 'my\_module').
 
     2.0.1 Added test:full task (requires rvm).
 
@@ -98,9 +98,9 @@ Updates
           A common rubies.yml file might look something like this:
 
           - ruby: 1.9.2
-            gemset: my_gem_test
+            gemset: my\_gem\_test
           - ruby: 1.9.3
-            gemset: my_gem_test
+            gemset: my\_gem\_test
 
 Additional Documentation
 ------------------------
