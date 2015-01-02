@@ -1,5 +1,6 @@
 require_relative 'lib/rake_tasks'
 [
+  'cane',
   'doc',
   'gem',
   'rdoc',
@@ -15,28 +16,6 @@ RSpec::Core::RakeTask.new(:spec) do |task|
   task.ruby_opts = '-w'
   #task.rspec_opts = '--format documentation'
   #task.pattern = 'spec/**/*_save_config_spec.rb'
-end
-
-namespace :cane do
-  glob_pattern = '{bin,lib,spec,test,tasks,scripts}/**/*.{rb,rake,sh}'
-
-  desc 'Run cane to check quality metrics'
-  Cane::RakeTask.new(:quality) do |cane|
-    cane.abc_max = 9
-    cane.no_doc = true
-
-    cane.abc_glob   = glob_pattern
-    cane.style_glob = glob_pattern
-  end
-
-  desc 'Run cane to check quality metrics'
-  Cane::RakeTask.new(:warn) do |cane|
-    cane.abc_max = 8
-    cane.no_doc = true
-
-    cane.abc_glob   = glob_pattern
-    cane.style_glob = glob_pattern
-  end
 end
 
 task :default
