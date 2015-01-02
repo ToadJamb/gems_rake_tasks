@@ -28,9 +28,6 @@
 ################################################################################
 #++
 
-require 'rake/testtask'
-require 'rdoc/task'
-require 'rake/clean'
 require 'fileutils'
 require 'psych'
 
@@ -56,16 +53,6 @@ end
 Dir[File.join(base_path, gem_name, '*.rb')].each do |lib|
   require lib
 end
-
-# Require tasks.
-# Using a glob, they were being required in different orders
-# in different situations.
-# Specifically, it was different depending on whether it was
-# consumed as an installed gem or pointing to the source.
-require File.join(base_path, 'tasks', 'rdoc')
-require File.join(base_path, 'tasks', 'doc')
-require File.join(base_path, 'tasks', 'gem')
-require File.join(base_path, 'tasks', 'test')
 
 # Include any rake files in tasks folders.
 Dir[File.join(Dir.getwd, '**', 'tasks', '**', '*.rake')].each do |rake_file|
