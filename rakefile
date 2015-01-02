@@ -1,4 +1,12 @@
 require_relative 'lib/rake_tasks'
+[
+  'doc',
+  'gem',
+  'rdoc',
+  'test',
+].each do |task|
+  require_relative File.join('lib/rake_tasks/tasks', task)
+end
 
 require 'rspec/core/rake_task'
 require 'cane/rake_task'
