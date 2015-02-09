@@ -38,14 +38,6 @@ The following assumptions are currently made:
   If README.md does exist, a README\_GENERATED.md file will be created,
   so as not to overwrite a 'real' README.md file.
 
-The default task will be set in the following order:
-
-1. If tests are found, rake will run test:all.
-
-2. If tests are not found, but an appropriately named .gemspec file is,
-   gem:build will be run.
-
-3. If no tests or .gemspec are found, rdoc:app will be run.
 
 Getting Started
 ---------------
