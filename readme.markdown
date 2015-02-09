@@ -48,7 +48,7 @@ Install RakeTasks at the command prompt if you haven't yet:
 
 Require the gem in your Gemfile:
 
-    gem 'rake\_tasks', '~> 3.0.0'
+    gem 'rake\_tasks', '~> 3.0.1'
 
 Require the gem wherever you need to use it:
 (This will load any \*.rake files in your project.)
@@ -64,9 +64,20 @@ Require the tasks that you want to use:
     require 'rake\_tasks\tasks\test'     # Run tests - This may get deprecated
     require 'rake\_tasks\tasks\checksum' # Generate a checksum for \*.gem file
 
+Tasks
+-----
+
+### gem:push
+
+`gem:push` requires that an environment variable named `RUBYGEMS_API_KEY` is set.
+This key is used to identify the author when pushing to rubygems.
+After authenticating on the command line, this value will be saved to `~/.gem/credentials`.
+
 
 Updates
 -------
+
+    3.0.1 Add gem:push.
 
     3.0.0 No tasks are automatically added to the default rake task.
 

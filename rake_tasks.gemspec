@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '3.0.0'
+  s.version = '3.0.1'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
@@ -31,6 +31,8 @@ mmmm yummy
     'license/*'] -
     Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
+
+  s.add_dependency 'gems'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'mocha'

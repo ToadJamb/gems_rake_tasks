@@ -84,6 +84,13 @@ module RakeTasks
         write_file gem_spec_file, temp
       end
 
+      def push
+        Gems.configure do |config|
+          config.key = ENV['RUBYGEMS_API_KEY']
+        end
+        Gems.push File.new(gem_file)
+      end
+
       private
 
       # Write the contents of a stream to a file.

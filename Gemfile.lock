@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    rake_tasks (3.0.0)
+    rake_tasks (3.0.1)
+      gems
 
 GEM
   remote: http://rubygems.org/
@@ -11,6 +12,7 @@ GEM
     diff-lcs (1.2.5)
     faker (1.1.2)
       i18n (~> 0.5)
+    gems (0.8.3)
     i18n (0.7.0)
     metaclass (0.0.4)
     mocha (1.1.0)

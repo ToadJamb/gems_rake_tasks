@@ -29,6 +29,8 @@
 #++
 
 if RakeTasks::Gem.gemspec_file?
+  require 'gems'
+
   ############################################################################
   namespace :gem do
   ############################################################################
@@ -67,6 +69,13 @@ if RakeTasks::Gem.gemspec_file?
         gem_spec = RakeTasks::Gem.gem_spec
         puts RakeTasks::Gem.version(gem_spec)
       end
+    end
+
+    desc 'Push the gem to rubygems'
+    task :push do
+      response = RakeTasks::Gem.push
+      puts response
+      exit(1) unless response.match(/Successfully registered gem/)
     end
 
   ############################################################################
