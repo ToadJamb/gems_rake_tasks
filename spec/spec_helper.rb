@@ -16,7 +16,6 @@ puts Benchmark.measure('app') {
 
 puts Benchmark.measure('specs') {
   require_relative 'support/quiet_require'
-  require 'faker'
   require 'rspec'
   require 'mocha/api'
 
