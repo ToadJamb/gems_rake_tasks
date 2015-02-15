@@ -1,1 +1,1 @@
-quiet_require 'faker'
+require_quietly 'faker'

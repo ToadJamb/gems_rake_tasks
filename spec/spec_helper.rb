@@ -15,7 +15,7 @@ puts Benchmark.measure('app') {
 }.format(benchmark_format)
 
 puts Benchmark.measure('specs') {
-  require_relative 'support/quiet_require'
+  require_relative 'support/require_quietly'
   require 'rspec'
   require 'mocha/api'
 
