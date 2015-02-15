@@ -1,5 +1,9 @@
 TODO
 ====
 
-* Use a class method on Doc to specify readme name for consistency.
 * Only load rake tasks in lib or tasks.
+* Add spec tasks.
+* Move gems dependency to development.
+* Add warnings/errors when dependencies are not met.
+* Tests for gem:push.
+* Use a class method on Doc to specify readme name for consistency.
