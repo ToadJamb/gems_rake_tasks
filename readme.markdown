@@ -6,37 +6,17 @@ building and installing gems, and running tests.
 It will also load additional rake tasks if they are in a folder named 'tasks'.
 mmmm yummy
 
-The following assumptions are currently made:
 
-* There is a valid .gemspec file in the root folder that is named the same
-   as the root folder.
+Dependency Philosophy
+---------------------
 
-* Tests reside in a folder named 'test', 'tests', or 'spec'
-   and test files are named \*\_test.rb or test\_\*.rb.
+This gem potentially adds a number of (hopefully) useful tasks.
+However, it is probably rare that a given project
+will actually make use of all of them at once.
+To that end, *dependencies are expected to be included by the application
+that is consuming this gem*.
 
-   Additionally, if you have sub-folders under test(s)
-   (i.e. test/unit, test/performance), they will be available
-   using rake test:unit and rake test:performance.
-   Sub-folders that do not contain files matching the test file name patterns
-   will not be included in this set.
-
-   You may run a single test from any test file by using the following:
-
-    rake test:test\_file[test\_method]
-
-   test\_file is the name of the test file without the pattern,
-   so if you have a test named my\_class\_test.rb with a test method
-   named my\_test\_method, it would be invoked by:
-
-    rake test:my\_class[my\_test\_method]
-
-* Additional rake tasks are named \*.rake (as of 3.0.0) and reside in a folder named 'tasks'.
-
-* README generation uses the gemspec data to populate the license information.
-
-  If README.md does not exist, one will be created.
-  If README.md does exist, a README\_GENERATED.md file will be created,
-  so as not to overwrite a 'real' README.md file.
+Per-task requirements are noted in the [Tasks][tasks] section below.
 
 
 Getting Started
@@ -64,20 +44,81 @@ Require the tasks that you want to use:
     require 'rake\_tasks\tasks\test'     # Run tests - This may get deprecated
     require 'rake\_tasks\tasks\checksum' # Generate a checksum for \*.gem file
 
+
 Tasks
 -----
 
-### gem:push
+Additional rake tasks will be found and loaded
+if they are named \*.rake (as of 3.0.0)
+and reside in either `lib\tasks` or  `tasks` (as of 3.0.1).
 
-`gem:push` requires that an environment variable named `RUBYGEMS_API_KEY` is set.
+
+### Gem Tasks
+
+#### Dependencies
+
+* [gems][gems]
+
+
+#### Requirements
+
+* There is a valid .gemspec file in the root folder that is named the same
+   as the root folder.
+
+
+#### gem:push
+
+`gem:push` requires that an environment variable
+named `RUBYGEMS_API_KEY` is set.
 This key is used to identify the author when pushing to rubygems.
-After authenticating on the command line, this value will be saved to `~/.gem/credentials`.
+After authenticating on the command line,
+this value will be saved to `~/.gem/credentials`.
+
+
+### Doc Tasks
+
+#### Requirements
+
+* There is a valid .gemspec file in the root folder that is named the same
+   as the root folder.
+
+* README generation uses the gemspec data to populate the license information.
+
+  If readem.md does not exist, one will be created.
+  If readem.md does exist, a readem\_GENERATED.md file will be created,
+  so as not to overwrite a 'real' readem.md file.
+
+
+### Test Tasks
+
+* Tests reside in a folder named 'test', 'tests', or 'spec'
+   and test files are named \*\_test.rb or test\_\*.rb.
+
+   Additionally, if you have sub-folders under test(s)
+   (i.e. test/unit, test/performance), they will be available
+   using rake test:unit and rake test:performance.
+   Sub-folders that do not contain files matching the test file name patterns
+   will not be included in this set.
+
+   You may run a single test from any test file by using the following:
+
+    rake test:test\_file[test\_method]
+
+   test\_file is the name of the test file without the pattern,
+   so if you have a test named my\_class\_test.rb with a test method
+   named my\_test\_method, it would be invoked by:
+
+    rake test:my\_class[my\_test\_method]
 
 
 Updates
 -------
 
+
     3.0.1 Add gem:push.
+
+          Gems dependency moved to a development dependency,
+          so it must now be included explicitly in your project.
 
     3.0.0 No tasks are automatically added to the default rake task.
 
@@ -86,12 +127,18 @@ Updates
 
           Added cane and checksum tasks.
 
-          Added `rake test:script` as a workaround to problems with `rake test:full`.
-          For some reason the gem command no longer works for me from the shell scripts.
+          Added `rake test:script` as a workaround
+          to problems with `rake test:full`.
+          For some reason the gem command no longer works
+          for me from the shell scripts.
 
-          Support for rake 0.8.7 was removed due to what appears to be issues with rspec.
+          Support for rake 0.8.7 was removed due
+          to what appears to be issues with rspec.
 
-          Custom rake tasks should now load properly from any tasks folder under the project root.
+          Custom rake tasks should now load properly from any tasks folder
+          under the project root.
+
+          Generated README.md is now named readme.md (lowercase).
 
     2.0.6 Use markdown for generated README.
           Convert rake\_task's README to markdown and rename it to README.md.
@@ -128,7 +175,12 @@ Additional Documentation
 
     rake rdoc:app
 
+
 License
 -------
 
 RakeTasks is released under the LGPLv3 license.
+
+
+[gems]:	https://github.com/rubygems/gems
+[tasks]: #Tasks
