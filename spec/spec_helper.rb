@@ -14,19 +14,19 @@ puts Benchmark.measure('app') {
   require_relative '../lib/rake_tasks'
 }.format(benchmark_format)
 
-puts Benchmark.measure('specs') {
-  require_relative 'support/require_quietly'
-  require 'rspec'
-  require 'mocha/api'
+require_relative 'support/require_quietly'
 
-  base = File.expand_path(File.dirname(__FILE__))
-  path = File.join(base, 'support')
-  Dir["#{path}/**/*.rb"].each do |file|
-    require file
-  end
+# Must be required in this order
+require 'rspec'
+require 'mocha/api'
 
-  path = File.join(base, 'helpers')
-  Dir["#{path}/**/*.rb"].each do |file|
-    require file
-  end
-}.format(benchmark_format)
+base = File.expand_path(File.dirname(__FILE__))
+path = File.join(base, 'support')
+Dir["#{path}/**/*.rb"].each do |file|
+  require file
+end
+
+path = File.join(base, 'helpers')
+Dir["#{path}/**/*.rb"].each do |file|
+  require file
+end
