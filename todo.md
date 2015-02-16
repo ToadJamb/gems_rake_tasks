@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Upgrade rspec.
 * Use rspec-mocks instead of mocha.
 * Add spec tasks.
 * Move gems dependency to development.
