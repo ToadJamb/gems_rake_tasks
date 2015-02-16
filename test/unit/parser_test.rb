@@ -47,7 +47,7 @@ class ParserTest < Test::Unit::TestCase
   def test_lines_should_print
     printable_lines.each do |line|
       wrap_output { @obj.parse line }
-      assert_match line.chomp + '\Z', out
+      assert out.match(/#{line.chomp}\Z/)
     end
     assert_equal printable_lines.join(''), out
   end
