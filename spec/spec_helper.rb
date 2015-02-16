@@ -1,8 +1,5 @@
 require File.expand_path('spec/support/lib') # Must be first
 
-require 'rspec'     # Must be before mocha/api
-require 'mocha/api' # Must be after rspec
-
 # Must be before spec/support
 require File.expand_path('spec/support/require_quietly')
 

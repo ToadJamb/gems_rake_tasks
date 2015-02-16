@@ -36,7 +36,6 @@ mmmm yummy
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'test-unit'
-  s.add_development_dependency 'mocha'
   s.add_development_dependency 'cane'
   s.add_development_dependency 'faker'
 

@@ -1,5 +1,7 @@
+require 'rspec'
+
 RSpec.configure do |config|
-  config.mock_framework = :mocha
+  config.mock_framework = :rspec
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
