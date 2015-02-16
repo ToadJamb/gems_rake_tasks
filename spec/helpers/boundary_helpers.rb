@@ -1,10 +1,14 @@
-module BoundaryHelpers
-  def not_implemented(klass, method)
-    klass.stubs(method).raises NotImplementedError,
-      "#{klass}.#{method} has been stubbed as not implemented."
+module RakeTasksRakeHelpers
+  module BoundaryHelpers
+    def not_implemented(klass, method)
+      allow(klass)
+        .to receive(method)
+        .and_raise NotImplementedError,
+          "#{klass}.#{method} has been stubbed as not implemented."
+    end
   end
 end
 
 RSpec.configure do |config|
-  include BoundaryHelpers
+  include RakeTasksRakeHelpers::BoundaryHelpers
 end
