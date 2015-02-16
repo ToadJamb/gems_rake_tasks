@@ -18,12 +18,14 @@ rubies=(
 header='****************************************'
 footer='----------------------------------------'
 
+bundle config --local path vendor
+
 for i in "${rubies[@]}"
 do
   echo "$header$header"
   rvm use $i
   rvm current
-  bundle check || bundle install --path vendor
+  bundle check || bundle install
   bundle clean --force
   bundle exec rake
   echo "$footer$footer"
