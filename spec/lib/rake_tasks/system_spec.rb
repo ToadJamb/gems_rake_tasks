@@ -9,33 +9,33 @@ RSpec.describe RakeTasks::System do
 
     before do
       delegate ||= method
-      described_class.unstub delegate
+      allow(described_class).to receive(delegate).and_call_original
     end
 
     context 'given no arguments are passed' do
       it "calls #{klass}.#{method} with no arguments" do
-        klass.expects(method).with
+        expect(klass).to receive(method).with no_args
         described_class.send delegate
       end
     end
 
     context 'given 1 argument is passed' do
       it "calls #{klass}.#{method} with 1 argument" do
-        klass.expects(method).with arg1
+        expect(klass).to receive(method).with arg1
         described_class.send delegate, arg1
       end
     end
 
     context 'given 3 arguments are passed' do
       it "calls #{klass}.#{method} with 3 arguments" do
-        klass.expects(method).with arg1, arg2, arg3
+        expect(klass).to receive(method).with arg1, arg2, arg3
         described_class.send delegate, arg1, arg2, arg3
       end
     end
 
     context 'given multiple arguments are passed, followed by a hash' do
       it "calls #{klass}.#{method} with appropriate arguments" do
-        klass.expects(method).with arg1, arg2, arg3, arg4
+        expect(klass).to receive(method).with arg1, arg2, arg3, arg4
         described_class.send delegate, arg1, arg2, arg3, arg4
       end
     end
