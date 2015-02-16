@@ -30,6 +30,7 @@
 
 require 'fileutils'
 require 'psych'
+require 'rake'
 
 module RakeTasks
   # Contains the full path to the shell script to run tests in other env's.
@@ -54,7 +55,8 @@ Dir[File.join(base_path, gem_name, '*.rb')].each do |lib|
   require lib
 end
 
-# Include any rake files in tasks folders.
-Dir[File.join(Dir.getwd, '**', 'tasks', '**', '*.rake')].each do |rake_file|
-  import rake_file
+module RakeTasks
+  extend Core
 end
+
+RakeTasks.load_tasks
