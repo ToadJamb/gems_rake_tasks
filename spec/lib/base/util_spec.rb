@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Util do
-  let(:klass) { Util }
-
   shared_examples_for 'a delegated property' do |klass, method, delegate|
     let(:test_class) { Util }
     let(:arg1) { Faker::Lorem.word }
@@ -55,11 +53,11 @@ RSpec.describe Util do
     it_behaves_like 'a delegated property', File, :open, :open_file
 
     it 'accepts a block and passes it to File.open' do
-      klass.unstub :open_file
+      described_class.unstub :open_file
       File.expects(:open).with(arg1, arg2).yields
 
       block_called = false
-      klass.open_file arg1, arg2 do
+      described_class.open_file arg1, arg2 do
         block_called = true
       end
 
@@ -76,9 +74,11 @@ RSpec.describe Util do
       file_content.read.to_s.split("\n")
     end
 
-    before { klass.unstub :write_file }
-    before { Util.expects(:open_file).with(file, 'w').yields file_content }
-    before { klass.write_file file, array }
+    before do
+      described_class.unstub :write_file
+      described_class.expects(:open_file).with(file, 'w').yields file_content
+      described_class.write_file file, array
+    end
 
     it 'writes an array to the file' do
       array.each_with_index do |element, i|

@@ -33,23 +33,6 @@
 # Monkey patch Test::Unit::TestCase.
 module Test::Unit
   class TestCase
-    # Converts a string to a function that is used as a test.
-    # ==== Input
-    # [test_name : String] The name to use for the test.
-    # [&block : Block] The code that will be run.
-    # ==== Examples
-    # The best examples are in the tests.
-    def self.test(test_name, &block)
-      class_name = test_class
-
-      test_name = "#{class_name}#{test_name}" if test_name.match(/^[#\.]/)
-      test_name = "test #{test_name} "
-
-      test_method_name = test_name.to_sym
-
-      define_method(test_method_name, &block)
-    end
-
     # Returns the name of the class that is being tested.
     # ==== Output
     # [String] The class that is being tested. nil if not found.

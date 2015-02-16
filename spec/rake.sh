@@ -12,18 +12,22 @@ rubies=(
   1.9.3-p547
   2.0.0-p481
   2.1.2
+  2.2.0
 )
 
 header='****************************************'
 footer='----------------------------------------'
+
+bundle config --local path vendor
 
 for i in "${rubies[@]}"
 do
   echo "$header$header"
   rvm use $i
   rvm current
-  bundle check || bundle install --path vendor
-  bundle exec rake spec test:all
+  bundle check || bundle install
+  bundle clean --force
+  bundle exec rake
   echo "$footer$footer"
   echo
 done
