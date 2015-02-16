@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Run default rake task in rake script.
 * Upgrade rspec.
 * Add spec tasks.
 * Move gems dependency to development.
