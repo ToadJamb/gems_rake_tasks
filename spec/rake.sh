@@ -27,6 +27,15 @@ do
   rvm current
   bundle check || bundle install
   bundle clean --force
+  echo "$footer$footer"
+  echo
+done
+
+for i in "${rubies[@]}"
+do
+  echo "$header$header"
+  rvm use $i
+  rvm current
   bundle exec rake
   echo "$footer$footer"
   echo
