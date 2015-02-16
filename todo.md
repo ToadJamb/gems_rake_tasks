@@ -10,4 +10,3 @@ TODO
 * Use a class method on Doc to specify readme name for consistency.
 * Use rspec-mocks instead of mocha.
 * Migrate Util methods to System
-* Upgrade Ruby
