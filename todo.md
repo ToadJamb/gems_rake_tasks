@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Only load rake tasks in lib or tasks.
 * Run default rake task in rake script.
 * Upgrade rspec.
 * Add spec tasks.
