@@ -5,12 +5,12 @@ RSpec.describe RakeTasks::Tests do
 
   let(:klass) { RakeTasks::Tests }
 
-  roots = [
+  root_list = [
     'test',
     'tests',
     'spec',
   ]
-  let(:roots) { roots }
+  let(:roots) { root_list }
 
   patterns = [
     '*_test.rb',
@@ -24,15 +24,15 @@ RSpec.describe RakeTasks::Tests do
   let(:yaml_path) { File.join('.', root, 'rubies.yml') }
 
   let(:pids) do
-    pids = []
+    list = []
     yaml_configs.count.times do
       pid = rand(98) + 1
-      while pids.include?(pid)
+      while list.include?(pid)
         pid = rand(98) + 1
       end
-      pids << pid
+      list << pid
     end
-    pids
+    list
   end
 
   describe '::ROOTS' do
@@ -44,9 +44,9 @@ RSpec.describe RakeTasks::Tests do
       expect(klass::ROOTS.count).to eq roots.count
     end
 
-    roots.each do |root|
-      it "contains #{root.inspect}" do
-        expect(klass::ROOTS).to include root
+    root_list.each do |root_item|
+      it "contains #{root_item.inspect}" do
+        expect(klass::ROOTS).to include root_item
       end
     end
   end
@@ -105,8 +105,11 @@ RSpec.describe RakeTasks::Tests do
           patterns.each do |pattern|
             Util.stubs(:dir_glob).with(File.join(root, pattern)).returns []
 
-            paths.each do |path|
-              Util.stubs(:dir_glob).with(File.join(path, pattern)).returns []
+            paths.each do |path_item|
+              Util
+                .stubs(:dir_glob)
+                .with(File.join(path_item, pattern))
+                .returns []
             end
           end
         end
@@ -125,8 +128,9 @@ RSpec.describe RakeTasks::Tests do
           patterns.each do |pattern|
             expect(Util.dir_glob(File.join(root, pattern)).empty?).to eq false
 
-            paths.each do |path|
-              expect(Util.dir_glob(File.join(path, pattern)).empty?).to eq false
+            paths.each do |path_item|
+              expect(Util.dir_glob(File.join(path_item, pattern)).empty?)
+                .to eq false
             end
           end
         end
@@ -146,8 +150,8 @@ RSpec.describe RakeTasks::Tests do
 
       before do
         root_count = 0
-        roots.each do |root|
-          root_count += 1 if Util.directory?(root)
+        roots.each do |root_item|
+          root_count += 1 if Util.directory?(root_item)
         end
         expect(root_count).to eq 1
       end
@@ -173,8 +177,8 @@ RSpec.describe RakeTasks::Tests do
       before { expect(klass::ROOTS.count).to be > 1 }
 
       before do
-        klass::ROOTS.each do |root|
-          expect(Util.directory?(root)).to eq true
+        klass::ROOTS.each do |root_item|
+          expect(Util.directory?(root_item)).to eq true
         end
       end
 
