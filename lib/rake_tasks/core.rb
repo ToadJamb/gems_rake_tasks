@@ -9,7 +9,9 @@ module RakeTasks
     private
 
     def task_list
-      System.dir File.join(System.pwd, '**', 'tasks', '**', '*.rake')
+      tasks = System.dir(File.join(System.pwd, 'lib', 'tasks', '**', '*.rake'))
+      tasks << System.dir(File.join(System.pwd, 'tasks', '**', '*.rake'))
+      tasks.flatten
     end
   end
 end
