@@ -2,42 +2,41 @@ require 'spec_helper'
 
 RSpec.describe Util do
   shared_examples_for 'a delegated property' do |klass, method, delegate|
-    let(:test_class) { Util }
-    let(:arg1) { Faker::Lorem.word }
-    let(:arg2) { Faker::Lorem.word }
-    let(:arg3) { { k1: :v1 } }
-    let(:arg4) { { k2: :v2 } }
+    let(:arg1) { 'abc' }
+    let(:arg2) { 'def' }
+    let(:arg3) { { :k1 => :v1 } }
+    let(:arg4) { { :k2 => :v2 } }
 
     before do
       delegate ||= method
-      test_class.unstub delegate
+      allow(described_class).to receive(delegate).and_call_original
     end
 
     context 'given no arguments are passed' do
       it "calls #{klass}.#{method} with no arguments" do
-        klass.expects(method).with
-        test_class.send delegate
+        expect(klass).to receive(method).with no_args
+        described_class.send delegate
       end
     end
 
     context 'given 1 argument is passed' do
       it "calls #{klass}.#{method} with 1 argument" do
-        klass.expects(method).with arg1
-        test_class.send delegate, arg1
+        expect(klass).to receive(method).with arg1
+        described_class.send delegate, arg1
       end
     end
 
     context 'given 3 arguments are passed' do
       it "calls #{klass}.#{method} with 3 arguments" do
-        klass.expects(method).with arg1, arg2, arg3
-        test_class.send delegate, arg1, arg2, arg3
+        expect(klass).to receive(method).with arg1, arg2, arg3
+        described_class.send delegate, arg1, arg2, arg3
       end
     end
 
     context 'given multiple arguments are passed, followed by a hash' do
       it "calls #{klass}.#{method} with appropriate arguments" do
-        klass.expects(method).with arg1, arg2, arg3, arg4
-        test_class.send delegate, arg1, arg2, arg3, arg4
+        expect(klass).to receive(method).with arg1, arg2, arg3, arg4
+        described_class.send delegate, arg1, arg2, arg3, arg4
       end
     end
   end
@@ -53,8 +52,8 @@ RSpec.describe Util do
     it_behaves_like 'a delegated property', File, :open, :open_file
 
     it 'accepts a block and passes it to File.open' do
-      described_class.unstub :open_file
-      File.expects(:open).with(arg1, arg2).yields
+      allow(described_class).to receive(:open_file).and_call_original
+      expect(File).to receive(:open).with(arg1, arg2).and_yield
 
       block_called = false
       described_class.open_file arg1, arg2 do
@@ -75,8 +74,11 @@ RSpec.describe Util do
     end
 
     before do
-      described_class.unstub :write_file
-      described_class.expects(:open_file).with(file, 'w').yields file_content
+      allow(described_class).to receive(:write_file).and_call_original
+      expect(described_class)
+        .to receive(:open_file)
+        .with(file, 'w')
+        .and_yield file_content
       described_class.write_file file, array
     end
 
