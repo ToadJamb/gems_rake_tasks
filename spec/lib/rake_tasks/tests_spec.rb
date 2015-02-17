@@ -3,8 +3,6 @@ require 'spec_helper'
 RSpec.describe RakeTasks::Tests do
   include TestsHelpers
 
-  let(:klass) { RakeTasks::Tests }
-
   root_list = [
     'test',
     'tests',
@@ -37,32 +35,32 @@ RSpec.describe RakeTasks::Tests do
 
   describe '::ROOTS' do
     it 'contains at least one element' do
-      expect(klass::ROOTS.count).to be > 0
+      expect(described_class::ROOTS.count).to be > 0
     end
 
     it 'has the correct number of elements' do
-      expect(klass::ROOTS.count).to eq roots.count
+      expect(described_class::ROOTS.count).to eq roots.count
     end
 
     root_list.each do |root_item|
       it "contains #{root_item.inspect}" do
-        expect(klass::ROOTS).to include root_item
+        expect(described_class::ROOTS).to include root_item
       end
     end
   end
 
   describe '::PATTERNS' do
     it 'contains at least one element' do
-      expect(klass::PATTERNS.count).to be > 0
+      expect(described_class::PATTERNS.count).to be > 0
     end
 
     it 'has the correct number of elements' do
-      expect(klass::PATTERNS.count).to eq patterns.count
+      expect(described_class::PATTERNS.count).to eq patterns.count
     end
 
     patterns.each do |pattern|
       it "contains #{pattern.inspect}" do
-        expect(klass::PATTERNS).to include pattern
+        expect(described_class::PATTERNS).to include pattern
       end
     end
   end
@@ -76,7 +74,7 @@ RSpec.describe RakeTasks::Tests do
     ].each do |task|
       context "given a file of #{task.last}" do
         it "returns #{task.first}" do
-          expect(klass.task_name(task.last)).to eq task.first
+          expect(described_class.task_name(task.last)).to eq task.first
         end
       end
     end
@@ -88,36 +86,39 @@ RSpec.describe RakeTasks::Tests do
       before { expect(Util.directory?(root)).to eq false }
 
       it 'returns false' do
-        expect(klass.exist?).to eq false
+        expect(described_class.exist?).to eq false
       end
     end
 
     context 'given a root folder' do
       before { stub_root }
+      before { stub_paths }
+
+      before { expect(patterns.count).to be > 0 }
 
       before { expect(Util.directory?(root)).to eq true }
 
       context 'given no test files' do
         before do
-          Util.stubs(:directory?).with(any_of(*paths)).returns true
-          Util.stubs(:dir_glob).with("#{root}/**").returns paths
-
           patterns.each do |pattern|
-            Util.stubs(:dir_glob).with(File.join(root, pattern)).returns []
+            allow(Util)
+              .to receive(:dir_glob)
+              .with(File.join(root, pattern))
+              .and_return []
 
             paths.each do |path_item|
-              Util
-                .stubs(:dir_glob)
+              allow(Util)
+                .to receive(:dir_glob)
                 .with(File.join(path_item, pattern))
-                .returns []
+                .and_return []
             end
           end
         end
 
-        before { expect(klass.file_list).to eq [] }
+        before { expect(described_class.file_list).to eq [] }
 
         it 'returns false' do
-          expect(klass.exist?).to eq false
+          expect(described_class.exist?).to eq false
         end
       end
 
@@ -136,7 +137,7 @@ RSpec.describe RakeTasks::Tests do
         end
 
         it 'returns true' do
-          expect(klass.exist?).to eq true
+          expect(described_class.exist?).to eq true
         end
       end
     end
@@ -146,7 +147,7 @@ RSpec.describe RakeTasks::Tests do
     before { stub_no_root }
 
     context 'given a root test folder exists' do
-      before { Util.stubs(:directory?).with(root).returns true }
+      before { allow(Util).to receive(:directory?).with(root).and_return true }
 
       before do
         root_count = 0
@@ -157,7 +158,7 @@ RSpec.describe RakeTasks::Tests do
       end
 
       it 'returns the folder name' do
-        expect(klass.root).to eq root
+        expect(described_class.root).to eq root
       end
     end
 
@@ -165,35 +166,39 @@ RSpec.describe RakeTasks::Tests do
       before { expect(roots.any? { |r| Util.directory?(r) }).to eq false }
 
       it 'returns nil' do
-        expect(klass.root).to eq nil
+        expect(described_class.root).to eq nil
       end
     end
 
     context 'given multiple root folders exist' do
       before do
-        roots.each { |r| Util.stubs(:directory?).with(r).returns true }
+        roots.each do |root_item|
+          allow(Util).to receive(:directory?).with(root_item).and_return true
+        end
       end
 
-      before { expect(klass::ROOTS.count).to be > 1 }
+      before { expect(described_class::ROOTS.count).to be > 1 }
 
       before do
-        klass::ROOTS.each do |root_item|
+        described_class::ROOTS.each do |root_item|
           expect(Util.directory?(root_item)).to eq true
         end
       end
 
       it 'returns the first one' do
-        expect(klass.root).to eq klass::ROOTS.first
+        expect(described_class.root).to eq described_class::ROOTS.first
       end
     end
   end
 
   describe '::file_list' do
+    before { stub_root }
+    before { stub_paths }
     before { stub_test_files }
 
     context 'by default' do
       it 'returns files in the test folder' do
-        expect(klass.file_list).to eq @files
+        expect(described_class.file_list).to eq @files
       end
     end
 
@@ -204,16 +209,18 @@ RSpec.describe RakeTasks::Tests do
       before { expect(type_files.count).to be > 0 }
 
       it 'returns only files for that type' do
-        expect(klass.file_list(type)).to eq type_files
+        expect(described_class.file_list(type)).to eq type_files
       end
     end
   end
 
   describe '::paths' do
+    before { stub_root }
+    before { stub_paths }
     before { stub_test_files }
 
     it 'returns the paths that contain test files' do
-      expect(klass.paths).to eq [root].push(paths).flatten
+      expect(described_class.paths).to eq [root].push(paths).flatten
     end
 
     context 'given a specific type' do
@@ -224,7 +231,7 @@ RSpec.describe RakeTasks::Tests do
         before { expect(type).to be_a Symbol }
 
         it 'returns the path for that type' do
-          expect(klass.paths(type)).to eq [path]
+          expect(described_class.paths(type)).to eq [path]
         end
       end
 
@@ -234,7 +241,7 @@ RSpec.describe RakeTasks::Tests do
         before { expect(type).to be_a String }
 
         it 'returns the path for that type' do
-          expect(klass.paths(type)).to eq [path]
+          expect(described_class.paths(type)).to eq [path]
         end
       end
 
@@ -244,11 +251,11 @@ RSpec.describe RakeTasks::Tests do
         before { expect(type).to eq :all }
 
         it 'includes the root path' do
-          expect(klass.paths(type)).to include root
+          expect(described_class.paths(type)).to include root
         end
 
         it 'includes all paths' do
-          expect(klass.paths(type)).to eq [root].push(paths).flatten
+          expect(described_class.paths(type)).to eq [root].push(paths).flatten
         end
       end
     end
@@ -258,22 +265,16 @@ RSpec.describe RakeTasks::Tests do
       before { expect(Util.directory?(root)).to eq false }
 
       it 'returns an empty array' do
-        expect(klass.paths).to eq []
+        expect(described_class.paths).to eq []
       end
     end
   end
 
   describe '::types' do
-    before do
-      Util.stubs directory?: false
-      Util.stubs(:directory?).with(root).returns true
-      Util.stubs(:dir_glob).with("#{root}/**").returns paths
-    end
+    before { stub_root }
 
     context 'given subfolders of the test folder' do
-      before do
-        Util.stubs(:directory?).with(any_of(*paths)).returns true
-      end
+      before { stub_paths }
 
       before do
         expect(subfolders.count).to be > 1
@@ -286,7 +287,10 @@ RSpec.describe RakeTasks::Tests do
         before do
           paths.each do |path|
             patterns.each do |pattern|
-              Util.stubs(:dir_glob).with(File.join(path, pattern)).returns [1]
+              allow(Util)
+                .to receive(:dir_glob)
+                .with(File.join(path, pattern))
+                .and_return [1]
             end
           end
         end
@@ -301,7 +305,7 @@ RSpec.describe RakeTasks::Tests do
         end
 
         it 'returns the subfolder names' do
-          expect(klass.types).to eq subfolders
+          expect(described_class.types).to eq subfolders
         end
       end
 
@@ -309,7 +313,10 @@ RSpec.describe RakeTasks::Tests do
         before do
           patterns.each do |pattern|
             paths.each do |path|
-              Util.stubs(:dir_glob).with(File.join(path, pattern)).returns []
+              allow(Util)
+                .to receive(:dir_glob)
+                .with(File.join(path, pattern))
+                .and_return []
             end
           end
         end
@@ -324,14 +331,14 @@ RSpec.describe RakeTasks::Tests do
         end
 
         it 'returns an empty array' do
-          expect(klass.types).to eq []
+          expect(described_class.types).to eq []
         end
       end
     end
 
     context 'given only files in the test folder' do
       before do
-        Util.stubs(:dir_glob).with("#{root}/**").returns paths
+        allow(Util).to receive(:dir_glob).with("#{root}/**").and_return paths
       end
 
       before do
@@ -341,7 +348,7 @@ RSpec.describe RakeTasks::Tests do
       end
 
       it 'returns an empty array' do
-        expect(klass.types).to eq []
+        expect(described_class.types).to eq []
       end
     end
 
@@ -350,7 +357,7 @@ RSpec.describe RakeTasks::Tests do
       before { expect(Util.directory?(root)).to eq false }
 
       it 'returns an empty array' do
-        expect(klass.types).to eq []
+        expect(described_class.types).to eq []
       end
     end
   end
@@ -358,21 +365,29 @@ RSpec.describe RakeTasks::Tests do
   describe '::run_rubies?' do
     context 'given no root folder' do
       before { stub_no_root }
-      before { Util.stubs(:file?).with(any_of(nil, '')).returns false }
+      before do
+        [nil, ''].each do |file_name|
+          allow(Util)
+            .to receive(:file?)
+            .with(file_name)
+            .and_return false
+        end
+      end
+
       before { expect(roots.any? { |r| Util.directory?(r) }).to eq false }
 
       it 'returns false' do
-        expect(klass.run_rubies?).to eq false
+        expect(described_class.run_rubies?).to eq false
       end
     end
 
     context 'given a root folder' do
       before { stub_root }
-      before { Util.stubs(:file?).with(yaml_path).returns true }
+      before { allow(Util).to receive(:file?).with(yaml_path).and_return true }
       before { expect(Util.directory?(root)).to eq true }
 
       it 'returns true' do
-        expect(klass.run_rubies?).to eq true
+        expect(described_class.run_rubies?).to eq true
       end
     end
   end
@@ -384,13 +399,14 @@ RSpec.describe RakeTasks::Tests do
       before { expect(Util.directory?(root)).to eq true }
 
       it 'returns the path to the yaml file' do
-        expect(klass.rubies_yaml).to eq yaml_path
+        expect(described_class.rubies_yaml).to eq yaml_path
       end
     end
   end
 
   describe '::run_ruby_tests' do
-    let(:yaml_configs) { yaml_config_list 3 }
+    # Increase the yaml_config count to see test_output not get cached/rewound.
+    let(:yaml_configs) { yaml_config_list 1 }
     let(:seperator) { '*' * 80 }
     let(:seperator_count) { yaml_configs.count + 1 }
     let(:test_count) { rand(9) + 1 }
@@ -398,13 +414,20 @@ RSpec.describe RakeTasks::Tests do
     before { reset_io }
     before { stub_root }
 
-    before { Util.stubs(:load_yaml).with(yaml_path).returns yaml_configs }
-    before { klass.expects(:init_rubies).with kind_of(Array) }
-    before { Util.expects(:rm).with 'out.log' }
-    before { Util.expects(:rm).with 'err.log' }
+    before do
+      allow(Util).to receive(:load_yaml).with(yaml_path).and_return yaml_configs
+
+      expect(described_class).to receive(:init_rubies).with kind_of(Array)
+      expect(Util).to receive(:rm).with 'out.log'
+      expect(Util).to receive(:rm).with 'err.log'
+    end
+
     before do
       yaml_configs.count.times do
-        Util.expects(:open_file).with('out.log', 'r').yields test_output
+        allow(Util)
+          .to receive(:open_file)
+          .with('out.log', 'r')
+          .and_yield test_output
       end
     end
 
@@ -414,12 +437,14 @@ RSpec.describe RakeTasks::Tests do
           command = ['bash', RakeTasks::SCRIPTS[:rubies], 'test:all']
           command << "#{config[:ruby]}@#{config[:gemset]}"
 
-          Process.expects(:spawn).with(*command, out: 'out.log', err: 'err.log')
-            .returns pids[i]
-          Process.expects(:wait).with pids[i]
+          expect(Process)
+            .to receive(:spawn)
+            .with(*command, out: 'out.log', err: 'err.log')
+            .and_return pids[i]
+          expect(Process).to receive(:wait).with pids[i]
         end
 
-        wrap_output { klass.run_ruby_tests }
+        wrap_output { described_class.run_ruby_tests }
 
         expect(out.scan(seperator).count).to eq seperator_count
         expect(out).to match("#{test_count * yaml_configs.count} tests")
@@ -434,12 +459,14 @@ RSpec.describe RakeTasks::Tests do
           command << "#{config[:ruby]}@#{config[:gemset]}"
           command << config[:rake]
 
-          Process.expects(:spawn).with(*command, out: 'out.log', err: 'err.log')
-            .returns pids[i]
-          Process.expects(:wait).with pids[i]
+          expect(Process)
+            .to receive(:spawn)
+            .with(*command, out: 'out.log', err: 'err.log')
+            .and_return pids[i]
+          expect(Process).to receive(:wait).with pids[i]
         end
 
-        wrap_output { klass.run_ruby_tests }
+        wrap_output { described_class.run_ruby_tests }
 
         yaml_configs.each do |config|
           expect(out).to match("#{config[:ruby]} - #{config[:rake]}")
@@ -454,11 +481,14 @@ RSpec.describe RakeTasks::Tests do
     TestsHelpers.yaml_configs.each do |yaml_hash|
       context "given #{yaml_hash[:in].inspect}" do
         before do
-          Util.stubs(:load_yaml).with(yaml_path).returns yaml_hash[:in].dup
+          allow(Util)
+            .to receive(:load_yaml)
+            .with(yaml_path)
+            .and_return yaml_hash[:in].dup
         end
 
         it "returns #{yaml_hash[:out].inspect}" do
-          expect(klass.test_configs).to eq yaml_hash[:out]
+          expect(described_class.test_configs).to eq yaml_hash[:out]
         end
       end
     end
@@ -487,11 +517,17 @@ RSpec.describe RakeTasks::Tests do
     end
 
     before { stub_root }
-    before { Util.stubs(:load_yaml).with(yaml_path).returns yaml_configs }
+
+    before do
+      allow(Util)
+        .to receive(:load_yaml)
+        .with(yaml_path)
+        .and_return yaml_configs
+    end
 
     context 'by default' do
       it 'initializes rubies' do
-        configs = klass.test_configs
+        configs = described_class.test_configs
 
         rubies = []
         configs.each_with_index do |config, i|
@@ -501,11 +537,15 @@ RSpec.describe RakeTasks::Tests do
           command = ['bash', RakeTasks::SCRIPTS[:gemsets]]
           command << config[:ruby].split('@')
 
-          Process.expects(:spawn).with(*command.flatten).returns pids[i]
-          Process.expects(:wait).with pids[i]
+          expect(Process)
+            .to receive(:spawn)
+            .with(*command.flatten)
+            .and_return pids[i]
+
+          expect(Process).to receive(:wait).with pids[i]
         end
 
-        klass.init_rubies configs
+        described_class.init_rubies configs
       end
     end
   end
@@ -532,13 +572,9 @@ RSpec.describe RakeTasks::Tests do
         end
       end
       let(:rake) { "#{rvm} bundle exec rake" }
-      let(:output) do
-        shell_script.rewind
-        shell_script.read.to_s.split "\n"
-      end
+      let(:output) { @output }
       let(:offset) { yaml_configs.count + 1 }
       let(:ruby_shell_script) { 'rubies.sh' }
-      let(:shell_script) { StringIO.new }
       let(:rakes) do
         yaml_configs.map do |config|
           if config[:rake]
@@ -554,10 +590,20 @@ RSpec.describe RakeTasks::Tests do
 
       before { reset_io }
       before { stub_root }
-      before { Util.stubs(:load_yaml).with(yaml_path).returns yaml_configs }
+
       before do
-        Util.unstub :write_file
-        Util.stubs(:open_file).with(ruby_shell_script, 'w').yields shell_script
+        allow(Util)
+          .to receive(:load_yaml)
+          .with(yaml_path)
+          .and_return yaml_configs
+      end
+
+      before do
+        allow(Util)
+          .to receive(:write_file)
+          .with(ruby_shell_script, anything) do |file, content|
+            @output = content
+          end
       end
 
       before do
@@ -565,13 +611,13 @@ RSpec.describe RakeTasks::Tests do
       end
 
       it 'tells the shell to exit on error' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
         expect(output.first).to eq 'set -e'
       end
 
       it 'creates the gemset' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
         expect(output[1]).to eq gemset_creates.first
 
@@ -581,31 +627,31 @@ RSpec.describe RakeTasks::Tests do
       end
 
       it 'installs bundler' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
         expect(output[0 + offset]).to eq bundler_install
       end
 
       it 'installs gems' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
         expect(output[1 + offset]).to eq bundle_install
       end
 
       it 'cleans up gems' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
         expect(output[2 + offset]).to eq bundle_clean
       end
 
       it 'runs rake' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
         expect(output.last).to eq rake
       end
 
       it 'does not install rake' do
-        klass.rubies_shell_script
+        described_class.rubies_shell_script
         expect(output.any? { |line| line.index('gem install rake') })
           .to eq false
       end
@@ -623,7 +669,7 @@ RSpec.describe RakeTasks::Tests do
         before { expect(yaml_configs.all? { |c| c[:rake] }).to eq true }
 
         it 'installs the appropriate rake version' do
-          klass.rubies_shell_script
+          described_class.rubies_shell_script
           expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
 
           index = output.index(rake_installs.first)
@@ -635,7 +681,7 @@ RSpec.describe RakeTasks::Tests do
         end
 
         it 'runs rake without bundle exec' do
-          klass.rubies_shell_script
+          described_class.rubies_shell_script
           expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
 
           expect(output.last).to eq rakes.last
@@ -647,7 +693,7 @@ RSpec.describe RakeTasks::Tests do
         end
 
         it 'echoes the ruby/rake combination' do
-          klass.rubies_shell_script
+          described_class.rubies_shell_script
           expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
           expect(echoes.count).to be > 0
           echoes.each do |echo|
@@ -672,7 +718,7 @@ RSpec.describe RakeTasks::Tests do
           before { expect(uniq_configs.count).to_not eq yaml_configs.count }
 
           it 'creates the gemset once' do
-            klass.rubies_shell_script
+            described_class.rubies_shell_script
             expect(rvm_rubies.scan('@').count).to eq uniq_configs.count
             expect(output[1]).to eq gemset_creates.first
 
@@ -682,7 +728,7 @@ RSpec.describe RakeTasks::Tests do
           end
 
           it 'does not repeat ruby/gemset combinations' do
-            klass.rubies_shell_script
+            described_class.rubies_shell_script
             expect(rvm_rubies.scan('@').count).to eq uniq_configs.count
 
             output.each do |line|
@@ -694,7 +740,7 @@ RSpec.describe RakeTasks::Tests do
           end
 
           it 'runs rake without bundle exec' do
-            klass.rubies_shell_script
+            described_class.rubies_shell_script
             expect(rvm_rubies.scan('@').count).to eq uniq_configs.count
 
             expect(output.last).to eq rakes.last
@@ -723,7 +769,7 @@ RSpec.describe RakeTasks::Tests do
         before { expect(yaml_configs.all? { |c| c[:rake] }).to eq false }
 
         it 'runs rake for each ruby according to the rake setting' do
-          klass.rubies_shell_script
+          described_class.rubies_shell_script
           expect(rvm_rubies.scan('@').count).to eq yaml_configs.count
 
           expect(output.last).to eq rakes.last
