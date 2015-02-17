@@ -12,12 +12,12 @@ RSpec.describe RakeTasks::Core do
   let(:lib_task_glob) { "#{path}/lib/tasks/**/*.rake" }
   let(:tasks_task_glob) { "#{path}/tasks/**/*.rake" }
 
-  before { RakeTasks::System.stubs :pwd => path }
+  before { mock_system(:pwd).and_return path }
 
   it 'matches a glob that contains tasks folders with .rake files' do
-    RakeTasks::System.unstub :dir
-    RakeTasks::System.expects(:dir).with(lib_task_glob).returns []
-    RakeTasks::System.expects(:dir).with(tasks_task_glob).returns []
+    system_expects(:dir).with(lib_task_glob).and_return []
+    system_expects(:dir).with(tasks_task_glob).and_return []
+
     subject.load_tasks
   end
 
@@ -34,8 +34,8 @@ RSpec.describe RakeTasks::Core do
     ]}
 
     before do
-      RakeTasks::System.stubs(:dir).with(lib_task_glob).returns lib_tasks
-      RakeTasks::System.stubs(:dir).with(tasks_task_glob).returns task_tasks
+      mock_system(:dir).with(lib_task_glob).and_return lib_tasks
+      mock_system(:dir).with(tasks_task_glob).and_return task_tasks
 
       expect(RakeTasks::System.dir(lib_task_glob).count).to be > 0
       expect(RakeTasks::System.dir(tasks_task_glob).count).to be > 0
@@ -43,9 +43,7 @@ RSpec.describe RakeTasks::Core do
 
     it 'imports the files' do
       (lib_tasks + task_tasks).flatten.each do |file|
-        RakeTasks::System
-          .expects(:import_task)
-          .with file
+        system_expects(:import_task).with file
       end
       subject.load_tasks
     end
