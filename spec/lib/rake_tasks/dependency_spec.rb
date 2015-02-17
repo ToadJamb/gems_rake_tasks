@@ -5,7 +5,7 @@ RSpec.describe RakeTasks::Dependency do
     subject { described_class.loaded? constant.to_s, requirement }
 
     context 'given the constant exists' do
-      let(:constant) { described_class }
+      let(:constant) { RakeTasks }
       let(:requirement) { 'rake_tasks' }
 
       it 'returns true' do
