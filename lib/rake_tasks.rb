@@ -45,7 +45,6 @@ end
 gem_name = File.basename(__FILE__, '.rb')
 base_path = File.dirname(__FILE__)
 
-# Require files.
 Dir[File.join(base_path, gem_name, '*.rb')].each do |lib|
   require lib
 end

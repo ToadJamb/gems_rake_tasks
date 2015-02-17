@@ -1,3 +1,6 @@
+require 'cane'
+require 'gems'
+
 require_relative 'lib/rake_tasks'
 [
   'cane',
