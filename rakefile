@@ -19,6 +19,6 @@ Rake::Task[:default].clear_prerequisites
 
 task :default => [
   'cane:quality',
-  :spec,
+  :specs,
   'test:all',
 ]

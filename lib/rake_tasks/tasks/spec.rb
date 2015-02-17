@@ -69,5 +69,5 @@ namespace :spec do
 end
 
 desc 'Run all specs together'
-RSpec::Core::RakeTask.new :spec do
+RSpec::Core::RakeTask.new :specs do
 end
