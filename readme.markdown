@@ -31,7 +31,7 @@ Install RakeTasks at the command prompt if you haven't yet:
 
 Require the gem in your Gemfile:
 
-    gem 'rake\_tasks', '~> 3.0.1'
+    gem 'rake\_tasks', '~> 4.0.0'
 
 Require the gem wherever you need to use it:
 (This will load any \*.rake files in your project.)
@@ -125,10 +125,12 @@ this value will be saved to `~/.gem/credentials`.
 Updates
 -------
 
-
-    3.0.1 Added gem:push.
+    4.0.0 Added gem:push.
 
           Added spec, spec:features, spec:api, spec:integration, and spec:unit.
+
+          Dependencies are expected to be loaded by the consumer
+          prior to loading any tasks.
 
     3.0.0 No tasks are automatically added to the default rake task.
 
