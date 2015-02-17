@@ -3,8 +3,11 @@ Welcome to RakeTasks
 
 RakeTasks provides basic rake tasks for generating documentation,
 building and installing gems, and running tests.
-It will also load additional rake tasks if they are in a folder named 'tasks'.
-mmmm yummy
+
+It will also load additional rake tasks
+if they are in either `lib/tasks` or `tasks`.
+That is the only thing this gem does unless
+one of the included tasks is explicitly required.
 
 
 Dependency Philosophy
@@ -37,12 +40,13 @@ Require the gem wherever you need to use it:
 
 Require the tasks that you want to use:
 
-    require 'rake\_tasks\tasks\doc'      # Generate readme
+    require 'rake\_tasks\tasks\spec'     # Run RSpec specs of different types
     require 'rake\_tasks\tasks\cane'     # Cane rake tasks
     require 'rake\_tasks\tasks\gem'      # Gem build, install, deploy, etc.
-    require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
-    require 'rake\_tasks\tasks\test'     # Run tests - This may get deprecated
     require 'rake\_tasks\tasks\checksum' # Generate a checksum for \*.gem file
+    require 'rake\_tasks\tasks\doc'      # Generate readme
+    require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
+    require 'rake\_tasks\tasks\test'     # Run TestUnit tests - may get removed
 
 
 Tasks
@@ -50,14 +54,21 @@ Tasks
 
 Additional rake tasks will be found and loaded
 if they are named \*.rake (as of 3.0.0)
-and reside in either `lib\tasks` or  `tasks` (as of 3.0.1).
+and reside in either `lib\tasks` or  `tasks` (as of 4.0.0).
+
+
+### Cane Tasks
+
+#### Dependencies
+
+* [Cane][cane]
 
 
 ### Gem Tasks
 
 #### Dependencies
 
-* [gems][gems]
+* [Gems][gems]
 
 
 #### Requirements
@@ -115,10 +126,9 @@ Updates
 -------
 
 
-    3.0.1 Add gem:push.
+    3.0.1 Added gem:push.
 
-          Gems dependency moved to a development dependency,
-          so it must now be included explicitly in your project.
+          Added spec, spec:features, spec:api, spec:integration, and spec:unit.
 
     3.0.0 No tasks are automatically added to the default rake task.
 
@@ -182,5 +192,6 @@ License
 RakeTasks is released under the LGPLv3 license.
 
 
-[gems]:	https://github.com/rubygems/gems
+[gems]:	 https://github.com/rubygems/gems
+[cane]:	 http://github.com/square/cane
 [tasks]: #Tasks
