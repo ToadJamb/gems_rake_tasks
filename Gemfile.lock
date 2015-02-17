@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     rake_tasks (3.0.1)
-      gems
 
 GEM
   remote: http://rubygems.org/
@@ -41,6 +40,7 @@ PLATFORMS
 DEPENDENCIES
   cane
   faker
+  gems
   mocha
   rake_tasks!
   rspec
