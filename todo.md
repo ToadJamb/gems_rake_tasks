@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Migrate Util methods to System
 * Add spec tasks.
 * Move gems dependency to development.
 * Add warnings/errors when dependencies are not met.
