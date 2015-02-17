@@ -95,21 +95,21 @@ module TestsHelpers
   end
 
   def stub_root
-    allow(Util).to receive(:directory?).and_return false
-    allow(Util).to receive(:directory?).with(root).and_return true
+    mock_system(:directory?).and_return false
+    mock_system(:directory?).with(root).and_return true
   end
 
   def stub_no_root
-    allow(Util).to receive(:directory?).and_return true
+    mock_system(:directory?).and_return true
     roots.each do |root_item|
-      allow(Util).to receive(:directory?).with(root_item).and_return false
+      mock_system(:directory?).with(root_item).and_return false
     end
   end
 
   def stub_paths
     allow_dir_glob "#{root}/**", paths
     paths.each do |path_item|
-      allow(Util).to receive(:directory?).with(path_item).and_return true
+      mock_system(:directory?).with(path_item).and_return true
     end
   end
 
@@ -144,7 +144,6 @@ module TestsHelpers
   end
 
   def allow_dir_glob(glob, result = [])
-    #puts result
-    allow(Util).to receive(:dir_glob).with(glob).and_return result
+    mock_system(:dir_glob).with(glob).and_return result
   end
 end

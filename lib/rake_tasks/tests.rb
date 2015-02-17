@@ -59,7 +59,7 @@ module RakeTasks
 
         PATTERNS.each do |pattern|
           paths(group).each do |path|
-            files = Util.dir_glob(File.join(path, pattern))
+            files = RakeTasks::System.dir_glob(File.join(path, pattern))
             list << files
           end
         end
@@ -90,8 +90,8 @@ module RakeTasks
 
         types = []
 
-        Util.dir_glob(File.join(root, '**')).each do |path|
-          next unless Util.directory?(path)
+        RakeTasks::System.dir_glob(File.join(root, '**')).each do |path|
+          next unless RakeTasks::System.directory?(path)
           types << get_types(path)
         end
 
@@ -102,7 +102,7 @@ module RakeTasks
         types = []
         PATTERNS.each do |pattern|
           next if types.include?(File.basename(path))
-          unless Util.dir_glob(File.join(path, pattern)).empty?
+          unless RakeTasks::System.dir_glob(File.join(path, pattern)).empty?
             types << File.basename(path)
           end
         end
@@ -111,7 +111,7 @@ module RakeTasks
 
       # Indicates whether tests can be run against multiple rubies.
       def run_rubies?
-        Util.file? rubies_yaml
+        RakeTasks::System.file? rubies_yaml
       end
 
       # Runs tests against specified ruby/gemset/rake configurations.
@@ -141,8 +141,8 @@ module RakeTasks
           parse_log parser
         end
 
-        Util.rm 'out.log'
-        Util.rm 'err.log'
+        RakeTasks::System.rm 'out.log'
+        RakeTasks::System.rm 'err.log'
 
         puts '*' * 80
         parser.summarize
@@ -159,7 +159,8 @@ module RakeTasks
           commands << command
         end
 
-        Util.write_file 'rubies.sh', commands.map { |c| c.join(' ') }
+        RakeTasks::System.write_file 'rubies.sh',
+          commands.map { |c| c.join(' ') }
       end
 
       # Initialize gemsets for rubies.
@@ -182,7 +183,7 @@ module RakeTasks
       # ==== Output
       # [Array] The configurations that will be tested.
       def test_configs
-        configs = Util.load_yaml(rubies_yaml)
+        configs = RakeTasks::System.load_yaml(rubies_yaml)
         return [] unless configs.is_a?(Array)
 
         configs.select! { |c| c['ruby'] || c['gemset'] }
@@ -212,7 +213,7 @@ module RakeTasks
       # The root test folder.
       def root
         ROOTS.each do |r|
-          return r if Util.directory?(r)
+          return r if RakeTasks::System.directory?(r)
         end
         return
       end
@@ -236,7 +237,7 @@ module RakeTasks
       end
 
       def parse_log(parser)
-        Util.open_file('out.log', 'r') do |file|
+        RakeTasks::System.open_file('out.log', 'r') do |file|
           while line = file.gets
             parser.parse line
           end
