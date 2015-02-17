@@ -7,19 +7,11 @@ require_relative 'lib/rake_tasks'
   'doc',
   'gem',
   'rdoc',
+  'spec',
   'test',
   'checksum',
 ].each do |task|
   require_relative File.join('lib/rake_tasks/tasks', task)
-end
-
-require 'rspec/core/rake_task'
-require 'cane/rake_task'
-
-RSpec::Core::RakeTask.new(:spec) do |task|
-  task.ruby_opts = '-w'
-  #task.rspec_opts = '--format documentation'
-  #task.pattern = 'spec/**/*_save_config_spec.rb'
 end
 
 task :default
