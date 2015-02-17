@@ -7,10 +7,7 @@ RSpec.describe Util do
     let(:arg3) { { :k1 => :v1 } }
     let(:arg4) { { :k2 => :v2 } }
 
-    before do
-      delegate ||= method
-      allow(described_class).to receive(delegate).and_call_original
-    end
+    before { delegate ||= method }
 
     context 'given no arguments are passed' do
       it "calls #{klass}.#{method} with no arguments" do
