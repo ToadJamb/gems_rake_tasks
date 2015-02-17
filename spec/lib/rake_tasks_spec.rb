@@ -13,7 +13,7 @@ RSpec.describe RakeTasks do
   end
 
   it 'loads rake tasks' do
-    described_class.expects :load_tasks
+    expect(described_class).to receive :load_tasks
     load_quietly file_path
   end
 end

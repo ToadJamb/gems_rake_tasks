@@ -95,24 +95,26 @@ module TestsHelpers
   end
 
   def stub_root
-    Util.stubs(:directory?).with(any_of(*roots)).returns false
-    Util.stubs(:directory?).with(root).returns true
+    allow(Util).to receive(:directory?).and_return false
+    allow(Util).to receive(:directory?).with(root).and_return true
   end
 
   def stub_no_root
-    Util.stubs(:directory?).with(any_of(*roots)).returns false
+    allow(Util).to receive(:directory?).and_return true
+    roots.each do |root_item|
+      allow(Util).to receive(:directory?).with(root_item).and_return false
+    end
   end
 
   def stub_paths
-    Util.stubs(:directory?).with(any_of(*paths)).returns true
-    Util.stubs(:dir_glob).with("#{root}/**").returns paths
+    allow_dir_glob "#{root}/**", paths
+    paths.each do |path_item|
+      allow(Util).to receive(:directory?).with(path_item).and_return true
+    end
   end
 
   def stub_test_files
     @files = []
-
-    stub_root
-    stub_paths
 
     patterns.each_with_index do |pattern, i|
       stub_test_file_root_glob pattern, i
@@ -122,7 +124,7 @@ module TestsHelpers
 
   def stub_test_file_root_glob(pattern, i)
     @files << File.join(root, pattern.sub(/\*/, "#{i}_#{Faker::Lorem.word}"))
-    Util.stubs(:dir_glob).with(File.join(root, pattern)).returns [@files.last]
+    allow_dir_glob File.join(root, pattern), [@files.last]
   end
 
   def stub_test_file_dir_glob(pattern, i)
@@ -138,7 +140,11 @@ module TestsHelpers
         path, pattern.sub(/\*/, "#{i}_#{j}_#{Faker::Lorem.word}"))
     end
 
-    Util.stubs(:dir_glob).with(File.join(path, pattern))
-      .returns @files[-1 * n..-1]
+    allow_dir_glob File.join(path, pattern), @files[-1 * n..-1]
+  end
+
+  def allow_dir_glob(glob, result = [])
+    #puts result
+    allow(Util).to receive(:dir_glob).with(glob).and_return result
   end
 end
