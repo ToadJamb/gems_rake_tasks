@@ -38,6 +38,7 @@ mmmm yummy
   s.add_development_dependency 'test-unit'
   s.add_development_dependency 'cane'
   s.add_development_dependency 'faker'
+  s.add_development_dependency 'mocha'
 
   s.has_rdoc = true
 end
