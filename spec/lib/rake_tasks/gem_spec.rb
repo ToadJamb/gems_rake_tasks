@@ -119,4 +119,31 @@ end
       end
     end
   end
+
+  describe '.push' do
+    # This is here because the dependency is not expected
+    # to be loaded by the library.
+    # It is expected to be loaded by an application prior to loading rake tasks.
+    require_quietly 'gems'
+
+    subject { described_class.push }
+
+    let(:gem_path) { 'path/to/gemspec' }
+    let(:gem_file) { instance_double File }
+    let(:api_key)  { 'rubygems-api-key' }
+
+    before { stub_const 'ENV', {'RUBYGEMS_API_KEY' => api_key} }
+
+    it 'pushes a gem' do
+      allow(RakeTasks::Gem).to receive(:gem_file).and_return gem_path
+      allow(File).to receive(:new).with(gem_path).and_return gem_file
+
+      expect(Gems).to receive(:push).with gem_file
+      expect(Gems.key).to_not eq api_key
+
+      subject
+
+      expect(Gems.key).to eq api_key
+    end
+  end
 end

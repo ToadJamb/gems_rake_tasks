@@ -85,10 +85,10 @@ module RakeTasks
       end
 
       def push
-        Gems.configure do |config|
+        ::Gems.configure do |config|
           config.key = ENV['RUBYGEMS_API_KEY']
         end
-        Gems.push File.new(gem_file)
+        ::Gems.push File.new(gem_file)
       end
 
       private
