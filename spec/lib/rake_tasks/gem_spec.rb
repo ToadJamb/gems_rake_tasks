@@ -6,7 +6,7 @@ RSpec.describe RakeTasks::Gem do
   describe '::gem_spec_file' do
     let(:gemspecs) { Faker::Lorem.words }
 
-    before { allow(Util).to receive(:dir_glob).and_return gemspecs }
+    before { mock_system(:dir_glob).and_return gemspecs }
 
     it 'returns a string' do
       expect(klass.gem_spec_file).to be_a String
@@ -88,10 +88,10 @@ end
           let(:output) { StringIO.new(gemspec_contents % version) }
 
           before do
-            mock_util(:dir_glob).with('*.gemspec').and_return [gemspec_file]
-            mock_util(:open_file).with(gemspec_file, 'r').and_yield input
-            mock_util(:open_file).with(gemspec_file, 'w').and_yield output
-            mock_util(:load_gemspec).with(gemspec_file).and_return gemspec
+            mock_system(:dir_glob).with('*.gemspec').and_return [gemspec_file]
+            mock_system(:open_file).with(gemspec_file, 'r').and_yield input
+            mock_system(:open_file).with(gemspec_file, 'w').and_yield output
+            mock_system(:load_gemspec).with(gemspec_file).and_return gemspec
           end
 
           it 'sets the version in the gemspec file' do
@@ -112,7 +112,7 @@ end
     end
 
     context 'given no gemspec' do
-      before { mock_util(:dir_glob).with('*.gemspec').and_return [] }
+      before { mock_system(:dir_glob).with('*.gemspec').and_return [] }
       before { expect(klass.gem_spec).to eq nil }
       it 'does nothing' do
         expect{ klass.version! new_version }.to_not raise_error

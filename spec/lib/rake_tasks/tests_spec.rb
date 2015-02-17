@@ -83,7 +83,7 @@ RSpec.describe RakeTasks::Tests do
   describe '::exist?' do
     context 'given no root folder' do
       before { stub_no_root }
-      before { expect(Util.directory?(root)).to eq false }
+      before { expect(RakeTasks::System.directory?(root)).to eq false }
 
       it 'returns false' do
         expect(described_class.exist?).to eq false
@@ -96,19 +96,14 @@ RSpec.describe RakeTasks::Tests do
 
       before { expect(patterns.count).to be > 0 }
 
-      before { expect(Util.directory?(root)).to eq true }
+      before { expect(RakeTasks::System.directory?(root)).to eq true }
 
       context 'given no test files' do
         before do
           patterns.each do |pattern|
-            allow(Util)
-              .to receive(:dir_glob)
-              .with(File.join(root, pattern))
-              .and_return []
-
+            mock_system(:dir_glob).with(File.join(root, pattern)).and_return []
             paths.each do |path_item|
-              allow(Util)
-                .to receive(:dir_glob)
+              mock_system(:dir_glob)
                 .with(File.join(path_item, pattern))
                 .and_return []
             end
@@ -127,11 +122,12 @@ RSpec.describe RakeTasks::Tests do
 
         before do
           patterns.each do |pattern|
-            expect(Util.dir_glob(File.join(root, pattern)).empty?).to eq false
+            matches = RakeTasks::System.dir_glob(File.join(root, pattern))
+            expect(matches.empty?).to eq false
 
             paths.each do |path_item|
-              expect(Util.dir_glob(File.join(path_item, pattern)).empty?)
-                .to eq false
+              matches = RakeTasks::System.dir_glob(File.join(root, pattern))
+              expect(matches.empty?).to eq false
             end
           end
         end
@@ -147,12 +143,12 @@ RSpec.describe RakeTasks::Tests do
     before { stub_no_root }
 
     context 'given a root test folder exists' do
-      before { allow(Util).to receive(:directory?).with(root).and_return true }
+      before { mock_system(:directory?).with(root).and_return true }
 
       before do
         root_count = 0
         roots.each do |root_item|
-          root_count += 1 if Util.directory?(root_item)
+          root_count += 1 if RakeTasks::System.directory?(root_item)
         end
         expect(root_count).to eq 1
       end
@@ -163,7 +159,9 @@ RSpec.describe RakeTasks::Tests do
     end
 
     context 'given a root folder does not exist' do
-      before { expect(roots.any? { |r| Util.directory?(r) }).to eq false }
+      before do
+        expect(roots.any? { |r| RakeTasks::System.directory?(r) }).to eq false
+      end
 
       it 'returns nil' do
         expect(described_class.root).to eq nil
@@ -173,7 +171,7 @@ RSpec.describe RakeTasks::Tests do
     context 'given multiple root folders exist' do
       before do
         roots.each do |root_item|
-          allow(Util).to receive(:directory?).with(root_item).and_return true
+          mock_system(:directory?).with(root_item).and_return true
         end
       end
 
@@ -181,7 +179,7 @@ RSpec.describe RakeTasks::Tests do
 
       before do
         described_class::ROOTS.each do |root_item|
-          expect(Util.directory?(root_item)).to eq true
+          expect(RakeTasks::System.directory?(root_item)).to eq true
         end
       end
 
@@ -262,7 +260,7 @@ RSpec.describe RakeTasks::Tests do
 
     context 'given no root folder' do
       before { stub_no_root }
-      before { expect(Util.directory?(root)).to eq false }
+      before { expect(RakeTasks::System.directory?(root)).to eq false }
 
       it 'returns an empty array' do
         expect(described_class.paths).to eq []
@@ -279,7 +277,7 @@ RSpec.describe RakeTasks::Tests do
       before do
         expect(subfolders.count).to be > 1
         subfolders.each do |folder|
-          expect(Util.directory?("#{root}/#{folder}")).to eq true
+          expect(RakeTasks::System.directory?("#{root}/#{folder}")).to eq true
         end
       end
 
@@ -287,8 +285,7 @@ RSpec.describe RakeTasks::Tests do
         before do
           paths.each do |path|
             patterns.each do |pattern|
-              allow(Util)
-                .to receive(:dir_glob)
+              mock_system(:dir_glob)
                 .with(File.join(path, pattern))
                 .and_return [1]
             end
@@ -297,9 +294,10 @@ RSpec.describe RakeTasks::Tests do
 
         before do
           paths.each do |path|
-            expect(Util.directory?(path)).to eq true
+            expect(RakeTasks::System.directory?(path)).to eq true
             patterns.each do |pattern|
-              expect(Util.dir_glob(File.join(path, pattern)).empty?).to eq false
+              matches = RakeTasks::System.dir_glob(File.join(path, pattern))
+              expect(matches.empty?).to eq false
             end
           end
         end
@@ -313,8 +311,7 @@ RSpec.describe RakeTasks::Tests do
         before do
           patterns.each do |pattern|
             paths.each do |path|
-              allow(Util)
-                .to receive(:dir_glob)
+              mock_system(:dir_glob)
                 .with(File.join(path, pattern))
                 .and_return []
             end
@@ -323,9 +320,10 @@ RSpec.describe RakeTasks::Tests do
 
         before do
           paths.each do |path|
-            expect(Util.directory?(path)).to eq true
+            expect(RakeTasks::System.directory?(path)).to eq true
             patterns.each do |pattern|
-              expect(Util.dir_glob(File.join(path, pattern))).to eq []
+              matches = RakeTasks::System.dir_glob(File.join(path, pattern))
+              expect(matches).to eq []
             end
           end
         end
@@ -338,12 +336,12 @@ RSpec.describe RakeTasks::Tests do
 
     context 'given only files in the test folder' do
       before do
-        allow(Util).to receive(:dir_glob).with("#{root}/**").and_return paths
+        mock_system(:dir_glob).with("#{root}/**").and_return paths
       end
 
       before do
         paths.each do |folder|
-          expect(Util.directory?(folder)).to eq false
+          expect(RakeTasks::System.directory?(folder)).to eq false
         end
       end
 
@@ -354,7 +352,7 @@ RSpec.describe RakeTasks::Tests do
 
     context 'given no root folder' do
       before { stub_no_root }
-      before { expect(Util.directory?(root)).to eq false }
+      before { expect(RakeTasks::System.directory?(root)).to eq false }
 
       it 'returns an empty array' do
         expect(described_class.types).to eq []
@@ -367,14 +365,15 @@ RSpec.describe RakeTasks::Tests do
       before { stub_no_root }
       before do
         [nil, ''].each do |file_name|
-          allow(Util)
-            .to receive(:file?)
+          mock_system(:file?)
             .with(file_name)
             .and_return false
         end
       end
 
-      before { expect(roots.any? { |r| Util.directory?(r) }).to eq false }
+      before do
+        expect(roots.any? { |r| RakeTasks::System.directory?(r) }).to eq false
+      end
 
       it 'returns false' do
         expect(described_class.run_rubies?).to eq false
@@ -383,8 +382,8 @@ RSpec.describe RakeTasks::Tests do
 
     context 'given a root folder' do
       before { stub_root }
-      before { allow(Util).to receive(:file?).with(yaml_path).and_return true }
-      before { expect(Util.directory?(root)).to eq true }
+      before { mock_system(:file?).with(yaml_path).and_return true }
+      before { expect(RakeTasks::System.directory?(root)).to eq true }
 
       it 'returns true' do
         expect(described_class.run_rubies?).to eq true
@@ -396,7 +395,7 @@ RSpec.describe RakeTasks::Tests do
     context 'given a root folder' do
       before { stub_root }
 
-      before { expect(Util.directory?(root)).to eq true }
+      before { expect(RakeTasks::System.directory?(root)).to eq true }
 
       it 'returns the path to the yaml file' do
         expect(described_class.rubies_yaml).to eq yaml_path
@@ -415,17 +414,16 @@ RSpec.describe RakeTasks::Tests do
     before { stub_root }
 
     before do
-      allow(Util).to receive(:load_yaml).with(yaml_path).and_return yaml_configs
+      mock_system(:load_yaml).with(yaml_path).and_return yaml_configs
 
       expect(described_class).to receive(:init_rubies).with kind_of(Array)
-      expect(Util).to receive(:rm).with 'out.log'
-      expect(Util).to receive(:rm).with 'err.log'
+      system_expects(:rm).with 'out.log'
+      system_expects(:rm).with 'err.log'
     end
 
     before do
       yaml_configs.count.times do
-        allow(Util)
-          .to receive(:open_file)
+        mock_system(:open_file)
           .with('out.log', 'r')
           .and_yield test_output
       end
@@ -481,8 +479,7 @@ RSpec.describe RakeTasks::Tests do
     TestsHelpers.yaml_configs.each do |yaml_hash|
       context "given #{yaml_hash[:in].inspect}" do
         before do
-          allow(Util)
-            .to receive(:load_yaml)
+          mock_system(:load_yaml)
             .with(yaml_path)
             .and_return yaml_hash[:in].dup
         end
@@ -519,8 +516,7 @@ RSpec.describe RakeTasks::Tests do
     before { stub_root }
 
     before do
-      allow(Util)
-        .to receive(:load_yaml)
+      mock_system(:load_yaml)
         .with(yaml_path)
         .and_return yaml_configs
     end
@@ -592,15 +588,13 @@ RSpec.describe RakeTasks::Tests do
       before { stub_root }
 
       before do
-        allow(Util)
-          .to receive(:load_yaml)
+        mock_system(:load_yaml)
           .with(yaml_path)
           .and_return yaml_configs
       end
 
       before do
-        allow(Util)
-          .to receive(:write_file)
+        mock_system(:write_file)
           .with(ruby_shell_script, anything) do |file, content|
             @output = content
           end
