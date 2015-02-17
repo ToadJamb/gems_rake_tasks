@@ -1,5 +1,3 @@
-require File.expand_path('spec/helpers/boundary_helpers')
-
 RSpec.configure do |config|
   config.before do
     [
