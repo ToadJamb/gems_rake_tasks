@@ -3,6 +3,10 @@ module RakeTasks
     extend Rake::DSL
     extend self
 
+    def system(*args)
+      Kernel.system(*args)
+    end
+
     def dir(*glob)
       Dir[*glob]
     end

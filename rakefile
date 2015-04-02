@@ -10,6 +10,7 @@ require_relative 'lib/rake_tasks'
   'spec',
   'test',
   'checksum',
+  'console',
 ].each do |task|
   require_relative File.join('lib/rake_tasks/tasks', task)
 end

@@ -38,6 +38,10 @@ RSpec.describe RakeTasks::System do
     end
   end
 
+  describe '.system' do
+    it_behaves_like 'a delegated property', Kernel, :system
+  end
+
   describe '.dir' do
     it_behaves_like 'a delegated property', Dir, :[], :dir
   end

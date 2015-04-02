@@ -42,6 +42,7 @@ Require the tasks that you want to use:
 
     require 'rake\_tasks\tasks\spec'     # Run RSpec specs of different types
     require 'rake\_tasks\tasks\cane'     # Cane rake tasks
+    require 'rake\_tasks\tasks\console'  # Load a library project in irb.
     require 'rake\_tasks\tasks\gem'      # Gem build, install, deploy, etc.
     require 'rake\_tasks\tasks\checksum' # Generate a checksum for \*.gem file
     require 'rake\_tasks\tasks\doc'      # Generate readme
@@ -55,6 +56,13 @@ Tasks
 Additional rake tasks will be found and loaded
 if they are named \*.rake (as of 3.0.0)
 and reside in either `lib\tasks` or  `tasks` (as of 4.0.0).
+
+### Console Task
+
+#### Requirements
+
+This task looks for a folder under `lib` with a ruby (.rb extension) file
+of the same name.
 
 
 ### Cane Tasks
@@ -125,6 +133,8 @@ this value will be saved to `~/.gem/credentials`.
 Updates
 -------
 
+    4.0.01 Added console.
+
     4.0.0 Added gem:push.
 
           Added spec, spec:features, spec:api, spec:integration, and spec:unit.
@@ -181,6 +191,7 @@ Updates
             gemset: my\_gem\_test
           - ruby: 1.9.3
             gemset: my\_gem\_test
+
 
 Additional Documentation
 ------------------------
