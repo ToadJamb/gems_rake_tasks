@@ -31,7 +31,7 @@ RSpec.describe RakeTasks::Console do
 
     before do
       described_class.instance_variable_set :@lib_folder, nil
-      described_class.remove_instance_variable :@lib_folder
+      described_class.send :remove_instance_variable, :@lib_folder
 
       allow(RakeTasks::System)
         .to receive(:dir_glob)
