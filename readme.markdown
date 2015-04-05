@@ -31,7 +31,7 @@ Install RakeTasks at the command prompt if you haven't yet:
 
 Require the gem in your Gemfile:
 
-    gem 'rake\_tasks', '~> 4.0.0'
+    gem 'rake\_tasks', '~> 4.1.0'
 
 Require the gem wherever you need to use it:
 (This will load any \*.rake files in your project.)
@@ -133,7 +133,7 @@ this value will be saved to `~/.gem/credentials`.
 Updates
 -------
 
-    4.0.01 Added console.
+    4.1.0 Added console task.
 
     4.0.0 Added gem:push.
 
