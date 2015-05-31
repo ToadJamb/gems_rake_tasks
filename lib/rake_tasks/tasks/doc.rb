@@ -40,7 +40,7 @@ if RakeTasks::Gem.gemspec_file?
 
     file readme => gem_spec_file do |t|
       doc_obj = RakeTasks::Doc.new
-      Util.write_file readme, doc_obj.readme_contents
+      RakeTasks::System.write_file readme, doc_obj.readme_contents
     end
 
     desc "Generate a #{readme} file."
