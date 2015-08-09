@@ -32,6 +32,8 @@ mmmm yummy
     Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
+  s.add_dependency 'rake'
+
   s.add_development_dependency 'gems'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'test-unit'
