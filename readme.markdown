@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/ToadJamb/gems_rake_tasks.svg?branch=master)](https://travis-ci.org/ToadJamb/gems_rake_tasks)
+
+
 Welcome to RakeTasks
 ====================
 
