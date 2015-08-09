@@ -51,5 +51,6 @@ module IOHelpers
 end
 
 RSpec.configure do |config|
-  include IOHelpers
+  config.include IOHelpers, :stdout
+  config.before(:each, :stdout) { reset_io }
 end
