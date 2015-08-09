@@ -1,0 +1,14 @@
+language: ruby
+rvm:
+- 2.2
+- 1.9.3
+gemfile:
+- Gemfile
+#- gemfiles/gemfile.rake-10.4
+#- gemfiles/Gemfile.rake-0.9.6
+#- gemfiles/Gemfile.rake-0.8.7
+branches:
+  only:
+  - master
+  - chore/travis-ci
+  - chore/fix-ci

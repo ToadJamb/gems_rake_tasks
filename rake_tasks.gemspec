@@ -32,12 +32,15 @@ mmmm yummy
     Dir['Gemfile.lock']
   s.test_files = Dir['test/**/*.rb']
 
+  s.add_dependency 'rake'
+
   s.add_development_dependency 'gems'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'test-unit'
   s.add_development_dependency 'cane'
   s.add_development_dependency 'faker'
   s.add_development_dependency 'mocha'
+  s.add_development_dependency 'travis-yaml'
 
   s.has_rdoc = true
 end

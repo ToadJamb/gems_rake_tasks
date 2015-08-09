@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     rake_tasks (4.1.0)
+      rake
 
 GEM
   remote: http://rubygems.org/
@@ -18,6 +19,7 @@ GEM
       metaclass (~> 0.0.1)
     parallel (1.4.0)
     power_assert (0.2.2)
+    rake (10.4.2)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
       rspec-expectations (~> 3.2.0)
@@ -33,6 +35,7 @@ GEM
     rspec-support (3.2.1)
     test-unit (3.0.9)
       power_assert
+    travis-yaml (0.2.0)
 
 PLATFORMS
   ruby
@@ -45,3 +48,4 @@ DEPENDENCIES
   rake_tasks!
   rspec
   test-unit
+  travis-yaml

@@ -403,14 +403,13 @@ RSpec.describe RakeTasks::Tests do
     end
   end
 
-  describe '::run_ruby_tests' do
+  describe '::run_ruby_tests', :stdout do
     # Increase the yaml_config count to see test_output not get cached/rewound.
     let(:yaml_configs) { yaml_config_list 1 }
     let(:seperator) { '*' * 80 }
     let(:seperator_count) { yaml_configs.count + 1 }
     let(:test_count) { rand(9) + 1 }
 
-    before { reset_io }
     before { stub_root }
 
     before do
@@ -547,7 +546,7 @@ RSpec.describe RakeTasks::Tests do
   end
 
   describe '::rubies_shell_script' do
-    context 'given rubies and gemsets' do
+    context 'given rubies and gemsets', :stdout do
       let(:yaml_configs) { yaml_config_list 2 }
       let(:uniq_configs) do
         yaml_configs.uniq { |c| "#{c[:ruby]}@#{c[:gemset]}" }
@@ -584,7 +583,6 @@ RSpec.describe RakeTasks::Tests do
         end.flatten
       end
 
-      before { reset_io }
       before { stub_root }
 
       before do

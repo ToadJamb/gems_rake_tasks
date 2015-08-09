@@ -3,7 +3,7 @@ module RakeTasks
     extend self
 
     def loaded?(constant, requirement)
-      if ::Kernel::const_defined?(constant)
+      if ::Kernel::const_defined?(constant.match(/\w+/).to_s)
         return true
       else
         puts "<#{constant}> is not defined.\n"

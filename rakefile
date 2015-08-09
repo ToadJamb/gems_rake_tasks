@@ -1,5 +1,6 @@
 require 'cane'
 require 'gems'
+require 'travis/yaml' if RUBY_VERSION.match(/\d+/).to_s.to_i > 1
 
 require_relative 'lib/rake_tasks'
 [
@@ -11,15 +12,20 @@ require_relative 'lib/rake_tasks'
   'test',
   'checksum',
   'console',
+  'travis_ci_lint',
 ].each do |task|
   require_relative File.join('lib/rake_tasks/tasks', task)
 end
 
+$VERBOSE = true
+
 task :default
 Rake::Task[:default].clear_prerequisites
 
-task :default => [
-  'cane:quality',
-  :specs,
-  'test:all',
-]
+defaults = []
+defaults << 'travis_ci:lint' if Kernel.const_defined?('Travis')
+defaults << 'cane:quality'
+defaults << :specs
+defaults << 'test:all'
+
+task :default => defaults
