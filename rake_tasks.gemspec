@@ -40,6 +40,7 @@ mmmm yummy
   s.add_development_dependency 'cane'
   s.add_development_dependency 'faker'
   s.add_development_dependency 'mocha'
+  s.add_development_dependency 'travis-yaml'
 
   s.has_rdoc = true
 end
