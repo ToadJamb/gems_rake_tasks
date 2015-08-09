@@ -51,6 +51,7 @@ Require the tasks that you want to use:
     require 'rake\_tasks\tasks\doc'      # Generate readme
     require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
     require 'rake\_tasks\tasks\test'     # Run TestUnit tests - may get removed
+    require 'rake\_tasks\tasks\travis_ci_lint' # Lint .travis.yml
 
 
 Tasks
@@ -133,8 +134,17 @@ this value will be saved to `~/.gem/credentials`.
     rake test:my\_class[my\_test\_method]
 
 
+### Travis CI Lint Tasks
+
+#### Dependencies
+
+* [Travis::Yaml][travis-yaml]
+
+
 Updates
 -------
+
+    4.2.0 Added travis_ci:lint task.
 
     4.1.0 Added console task.
 
@@ -208,6 +218,7 @@ License
 RakeTasks is released under the LGPLv3 license.
 
 
-[gems]:	 https://github.com/rubygems/gems
-[cane]:	 http://github.com/square/cane
-[tasks]: #Tasks
+[gems]:        https://github.com/rubygems/gems
+[cane]:        http://github.com/square/cane
+[travis-yaml]: https://github.com/travis-ci/travis-yaml
+[tasks]:       #Tasks
