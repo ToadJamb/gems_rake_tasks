@@ -33,5 +33,10 @@ RSpec.describe RakeTasks::Dependency do
 
     it_behaves_like 'a loaded constant', RakeTasks, 'rake_tasks', true
     it_behaves_like 'a loaded constant', 'FooBar', 'foo_bar', false
+
+    # The behavior on 1.9.3 is pickier than it is on 2.
+    # Both of these cases resulted in failures on 1.9.3 with the original code.
+    it_behaves_like 'a loaded constant', RakeTasks::Gem, 'rake_tasks/gem', true
+    it_behaves_like 'a loaded constant', 'FooBar::Baz', 'foo_bar/baz', false
   end
 end
