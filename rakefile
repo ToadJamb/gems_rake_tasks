@@ -1,6 +1,7 @@
 require 'cane'
 require 'gems'
 require 'travis/yaml' if RUBY_VERSION.match(/\d+/).to_s.to_i > 1
+require 'wwtd/tasks'
 
 require_relative 'lib/rake_tasks'
 [
