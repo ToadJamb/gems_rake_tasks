@@ -11,4 +11,3 @@ branches:
   only:
   - master
   - chore/travis-ci
-  - chore/fix-ci
