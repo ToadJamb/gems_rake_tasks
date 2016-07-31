@@ -19,19 +19,5 @@ module RakeTasks
 
       return @lib_folder
     end
-
-    def foo
-      lib = nil
-      Dir['lib/*'].each do |lib_item|
-        if File.directory?(lib_item) && File.file?("#{lib_item}.rb")
-          lib = File.basename(lib_item)
-          break
-        end
-      end
-    end
-
-    def bar
-      system "bundle exec irb -Ilib -r#{lib}"
-    end
   end
 end
