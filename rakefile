@@ -23,10 +23,26 @@ $VERBOSE = true
 task :default
 Rake::Task[:default].clear_prerequisites
 
-defaults = []
-defaults << 'travis_ci:lint' if Kernel.const_defined?('Travis')
-defaults << 'cane:quality'
-defaults << :specs
-defaults << 'test:all'
+def figure_it_out(reqs, specs, ci, base = :basic, default = :default)
+  if ci
+    task base => (reqs + specs).flatten
+  else
+    task base => specs
+  end
 
-task :default => defaults
+  task default => [
+    reqs,
+    'wwtd:parallel',
+  ].flatten
+end
+
+reqs = []
+reqs << :cane
+reqs << 'travis_ci:lint' if Kernel.const_defined?('Travis')
+
+specs = [
+  :spec,
+  'test:unit',
+]
+
+figure_it_out reqs, specs, ENV['CI'] && !ENV['CI'].empty?
