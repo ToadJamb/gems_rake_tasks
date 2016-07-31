@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'cane'
 require 'gems'
 require 'travis/yaml' if RUBY_VERSION.match(/\d+/).to_s.to_i > 1
@@ -20,15 +22,18 @@ end
 
 $VERBOSE = true
 
-task :default
-Rake::Task[:default].clear_prerequisites
+def build_defaults(reqs, specs, ci, base = :basic, default = :default)
+  task base
+  Rake::Task[base].clear_prerequisites
 
-def figure_it_out(reqs, specs, ci, base = :basic, default = :default)
   if ci
     task base => (reqs + specs).flatten
   else
     task base => specs
   end
+
+  task default
+  Rake::Task[default].clear_prerequisites
 
   task default => [
     reqs,
@@ -45,4 +50,4 @@ specs = [
   'test:unit',
 ]
 
-figure_it_out reqs, specs, ENV['CI'] && !ENV['CI'].empty?
+build_defaults reqs, specs, !ENV['CI'].to_s.strip.empty?
