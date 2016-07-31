@@ -17,6 +17,10 @@ module RakeTasks
       @lib_name = lib if System.file?(file)
       @lib_name ||= nil
     end
+
+    def set_lib(lib)
+      @lib_name = lib
+    end
   end
 end
 

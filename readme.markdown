@@ -69,6 +69,20 @@ and reside in either `lib/tasks` or  `tasks` (as of 4.0.0).
 This task uses the root folder and looks for a file of the same name
 in `lib` with a `.rb` extension.
 
+If the root of your project is not named the same as the file you wish to load,
+use `RakeTasks::Console.set_lib` to set it:
+
+```
+# rakefile
+require 'rake_tasks'
+RakeTasks::Console.set_lib 'my_lib'
+require 'rake_tasks/tasks/console'
+```
+
+Please note that the console task must be required AFTER setting this value.
+If it is required prior to requiring the console task,
+the task will not be loaded.
+
 
 ### Cane Tasks
 
@@ -299,6 +313,8 @@ Updates
     5.0.0 console task uses root folder
           instead of matching files to folders in lib.
           The previous behavior assumed only one file/folder would match.
+
+          Add Console.set_lib
 
     4.2.0 Added travis_ci:lint task.
 

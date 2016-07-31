@@ -50,4 +50,16 @@ RSpec.describe RakeTasks::Console do
     it_behaves_like 'lib name', 'path/foo', 'lib/foo.rb', true, 'foo'
     it_behaves_like 'lib name', 'path/foo', 'lib/foo.rb', false, nil
   end
+
+  describe '.set_lib' do
+    context 'given a value' do
+      let(:lib_name) { Faker::Lorem.word }
+
+      before { subject.set_lib lib_name }
+
+      it 'sets .lib_name to that value' do
+        expect(subject.lib_name).to eq lib_name
+      end
+    end
+  end
 end
