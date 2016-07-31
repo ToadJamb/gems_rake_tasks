@@ -14,7 +14,7 @@ mmmm yummy
   s.email    = 'tthetoad@gmail.com'
   s.homepage = 'http://www.bitbucket.org/ToadJamb/gems_rake_tasks'
 
-  s.license = 'LGPLv3'
+  s.license = 'LGPL-3.0'
 
   s.extra_rdoc_files = [
     'readme.markdown',
