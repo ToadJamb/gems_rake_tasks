@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module RakeTasks
   module Console
     extend self
