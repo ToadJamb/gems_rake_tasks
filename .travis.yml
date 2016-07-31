@@ -1,11 +1,11 @@
 language: ruby
 rvm:
-- 2.2
-- 1.9.3
+- 2.3.0
+- 2.2.0
 gemfile:
 - Gemfile
-- gemfiles/gemfile.rake-10.5.0
-#- gemfiles/gemfile.rake-11.2.2
+- gemfiles/gemfile.rake-11.2
+- gemfiles/gemfile.rake-10.5
 branches:
   only:
   - master
