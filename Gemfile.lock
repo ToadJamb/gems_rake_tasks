@@ -36,6 +36,7 @@ GEM
     test-unit (3.2.1)
       power_assert
     travis-yaml (0.2.0)
+    wwtd (1.3.0)
 
 PLATFORMS
   ruby
@@ -49,6 +50,7 @@ DEPENDENCIES
   rspec
   test-unit
   travis-yaml
+  wwtd
 
 BUNDLED WITH
    1.12.5
