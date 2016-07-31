@@ -4,21 +4,19 @@ module RakeTasks
     extend self
 
     def run
-      System.system "bundle exec irb -Ilib -r#{lib_folder}"
+      System.system "bundle exec irb -Ilib -r#{lib_name}"
     end
 
-    def lib_folder
-      return @lib_folder if defined?(@lib_folder)
+    def lib_name
+      return @lib_name if defined?(@lib_name)
 
-      @lib_folder = nil
-      System.dir_glob('lib/*').each do |lib_item|
-        if System.directory?(lib_item) && System.file?("#{lib_item}.rb")
-          @lib_folder = File.basename(lib_item)
-          break
-        end
-      end
+      lib = File.basename(System.pwd)
 
-      return @lib_folder
+      file = "lib/#{lib}.rb"
+
+      @lib_name = lib if System.file?(file)
+      @lib_name ||= nil
     end
   end
 end
+

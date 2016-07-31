@@ -5,10 +5,10 @@ RSpec.describe RakeTasks::Console do
   describe '.run' do
     subject { described_class.run }
 
-    let(:command) { "bundle exec irb -Ilib -r#{lib}" }
-    let(:lib)     { Faker::Lorem.word }
+    let(:command)  { "bundle exec irb -Ilib -r#{lib}" }
+    let(:lib)      { "lib/#{Faker::Lorem.word}" }
 
-    before { described_class.instance_variable_set :@lib_folder, lib }
+    before { described_class.instance_variable_set :@lib_name, lib }
 
     it 'invokes the system command' do
       expect(RakeTasks::System)
@@ -18,68 +18,36 @@ RSpec.describe RakeTasks::Console do
     end
   end
 
-  describe '.lib_folder' do
-    subject { described_class.lib_folder }
+  describe '.lib_name' do
+    shared_examples_for 'lib name' do |pwd, candidate, exists, expected|
+      subject { described_class.lib_name }
 
-    let(:lib_name) { Faker::Lorem.word }
-
-    let(:glob_results) {[
-      'lib/foo_bar',
-      "lib/#{lib_name}",
-      'lib/fizz_buzz',
-      "lib/#{lib_name}.rb",
-    ]}
-
-    before do
-      described_class.instance_variable_set :@lib_folder, nil
-      described_class.send :remove_instance_variable, :@lib_folder
-
-      allow(RakeTasks::System)
-        .to receive(:dir_glob)
-        .with('lib/*')
-        .and_return glob_results
-    end
-
-    context 'given folders in lib' do
       before do
-        allow(RakeTasks::System).to receive(:directory?).and_return false
-        allow(RakeTasks::System).to receive(:file?).and_return false
+        described_class.instance_variable_set :@lib_name, nil
+        described_class.send :remove_instance_variable, :@lib_name
+      end
 
-        glob_results.each do |glob_result|
-          if File.extname(glob_result) == '.rb'
-            allow(RakeTasks::System)
-              .to receive(:file?)
-              .with(glob_result)
-              .and_return true
-          else
-            allow(RakeTasks::System)
-              .to receive(:directory?)
-              .with(glob_result)
-              .and_return true
+      context "given the current path is: #{pwd.inspect}" do
+        before do
+          allow(RakeTasks::System)
+            .to receive(:pwd)
+            .and_return pwd
+
+          allow(RakeTasks::System)
+            .to receive(:file?)
+            .with(candidate)
+            .and_return exists
+        end
+
+        context "given the file does#{exists ? ' ' : ' not '}exist" do
+          it "returns #{expected}" do
+            expect(subject).to eq expected
           end
         end
       end
-
-      context 'given a file that matches a folder name' do
-        it 'returns the folder name' do
-          expect(subject).to eq lib_name
-        end
-      end
-
-      context 'given no file matches a folder name' do
-        let(:glob_results) {[
-          'lib/foo_bar',
-          "lib/#{lib_name}",
-          'lib/fizz_buzz',
-        ]}
-
-        it('returns nil') { expect(subject).to eq nil }
-      end
     end
 
-    context 'given no folders in lib' do
-      let(:glob_results) { [] }
-      it('returns nil') { expect(subject).to eq nil }
-    end
+    it_behaves_like 'lib name', 'path/foo', 'lib/foo.rb', true, 'foo'
+    it_behaves_like 'lib name', 'path/foo', 'lib/foo.rb', false, nil
   end
 end
