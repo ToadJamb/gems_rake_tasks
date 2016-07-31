@@ -4,9 +4,8 @@ rvm:
 - 1.9.3
 gemfile:
 - Gemfile
-#- gemfiles/gemfile.rake-10.4
-#- gemfiles/Gemfile.rake-0.9.6
-#- gemfiles/Gemfile.rake-0.8.7
+- gemfiles/gemfile.rake-10.5.0
+#- gemfiles/gemfile.rake-11.2.2
 branches:
   only:
   - master
