@@ -66,8 +66,8 @@ and reside in either `lib/tasks` or  `tasks` (as of 4.0.0).
 
 #### Requirements
 
-This task looks for a folder under `lib` with a ruby (.rb extension) file
-of the same name.
+This task uses the root folder and looks for a file of the same name
+in `lib` with a `.rb` extension.
 
 
 ### Cane Tasks
@@ -295,6 +295,10 @@ It will have all pre-requisites, plus run the specs.
 
 Updates
 -------
+
+    5.0.0 console task uses root folder
+          instead of matching files to folders in lib.
+          The previous behavior assumed only one file/folder would match.
 
     4.2.0 Added travis_ci:lint task.
 
