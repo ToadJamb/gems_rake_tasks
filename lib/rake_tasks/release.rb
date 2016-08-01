@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require 'readline'
-
 module RakeTasks
   class Prompt
     def initialize(prompt, default = nil)
