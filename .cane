@@ -4,3 +4,5 @@
 --abc-max 9
 --abc-glob {rakefile,Gemfile,*.gemspec,{lib,spec,test,tasks}/**/*.{rb,rake,example}}
 --style-glob {rakefile,Gemfile,*.gemspec,{lib,spec,test,tasks}/**/*.{rb,rake,example}}
+
+--abc-exclude RakeTasks::Release#get_version #=> 13
