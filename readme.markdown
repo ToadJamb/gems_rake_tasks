@@ -43,15 +43,15 @@ Require the gem wherever you need to use it:
 
 Require the tasks that you want to use:
 
-    require 'rake\_tasks\tasks\spec'     # Run RSpec specs of different types
-    require 'rake\_tasks\tasks\cane'     # Cane rake tasks
-    require 'rake\_tasks\tasks\console'  # Load a library project in irb.
-    require 'rake\_tasks\tasks\gem'      # Gem build, install, deploy, etc.
-    require 'rake\_tasks\tasks\checksum' # Generate checksums for \*.gem file
-    require 'rake\_tasks\tasks\doc'      # Generate readme
-    require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
-    require 'rake\_tasks\tasks\test'     # Run TestUnit tests - may get removed
-    require 'rake\_tasks\tasks\travis_ci_lint' # Lint .travis.yml
+    require 'rake\_tasks/tasks/spec'     # Run RSpec specs of different types
+    require 'rake\_tasks/tasks/cane'     # Cane rake tasks
+    require 'rake\_tasks/tasks/console'  # Load a library project in irb.
+    require 'rake\_tasks/tasks/gem'      # Gem build, install, deploy, etc.
+    require 'rake\_tasks/tasks/checksum' # Generate checksums for \*.gem file
+    require 'rake\_tasks/tasks/doc'      # Generate readme
+    require 'rake\_tasks/tasks/rdoc'     # Generate RDoc
+    require 'rake\_tasks/tasks/test'     # Run TestUnit tests - may get removed
+    require 'rake\_tasks/tasks/travis_ci_lint' # Lint .travis.yml
 
 
 Tasks
@@ -59,7 +59,7 @@ Tasks
 
 Additional rake tasks will be found and loaded
 if they are named \*.rake (as of 3.0.0)
-and reside in either `lib\tasks` or  `tasks` (as of 4.0.0).
+and reside in either `lib/tasks` or  `tasks` (as of 4.0.0).
 
 ### Console Task
 
