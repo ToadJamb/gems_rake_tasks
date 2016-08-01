@@ -160,6 +160,131 @@ This task will do the following:
   * tag the commit with v[new\_version]
 
 
+Useful Methods
+--------------
+
+### `RakeTasks.build_default_tasks`
+
+This method allows you to run your 'default' task differently
+in different environments.
+This is generally not advisable,
+but for libraries, it makes sense.
+You want to check the code against multiple rubies/gemspecs,
+which is easy to do with [wwtd][wwtd],
+but ci (in particular [travisci][travisci]),
+has no way to say
+'run these things FIRST, then run these other things against different rubies'.
+
+By telling [travisci][travisci] (or the ci of your choice)
+to run `bundle exec base`,
+you can now run `bundle exec rake` in development,
+thus ensuring everything stays tested, but in more efficient ways.
+
+This function should be invoked *AFTER* all rake tasks have been loaded.
+Otherwise, some tasks/libraries, may decide to throw things into your
+default task for you.
+This method clears them all out, so you know exactly what you have
+and you get exactly what you want.
+
+This function builds those tasks for you. Let's look at the parameters.
+
+The first three are all expected to be arrays of rake task names.
+
+* reqs
+
+These are the things that should be run only once where possible.
+These tasks would be things like linters
+that only need to be run once.
+
+`RakeTasks` has this set to `[:cane, 'travis_ci:lint']`
+(if `Travis` is loaded) and just `[:cane]`, if not.
+
+
+* specs
+
+These are the test/spec tasks that should be run in every environment specified.
+
+`RakeTasks` sets this to `[:spec, 'test:unit']`.
+
+
+* local
+
+These are the tasks that will be run locally with a `bundle exec rake`.
+
+`RakeTasks` sets this to `['wwtd:parallel']`.
+
+
+* ci
+
+Whether the tasks are being built for CI or not.
+
+`RakeTasks` looks for the existence of `ENV['CI']`,
+which [travisci][travisci] lists as an environment variable
+that you can count on being set.
+
+
+* base
+
+The name of the base task.
+This is the task that you should use in CI.
+
+`RakeTasks` uses the default setting of `:base`.
+
+
+* default
+
+The name of the 'default' task.
+Although, if you send it something other than `:default`,
+it's not really the default task anymore, is it?
+
+This is here for completion,
+but probably best not overridden
+unless you really know what you're doing and why.
+
+`RakeTasks` uses the default setting of `:default`.
+
+
+#### Summary
+
+With all of those settings in place
+and with `.travis.yml` set to run `bundle exec base`,
+what happens is this:
+
+
+##### Locally
+
+    $ bundle exec rake
+
+In the case of `RakeTasks`, this will run the prereqs,
+stopping if any of them fail
+(rather than having a failure for each matrix due to linting).
+Then, it will run the specs in parallel.
+
+    $ bundle exec base
+
+In the case of `RakeTasks`, this will ONLY run the specs.
+
+
+##### CI
+
+    $ bundle exec rake
+
+You probably shouldn't be running this on CI using these tasks.
+Most likely, you can skip the overhead and just use the default rake task
+in all environments.
+
+For what it's worth, this will run the prereqs both prior to running
+the matrix builds and during each one.
+If you want that, just use the default rake task
+and make it the same for all environments.
+
+
+    $ bundle exec base
+
+In the case of `RakeTasks`, this functions as a stand-alone full rake.
+It will have all pre-requisites, plus run the specs.
+
+
 Updates
 -------
 
@@ -169,6 +294,8 @@ Updates
           It generates three checksums: sha256, sha512, and md5.
 
           Added release rake task.
+
+          Added RakeTasks.build_default_tasks.
 
     4.1.0 Added console task.
 
@@ -246,3 +373,5 @@ RakeTasks is released under the LGPLv3 license.
 [cane]:        http://github.com/square/cane
 [travis-yaml]: https://github.com/travis-ci/travis-yaml
 [tasks]:       #Tasks
+[wwtd]:        https://github.com/grosser/wwtd
+[travisci]:    https://travis-ci.org
