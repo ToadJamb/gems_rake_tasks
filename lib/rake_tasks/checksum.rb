@@ -32,8 +32,8 @@ module RakeTasks
     private
 
     def save_file_for(digest, checksum)
-      file = File.basename(Gem.gem_file)
-      path = "checksum/#{file}.#{digest}"
+      gem_file = File.basename(Gem.gem_file)
+      path = "checksum/#{gem_file}.#{digest}"
 
       puts "--- #{digest.to_s.upcase} ---"
       puts checksum
