@@ -7,11 +7,6 @@ Welcome to RakeTasks
 RakeTasks provides basic rake tasks for generating documentation,
 building and installing gems, and running tests.
 
-It will also load additional rake tasks
-if they are in either `lib/tasks` or `tasks`.
-That is the only thing this gem does unless
-one of the included tasks is explicitly required.
-
 
 Dependency Philosophy
 ---------------------
@@ -37,7 +32,6 @@ Require the gem in your Gemfile:
     gem 'rake\_tasks', '~> 4.2.0'
 
 Require the gem wherever you need to use it:
-(This will load any \*.rake files in your project.)
 
     require 'rake\_tasks'
 
@@ -54,13 +48,12 @@ Require the tasks that you want to use:
     require 'rake\_tasks/tasks/travis_ci_lint' # Lint .travis.yml
     require 'rake\_tasks/tasks/release'  # Prepare a gem (and repo) for release
 
+If you want `RakeTasks` to load all of your tasks for you,
+add `RakeTasks.load_tasks` to your `rakefile`.
+
 
 Tasks
 -----
-
-Additional rake tasks will be found and loaded
-if they are named \*.rake (as of 3.0.0)
-and reside in either `lib/tasks` or  `tasks` (as of 4.0.0).
 
 ### Console Task
 
@@ -318,6 +311,8 @@ Updates
 
           Removed checksum rake task.
           Use bundle exec rake checksums instead.
+
+          Do not auto load tasks.
 
     4.2.0 Added travis_ci:lint task.
 
