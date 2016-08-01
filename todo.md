@@ -13,9 +13,3 @@ Version 5.0
 
 * remove checksum task
 * remove auto-loading of tasks
-
-
-Version 4.3
------------
-
-* default task setup for wwtd
