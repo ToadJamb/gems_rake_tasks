@@ -36,4 +36,11 @@ local = [
   'wwtd:parallel',
 ]
 
+Rake::Task['release'].enhance do |task|
+  puts `git rm gemfiles/*.lock`
+  Rake::Task[:default].invoke
+  `git add gemfiles`
+  puts `git commit --amend --no-edit`
+end
+
 RakeTasks.build_default_tasks reqs, specs, local, !ENV['CI'].to_s.strip.empty?
