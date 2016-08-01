@@ -24,7 +24,8 @@ mmmm yummy
 
   s.require_paths = ['lib']
   s.files = Dir[
-    '*',
+    '*.gemspec',
+    'Gemfile',
     'lib/**/*.rb',
     'lib/**/rubies.sh',
     'lib/**/bundle_install.sh',
