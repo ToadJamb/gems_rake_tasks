@@ -52,6 +52,7 @@ Require the tasks that you want to use:
     require 'rake\_tasks/tasks/rdoc'     # Generate RDoc
     require 'rake\_tasks/tasks/test'     # Run TestUnit tests - may get removed
     require 'rake\_tasks/tasks/travis_ci_lint' # Lint .travis.yml
+    require 'rake\_tasks/tasks/release'  # Prepare a gem (and repo) for release
 
 
 Tasks
@@ -141,11 +142,31 @@ this value will be saved to `~/.gem/credentials`.
 * [Travis::Yaml][travis-yaml]
 
 
+### Release Task
+
+* [Gems][gems]
+
+This task will do the following:
+
+* Prompt you for a version number
+  * it attempts the two most logical choices and then lets you type in a new one.
+* Updates the gemspec with that version number.
+* Ensures Gemfile.lock is up to date (by running `bundle check`).
+* Builds the gem
+* Generates checksums
+* For git repos only:
+  * check in gemspec, Gemfile, Gemfile.lock, and checksums
+  * commit with a message of "Version [new\_version]"
+  * tag the commit with v[new\_version]
+
+
 Updates
 -------
 
     4.3.0 Added checksums rake task.
           It generates three checksums: sha256, sha512, and md5.
+
+          Added release rake task.
 
     4.2.0 Added travis_ci:lint task.
 
