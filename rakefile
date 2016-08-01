@@ -36,4 +36,8 @@ local = [
   'wwtd:parallel',
 ]
 
+Rake::Task[:release].clear
+Rake::Task[:release].clear_prerequisites
+task :release => :full_release
+
 RakeTasks.build_default_tasks reqs, specs, local, !ENV['CI'].to_s.strip.empty?
