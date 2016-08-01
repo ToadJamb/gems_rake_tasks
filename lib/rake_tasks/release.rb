@@ -21,22 +21,37 @@ module RakeTasks
     end
   end
 
-  module Release
-    extend self
+  class Release
+    def full_release
+      release
+
+      puts `git rm gemfiles/*.lock`
+
+      Rake::Task[:default].invoke
+
+      `git add gemfiles`
+      `git add checksum`
+      `git add Gemfile`
+      `git add Gemfile.lock`
+      `git add *.gemspec`
+
+      puts `git commit -m "Version #{@version}"`
+      puts `git tag v#{@version}`
+    end
 
     def release
       dirty_check
 
-      new_version = get_version
-      raise_invalid_version if new_version.to_s.strip.empty?
+      @version = get_version
+      raise_invalid_version if @version.to_s.strip.empty?
 
-      update_version new_version
+      update_version @version
       puts `bundle check`
 
       puts `gem build #{Gem.gem_spec_file}`
       Checksum.checksums
 
-      puts "#{new_version} is ready for release!"
+      puts "#{@version} is ready for release!"
     end
 
     private
