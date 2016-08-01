@@ -16,6 +16,7 @@ require_relative 'lib/rake_tasks'
   'checksum',
   'console',
   'travis_ci_lint',
+  'release',
 ].each do |task|
   require_relative File.join('lib/rake_tasks/tasks', task)
 end

@@ -146,4 +146,27 @@ end
       expect(Gems.key).to eq api_key
     end
   end
+
+  describe '.next_version' do
+    shared_examples_for 'next version' do |current, expected|
+      subject { described_class }
+
+      context "given the current version is #{current.inspect}" do
+        before do
+          allow(subject)
+            .to receive(:version_number)
+            .and_return current
+        end
+
+        it "returns #{expected.inspect}" do
+          expect(subject.next_version).to eq expected
+        end
+      end
+    end
+
+    it_behaves_like 'next version', '4.1.0', '4.1.1'
+    it_behaves_like 'next version', '4.1.3.5.8', '4.1.3.5.9'
+    it_behaves_like 'next version', '4.1.2.wip', '4.1.3'
+    it_behaves_like 'next version', '1.2.7.wip.3', '1.2.7.4'
+  end
 end

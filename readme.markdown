@@ -43,15 +43,16 @@ Require the gem wherever you need to use it:
 
 Require the tasks that you want to use:
 
-    require 'rake\_tasks\tasks\spec'     # Run RSpec specs of different types
-    require 'rake\_tasks\tasks\cane'     # Cane rake tasks
-    require 'rake\_tasks\tasks\console'  # Load a library project in irb.
-    require 'rake\_tasks\tasks\gem'      # Gem build, install, deploy, etc.
-    require 'rake\_tasks\tasks\checksum' # Generate checksums for \*.gem file
-    require 'rake\_tasks\tasks\doc'      # Generate readme
-    require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
-    require 'rake\_tasks\tasks\test'     # Run TestUnit tests - may get removed
-    require 'rake\_tasks\tasks\travis_ci_lint' # Lint .travis.yml
+    require 'rake\_tasks/tasks/spec'     # Run RSpec specs of different types
+    require 'rake\_tasks/tasks/cane'     # Cane rake tasks
+    require 'rake\_tasks/tasks/console'  # Load a library project in irb.
+    require 'rake\_tasks/tasks/gem'      # Gem build, install, deploy, etc.
+    require 'rake\_tasks/tasks/checksum' # Generate checksums for \*.gem file
+    require 'rake\_tasks/tasks/doc'      # Generate readme
+    require 'rake\_tasks/tasks/rdoc'     # Generate RDoc
+    require 'rake\_tasks/tasks/test'     # Run TestUnit tests - may get removed
+    require 'rake\_tasks/tasks/travis_ci_lint' # Lint .travis.yml
+    require 'rake\_tasks/tasks/release'  # Prepare a gem (and repo) for release
 
 
 Tasks
@@ -59,7 +60,7 @@ Tasks
 
 Additional rake tasks will be found and loaded
 if they are named \*.rake (as of 3.0.0)
-and reside in either `lib\tasks` or  `tasks` (as of 4.0.0).
+and reside in either `lib/tasks` or  `tasks` (as of 4.0.0).
 
 ### Console Task
 
@@ -141,13 +142,33 @@ this value will be saved to `~/.gem/credentials`.
 * [Travis::Yaml][travis-yaml]
 
 
+### Release Task
+
+* [Gems][gems]
+
+This task will do the following:
+
+* Prompt you for a version number
+  * it attempts the two most logical choices and then lets you type in a new one.
+* Updates the gemspec with that version number.
+* Ensures Gemfile.lock is up to date (by running `bundle check`).
+* Builds the gem
+* Generates checksums
+* For git repos only:
+  * check in gemspec, Gemfile, Gemfile.lock, and checksums
+  * commit with a message of "Version [new\_version]"
+  * tag the commit with v[new\_version]
+
+
 Updates
 -------
 
-    4.3.0 Added checksums rake task.
+    4.2.0 Added travis_ci:lint task.
+
+          Added checksums rake task.
           It generates three checksums: sha256, sha512, and md5.
 
-    4.2.0 Added travis_ci:lint task.
+          Added release rake task.
 
     4.1.0 Added console task.
 

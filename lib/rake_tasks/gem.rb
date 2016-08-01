@@ -30,10 +30,34 @@
 ################################################################################
 #++
 
+# frozen_string_literal: true
+
 # The main module for this gem.
 module RakeTasks
   # This class will handle gem utilities.
   class Gem
+    class Version
+      def initialize(string_version)
+        @marks = string_version.split('.')
+        @marks = @marks.map do |mark|
+          if mark.to_i.to_s == mark.to_s
+            mark.to_i
+          else
+            mark
+          end
+        end
+      end
+
+      def increment!
+        @marks = @marks.select { |m| m.class == Fixnum }
+        @marks[-1] += 1
+      end
+
+      def to_s
+        @marks.join('.')
+      end
+    end
+
     class << self
       # Check whether a gem spec file exists for this project.
       def gemspec_file?
@@ -71,6 +95,17 @@ module RakeTasks
         if spec.respond_to?(:name) && spec.respond_to?(:version)
           "#{spec.name} version #{spec.version}"
         end
+      end
+
+      # Returns the version from the specified gem specification.
+      def version_number(spec = gem_spec)
+        spec.version.to_s if spec.respond_to?(:version)
+      end
+
+      def next_version
+        version = Version.new(version_number)
+        version.increment!
+        version.to_s
       end
 
       # Updates the version in the gem specification file.

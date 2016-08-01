@@ -19,4 +19,3 @@ Version 4.3
 -----------
 
 * default task setup for wwtd
-* add release task
