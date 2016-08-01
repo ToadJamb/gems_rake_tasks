@@ -314,6 +314,8 @@ Updates
 
           Do not auto load tasks.
 
+    4.2.2 release task should report the selected version at completion.
+
     4.2.1 Scrub the version before presenting the first one in release task.
 
     4.2.0 Added travis_ci:lint task.
