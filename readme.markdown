@@ -163,12 +163,12 @@ This task will do the following:
 Updates
 -------
 
-    4.3.0 Added checksums rake task.
+    4.2.0 Added travis_ci:lint task.
+
+          Added checksums rake task.
           It generates three checksums: sha256, sha512, and md5.
 
           Added release rake task.
-
-    4.2.0 Added travis_ci:lint task.
 
     4.1.0 Added console task.
 
