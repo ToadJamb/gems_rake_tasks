@@ -47,7 +47,7 @@ Require the tasks that you want to use:
     require 'rake\_tasks\tasks\cane'     # Cane rake tasks
     require 'rake\_tasks\tasks\console'  # Load a library project in irb.
     require 'rake\_tasks\tasks\gem'      # Gem build, install, deploy, etc.
-    require 'rake\_tasks\tasks\checksum' # Generate a checksum for \*.gem file
+    require 'rake\_tasks\tasks\checksum' # Generate checksums for \*.gem file
     require 'rake\_tasks\tasks\doc'      # Generate readme
     require 'rake\_tasks\tasks\rdoc'     # Generate RDoc
     require 'rake\_tasks\tasks\test'     # Run TestUnit tests - may get removed
@@ -143,6 +143,9 @@ this value will be saved to `~/.gem/credentials`.
 
 Updates
 -------
+
+    4.3.0 Added checksums rake task.
+          It generates three checksums: sha256, sha512, and md5.
 
     4.2.0 Added travis_ci:lint task.
 
