@@ -12,8 +12,6 @@ module RakeTasks
       value = nil
       value = STDIN.cooked { value = Readline::readline(label, false).chomp }
       value = @default if value == '' && @default
-      puts value.inspect
-
       value
     end
 
@@ -59,8 +57,7 @@ module RakeTasks
     end
 
     def is_version?(version)
-      prompt = "#{version}\n"
-      prompt += 'Is that the version to release?'
+      prompt = "Is the version to release `#{version}`?"
       answer = Prompt.new(prompt, 'y').get_value
       answer == 'y'
     end
