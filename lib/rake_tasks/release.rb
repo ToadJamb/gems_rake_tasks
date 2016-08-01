@@ -51,6 +51,7 @@ module RakeTasks
 
     def get_version
       version = Gem.gem_version
+      version.scrub!
       return version.to_s if is_version?(version)
 
       version.next_revision!

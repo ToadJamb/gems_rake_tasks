@@ -152,6 +152,25 @@ end
 
     let(:version) { '1.2.3' }
 
+    describe '.scrub!' do
+      shared_examples_for 'scrub' do |current, expected|
+        context "given the current version is #{current.inspect}" do
+          let(:version) { current }
+
+          before { subject.scrub! }
+
+          it "returns #{expected.inspect}" do
+            expect(subject.to_s).to eq expected
+          end
+        end
+      end
+
+      it_behaves_like 'scrub', '1.2.3', '1.2.3'
+      it_behaves_like 'scrub', '4.1.3.5.8', '4.1.3.5.8'
+      it_behaves_like 'scrub', '4.1.2.wip', '4.1.2'
+      it_behaves_like 'scrub', '1.2.7.wip.3', '1.2.7.3'
+    end
+
     describe '.next_revision!' do
       shared_examples_for 'next revision' do |current, expected|
         context "given the current version is #{current.inspect}" do

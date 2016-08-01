@@ -46,15 +46,22 @@ module RakeTasks
             mark
           end
         end
+        @scrubbed = false
+      end
+
+      def scrub!
+        return if @scrubbed
+        @marks = @marks.select { |m| m.class == Fixnum }
+        @scrubbed = true
       end
 
       def next_revision!
-        @marks = @marks.select { |m| m.class == Fixnum }
+        scrub!
         @marks[-1] += 1
       end
 
       def next_minor_version!
-        @marks = @marks.select { |m| m.class == Fixnum }
+        scrub!
         @marks.count.times do |n|
           case n
           when 0
@@ -68,7 +75,7 @@ module RakeTasks
       end
 
       def next_major_version!
-        @marks = @marks.select { |m| m.class == Fixnum }
+        scrub!
         @marks.count.times do |n|
           if n == 0
             @marks[n] += 1
