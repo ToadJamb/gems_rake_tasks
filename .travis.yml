@@ -1,5 +1,5 @@
 language: ruby
-script: bundle exec rake basic --trace
+script: bundle exec rake base --trace
 rvm:
 - 2.3.0
 - 2.2.0
