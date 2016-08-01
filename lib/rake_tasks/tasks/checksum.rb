@@ -4,6 +4,10 @@ if RakeTasks::Gem.gem_file?
 
   desc 'Generate a checksum for the current gem file'
   task :checksum do |task|
+    message = "The checksum rake task will be deprecated in version 5.\n"
+    message += "Please use `rake checksums`"
+    warn message
+
     RakeTasks::Checksum.save_checksum_for :sha512
   end
 
