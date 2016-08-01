@@ -39,7 +39,7 @@ module RakeTasks
       Checksum.checksums
       update_git(new_version) if File.directory?('.git')
 
-      puts "#{Gem.version} is ready for release!"
+      puts "#{new_version} is ready for release!"
     end
 
     private
