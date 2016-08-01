@@ -147,26 +147,69 @@ end
     end
   end
 
-  describe '.next_version' do
-    shared_examples_for 'next version' do |current, expected|
-      subject { described_class }
+  describe RakeTasks::Gem::Version do
+    subject { described_class.new version }
 
-      context "given the current version is #{current.inspect}" do
-        before do
-          allow(subject)
-            .to receive(:version_number)
-            .and_return current
-        end
+    let(:version) { '1.2.3' }
 
-        it "returns #{expected.inspect}" do
-          expect(subject.next_version).to eq expected
+    describe '.next_revision!' do
+      shared_examples_for 'next revision' do |current, expected|
+        context "given the current version is #{current.inspect}" do
+          let(:version) { current }
+
+          before { subject.next_revision! }
+
+          it "returns #{expected.inspect}" do
+            expect(subject.to_s).to eq expected
+          end
         end
       end
+
+      it_behaves_like 'next revision', '4.1.0', '4.1.1'
+      it_behaves_like 'next revision', '4.1', '4.2'
+      it_behaves_like 'next revision', '4.1.3.5.8', '4.1.3.5.9'
+      it_behaves_like 'next revision', '4.1.2.wip', '4.1.3'
+      it_behaves_like 'next revision', '1.2.7.wip.3', '1.2.7.4'
     end
 
-    it_behaves_like 'next version', '4.1.0', '4.1.1'
-    it_behaves_like 'next version', '4.1.3.5.8', '4.1.3.5.9'
-    it_behaves_like 'next version', '4.1.2.wip', '4.1.3'
-    it_behaves_like 'next version', '1.2.7.wip.3', '1.2.7.4'
+    describe '.next_minor_version!' do
+      shared_examples_for 'minor version' do |current, expected|
+        context "given the current version is #{current.inspect}" do
+          let(:version) { current }
+
+          before { subject.next_minor_version! }
+
+          it "returns #{expected.inspect}" do
+            expect(subject.to_s).to eq expected
+          end
+        end
+      end
+
+      it_behaves_like 'minor version', '4.1.0', '4.2.0'
+      it_behaves_like 'minor version', '4.1', '4.2'
+      it_behaves_like 'minor version', '4.1.3.5.8', '4.2.0.0.0'
+      it_behaves_like 'minor version', '4.1.2.wip', '4.2.0'
+      it_behaves_like 'minor version', '1.2.7.wip.3', '1.3.0.0'
+    end
+
+    describe '.next_major_version!' do
+      shared_examples_for 'major version' do |current, expected|
+        context "given the current version is #{current.inspect}" do
+          let(:version) { current }
+
+          before { subject.next_major_version! }
+
+          it "returns #{expected.inspect}" do
+            expect(subject.to_s).to eq expected
+          end
+        end
+      end
+
+      it_behaves_like 'major version', '4.1.0', '5.0.0'
+      it_behaves_like 'major version', '4.1', '5.0'
+      it_behaves_like 'major version', '4.1.3.5.8', '5.0.0.0.0'
+      it_behaves_like 'major version', '4.1.2.wip', '5.0.0'
+      it_behaves_like 'major version', '1.2.7.wip.3', '2.0.0.0'
+    end
   end
 end

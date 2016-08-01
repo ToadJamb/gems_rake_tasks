@@ -32,7 +32,6 @@ module RakeTasks
       new_version = get_version
       raise_invalid_version if new_version.to_s.strip.empty?
 
-      puts "#{new_version} will be used"
       update_version new_version
       puts `bundle check`
 
@@ -49,16 +48,24 @@ module RakeTasks
     end
 
     def get_version
-      version = Gem.version_number
-      return version if is_version?(version)
-      version = Gem.next_version
-      return version if is_version?(version)
+      version = Gem.gem_version
+      return version.to_s if is_version?(version)
+
+      version.next_revision!
+      return version.to_s if is_version?(version)
+
+      version.next_minor_version!
+      return version.to_s if is_version?(version)
+
+      version.next_major_version!
+      return version.to_s if is_version?(version)
+
       version = user_version
     end
 
     def is_version?(version)
       prompt = "Is the version to release `#{version}`?"
-      answer = Prompt.new(prompt, 'y').get_value
+      answer = Prompt.new(prompt, 'n').get_value
       answer == 'y'
     end
 
@@ -73,10 +80,11 @@ module RakeTasks
     end
 
     def update_git(version)
-      puts `git add checksum`
-      puts `git add Gemfile`
-      puts `git add Gemfile.lock`
-      puts `git add *.gemspec`
+      `git add checksum`
+      `git add Gemfile`
+      `git add Gemfile.lock`
+      `git add *.gemspec`
+
       puts `git commit -m "Version #{version}"`
       puts `git tag v#{version}`
     end
