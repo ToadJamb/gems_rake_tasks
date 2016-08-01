@@ -10,4 +10,5 @@ gemfile:
 branches:
   only:
   - master
+  - v4.2
   - chore/travis-ci
