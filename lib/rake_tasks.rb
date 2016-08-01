@@ -28,9 +28,12 @@
 ################################################################################
 #++
 
+# frozen_string_literal: true
+
 require 'fileutils'
 require 'psych'
 require 'rake'
+require 'readline'
 
 module RakeTasks
   # Contains the full path to the shell script to run tests in other env's.
