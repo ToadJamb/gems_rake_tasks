@@ -38,9 +38,17 @@ local = [
 
 Rake::Task['release'].enhance do |task|
   puts `git rm gemfiles/*.lock`
+
   Rake::Task[:default].invoke
+
   `git add gemfiles`
-  puts `git commit --amend --no-edit`
+  `git add checksum`
+  `git add Gemfile`
+  `git add Gemfile.lock`
+  `git add *.gemspec`
+
+  puts `git commit -m "#{RakeTasks::Gem.version}"`
+  puts `git tag v#{RakeTasks::Gem.version_number}`
 end
 
 RakeTasks.build_default_tasks reqs, specs, local, !ENV['CI'].to_s.strip.empty?

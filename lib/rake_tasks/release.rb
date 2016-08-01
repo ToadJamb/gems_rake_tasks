@@ -35,7 +35,6 @@ module RakeTasks
 
       puts `gem build #{Gem.gem_spec_file}`
       Checksum.checksums
-      update_git(new_version) if File.directory?('.git')
 
       puts "#{new_version} is ready for release!"
     end
@@ -78,16 +77,6 @@ module RakeTasks
     def raise_invalid_version
       message = 'No version was specified.'
       raise ArgumentError.new(message)
-    end
-
-    def update_git(version)
-      `git add checksum`
-      `git add Gemfile`
-      `git add Gemfile.lock`
-      `git add *.gemspec`
-
-      puts `git commit -m "Version #{version}"`
-      puts `git tag v#{version}`
     end
 
     def dirty_check
