@@ -56,5 +56,3 @@ end
 module RakeTasks
   extend Core
 end
-
-RakeTasks.load_tasks
