@@ -176,7 +176,7 @@ has no way to say
 'run these things FIRST, then run these other things against different rubies'.
 
 By telling [travisci][travisci] (or the ci of your choice)
-to run `bundle exec base`,
+to run `bundle exec rake base`,
 you can now run `bundle exec rake` in development,
 thus ensuring everything stays tested, but in more efficient ways.
 
@@ -247,7 +247,7 @@ unless you really know what you're doing and why.
 #### Summary
 
 With all of those settings in place
-and with `.travis.yml` set to run `bundle exec base`,
+and with `.travis.yml` set to run `bundle exec rake base`,
 what happens is this:
 
 
@@ -260,7 +260,7 @@ stopping if any of them fail
 (rather than having a failure for each matrix due to linting).
 Then, it will run the specs in parallel.
 
-    $ bundle exec base
+    $ bundle exec rake base
 
 In the case of `RakeTasks`, this will ONLY run the specs.
 
@@ -279,7 +279,7 @@ If you want that, just use the default rake task
 and make it the same for all environments.
 
 
-    $ bundle exec base
+    $ bundle exec rake base
 
 In the case of `RakeTasks`, this functions as a stand-alone full rake.
 It will have all pre-requisites, plus run the specs.
