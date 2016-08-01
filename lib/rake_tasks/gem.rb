@@ -48,9 +48,34 @@ module RakeTasks
         end
       end
 
-      def increment!
+      def next_revision!
         @marks = @marks.select { |m| m.class == Fixnum }
         @marks[-1] += 1
+      end
+
+      def next_minor_version!
+        @marks = @marks.select { |m| m.class == Fixnum }
+        @marks.count.times do |n|
+          case n
+          when 0
+            @marks[n] = @marks[n]
+          when 1
+            @marks[n] += 1
+          else
+            @marks[n] = 0
+          end
+        end
+      end
+
+      def next_major_version!
+        @marks = @marks.select { |m| m.class == Fixnum }
+        @marks.count.times do |n|
+          if n == 0
+            @marks[n] += 1
+          else
+            @marks[n] = 0
+          end
+        end
       end
 
       def to_s
@@ -102,10 +127,8 @@ module RakeTasks
         spec.version.to_s if spec.respond_to?(:version)
       end
 
-      def next_version
-        version = Version.new(version_number)
-        version.increment!
-        version.to_s
+      def gem_version
+        Version.new version_number
       end
 
       # Updates the version in the gem specification file.

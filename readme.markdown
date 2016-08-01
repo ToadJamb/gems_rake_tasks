@@ -148,8 +148,16 @@ this value will be saved to `~/.gem/credentials`.
 
 This task will do the following:
 
-* Prompt you for a version number
-  * it attempts the two most logical choices and then lets you type in a new one.
+It is worth noting that the version bumping will strip out any part of versioning
+where the string version does not match the number
+(i.e. `1.3.2.pre-3.6` => `1.3.2.6`).
+
+* Prompt you for a version number in this order:
+  * The current version number.
+  * Bump the lowest point. (i.e. 1.2.3.5.8 => 1.2.3.5.9)
+  * Bump the minor number (i.e. 1.2.3.5.8 => 1.3.0.0.0)
+  * Bump the major number (i.e. 1.2.3.5.8 => 2.0.0.0.0)
+  * Enter the new number
 * Updates the gemspec with that version number.
 * Ensures Gemfile.lock is up to date (by running `bundle check`).
 * Builds the gem
