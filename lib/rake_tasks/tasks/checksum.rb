@@ -1,19 +1,14 @@
+# frozen_string_literal: true
 if RakeTasks::Gem.gem_file?
   require 'digest/sha2'
 
   desc 'Generate a checksum for the current gem file'
   task :checksum do |task|
-    gem_file = RakeTasks::Gem.gem_file
-    checksum = Digest::SHA512.new.hexdigest(File.read(gem_file))
-    checksum_file = File.basename(gem_file)
-    checksum_path = "checksum/#{checksum_file}.sha512"
+    RakeTasks::Checksum.save_checksum_for :sha512
+  end
 
-    puts checksum
-
-    FileUtils.mkdir_p 'checksum' unless File.directory?('checksum')
-
-    File.open(checksum_path, 'w') do |file|
-      file.write checksum
-    end
+  desc 'Generate all checksums for the current gem file'
+  task :checksums do |task|
+    RakeTasks::Checksum.checksums
   end
 end
