@@ -42,6 +42,8 @@ module RakeTasks
       puts "#{Gem.version} is ready for release!"
     end
 
+    private
+
     def update_version(new_version)
       return if new_version == Gem.version_number
       Gem.version! new_version
