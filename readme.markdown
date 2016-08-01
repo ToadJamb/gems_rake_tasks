@@ -34,7 +34,7 @@ Install RakeTasks at the command prompt if you haven't yet:
 
 Require the gem in your Gemfile:
 
-    gem 'rake\_tasks', '~> 4.2.0'
+    gem 'rake\_tasks', '~> 4.2.1'
 
 Require the gem wherever you need to use it:
 (This will load any \*.rake files in your project.)
