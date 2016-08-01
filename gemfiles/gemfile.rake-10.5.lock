@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    rake_tasks (5.0.0.wip)
+    rake_tasks (5.0.0)
       rake
 
 GEM
