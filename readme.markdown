@@ -296,6 +296,8 @@ It will have all pre-requisites, plus run the specs.
 Updates
 -------
 
+    4.2.1 Scrub the version before presenting the first one in release task.
+
     4.2.0 Added travis_ci:lint task.
 
           Added checksums rake task.
