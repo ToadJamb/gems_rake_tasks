@@ -316,6 +316,9 @@ Updates
 
           Add Console.set_lib
 
+          Removed checksum rake task.
+          Use bundle exec rake checksums instead.
+
     4.2.0 Added travis_ci:lint task.
 
           Added checksums rake task.
