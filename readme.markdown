@@ -34,7 +34,7 @@ Install RakeTasks at the command prompt if you haven't yet:
 
 Require the gem in your Gemfile:
 
-    gem 'rake\_tasks', '~> 4.2.1'
+    gem 'rake\_tasks', '~> 4.2.2'
 
 Require the gem wherever you need to use it:
 (This will load any \*.rake files in your project.)
@@ -295,6 +295,8 @@ It will have all pre-requisites, plus run the specs.
 
 Updates
 -------
+
+    4.2.2 release task should report the selected version at completion.
 
     4.2.1 Scrub the version before presenting the first one in release task.
 
