@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
   s.version = '5.0.0'
@@ -43,6 +44,7 @@ mmmm yummy
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'travis-yaml'
   s.add_development_dependency 'wwtd'
+  s.add_development_dependency 'colorize'
 
   s.has_rdoc = true
 end

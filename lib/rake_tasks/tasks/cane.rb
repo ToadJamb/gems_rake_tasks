@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 if RakeTasks::Dependency.loaded?('Cane', 'cane')
   require 'cane/rake_task'
 

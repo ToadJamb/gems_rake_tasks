@@ -47,6 +47,7 @@ Require the tasks that you want to use:
     require 'rake\_tasks/tasks/test'     # Run TestUnit tests - may get removed
     require 'rake\_tasks/tasks/travis_ci_lint' # Lint .travis.yml
     require 'rake\_tasks/tasks/release'  # Prepare a gem (and repo) for release
+    require 'rake\_tasks/tasks/colors'   # Show examples of the 16 colors
 
 If you want `RakeTasks` to load all of your tasks for you,
 add `RakeTasks.load_tasks` to your `rakefile`.
@@ -75,6 +76,15 @@ require 'rake_tasks/tasks/console'
 Please note that the console task must be required AFTER setting this value.
 If it is required prior to requiring the console task,
 the task will not be loaded.
+
+
+### Colors task
+
+#### Dependencies
+
+* [Colorize][colorize]
+
+RakeTaks will attempt to load [Colorize][colorize] when the task is invoked.
 
 
 ### Cane Tasks
@@ -303,6 +313,8 @@ It will have all pre-requisites, plus run the specs.
 Updates
 -------
 
+    5.1.0 added colors rake task
+
     5.0.0 console task uses root folder
           instead of matching files to folders in lib.
           The previous behavior assumed only one file/folder would match.
@@ -451,3 +463,4 @@ RakeTasks is released under the LGPLv3 license.
 [tasks]:       #Tasks
 [wwtd]:        https://github.com/grosser/wwtd
 [travisci]:    https://travis-ci.org
+[colorize]:    https://github.com/fazibear/colorize
