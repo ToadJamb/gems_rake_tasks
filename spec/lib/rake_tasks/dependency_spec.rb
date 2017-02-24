@@ -1,6 +1,59 @@
 require 'spec_helper'
 
 RSpec.describe RakeTasks::Dependency do
+  let(:require_error_class) { LoadError }
+
+  context "#{Kernel}.require" do
+    it "raises a #{LoadError}" do
+      expect{Kernel.require 'fizzbuzz'}.to raise_error require_error_class
+    end
+  end
+
+  describe '.require_politely' do
+    subject { described_class.require_politely lib, title, stream }
+
+    let(:lib)    { 'my-lib' }
+    let(:title)  { 'MyLib' }
+    let(:error)  { nil }
+    let(:stream) { StringIO.new }
+    let(:out)    { stream.string }
+
+    before do
+      if error
+        allow(Kernel).to receive(:require).with(lib).and_raise error
+      else
+        allow(Kernel).to receive(:require).with lib
+      end
+    end
+
+    context 'given a valid library that can be loaded' do
+      before { subject }
+
+      it 'requires the file' do
+        expect(Kernel).to have_received(:require).with lib
+      end
+    end
+
+    context "given a #{LoadError}" do
+      let(:error) { require_error_class.new 'lib not loaded' }
+
+      before { subject }
+
+      it 'outputs a message to the user' do
+        expect(out).to match(/lib not loaded/)
+        expect(out).to match(/could not be required/)
+        expect(out).to match(/Please ensure that #{title}/)
+      end
+    end
+
+    context "given an error other than #{LoadError}" do
+      let(:error) { Exception.new 'wrong answer!' }
+      it 'raises the error' do
+        expect{subject}.to raise_error error
+      end
+    end
+  end
+
   describe '.loaded?' do
     subject { described_class.loaded? constant.to_s, requirement }
 
