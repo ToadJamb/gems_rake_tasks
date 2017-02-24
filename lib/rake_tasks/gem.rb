@@ -51,7 +51,7 @@ module RakeTasks
 
       def scrub!
         return if @scrubbed
-        @marks = @marks.select { |m| m.class == Fixnum }
+        @marks = @marks.select { |m| m.is_a?(Integer) }
         @scrubbed = true
       end
 
