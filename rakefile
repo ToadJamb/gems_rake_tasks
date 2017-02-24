@@ -15,6 +15,7 @@ require_relative 'lib/rake_tasks'
   'test',
   'checksum',
   'console',
+  'colors',
   'travis_ci_lint',
   'release',
 ].each do |task|
