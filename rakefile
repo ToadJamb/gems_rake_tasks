@@ -39,6 +39,8 @@ local = [
 
 Rake::Task[:release].clear
 Rake::Task[:release].clear_prerequisites
+
+desc 'Prepare this gem for release (same as full_release)'
 task :release => :full_release
 
 RakeTasks.build_default_tasks reqs, specs, local, !ENV['CI'].to_s.strip.empty?
