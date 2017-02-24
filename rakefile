@@ -29,7 +29,7 @@ reqs << :cane
 reqs << 'travis_ci:lint' if Kernel.const_defined?('Travis')
 
 specs = [
-  :spec,
+  :specs,
   'test:unit',
 ]
 
