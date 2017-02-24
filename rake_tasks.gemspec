@@ -43,6 +43,7 @@ mmmm yummy
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'travis-yaml'
   s.add_development_dependency 'wwtd'
+  s.add_development_dependency 'colorize'
 
   s.has_rdoc = true
 end
