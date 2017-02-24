@@ -5,8 +5,8 @@ rvm:
 - 2.2.0
 gemfile:
 - Gemfile
-- gemfiles/gemfile.rake-11.2
-- gemfiles/gemfile.rake-10.5
+- gemfiles/gemfile.rake-11
+- gemfiles/gemfile.rake-10
 branches:
   only:
   - master
