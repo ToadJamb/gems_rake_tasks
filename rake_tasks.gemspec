@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 Gem::Specification.new do |s|
   s.name = 'rake_tasks'
-  s.version = '5.0.0'
+  s.version = '5.1.0'
 
   s.summary = 'Basic rake tasks. You know you want some.'
   s.description =%Q{
