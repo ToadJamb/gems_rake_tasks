@@ -48,7 +48,7 @@ DEPENDENCIES
   faker
   gems
   mocha
-  rake (~> 10.5)
+  rake (~> 10)
   rake_tasks!
   rspec
   test-unit
