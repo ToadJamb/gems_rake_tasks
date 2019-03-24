@@ -8,6 +8,7 @@ module RakeTasks
 
     def get_value
       value = nil
+      # TODO: this line requires `require 'io/console'`
       value = STDIN.cooked { value = Readline::readline(label, false).chomp }
       value = @default if value == '' && @default
       value
