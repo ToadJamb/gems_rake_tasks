@@ -1,4 +1,6 @@
 language: ruby
+before_script:
+  - bundle install
 script: bundle exec rake base --trace
 rvm:
 - 2.4.0
