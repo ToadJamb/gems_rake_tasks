@@ -1,3 +1,5 @@
+$VERBOSE = true
+
 require File.expand_path('spec/support/lib') # Must be first
 
 # Must be before spec/support
